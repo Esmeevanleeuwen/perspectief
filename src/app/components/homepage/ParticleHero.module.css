@@ -1,44 +1,59 @@
 .hero {
   position: relative;
+
   width: 100%;
   height: 100svh;
   min-height: 720px;
 
   overflow: hidden;
 
+  color: #102534;
+
   background:
     radial-gradient(
-      circle at 82% 42%,
-      rgba(245, 233, 223, 0.45),
-      transparent 35%
+      circle at 82% 43%,
+      rgba(241, 225, 211, 0.34),
+      transparent 36%
     ),
-    #fcfbf9;
-
-  color: #102534;
+    linear-gradient(
+      180deg,
+      #fffefd 0%,
+      #fcfaf7 100%
+    );
 }
 
 .canvas {
   position: absolute;
   inset: 0;
 
+  z-index: 1;
+
   width: 100%;
   height: 100%;
-
-  z-index: 1;
 
   pointer-events: none;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 .header {
   position: relative;
-  z-index: 10;
 
-  width: min(100% - 80px, 1500px);
-  height: 112px;
+  z-index: 20;
+
+  width: min(
+    calc(100% - 88px),
+    1540px
+  );
+
+  height: 104px;
 
   margin: 0 auto;
 
   display: grid;
+
   grid-template-columns:
     1fr
     auto
@@ -53,9 +68,10 @@
   display: inline-flex;
   align-items: center;
 
-  gap: 17px;
+  gap: 15px;
 
   color: #102534;
+
   text-decoration: none;
 
   font-family:
@@ -63,10 +79,15 @@
     Georgia,
     serif;
 
-  font-size: 30px;
+  font-size: 29px;
   font-weight: 500;
+
   line-height: 1;
 }
+
+/* =========================
+   LOGO
+========================= */
 
 .brandMark {
   position: relative;
@@ -75,6 +96,8 @@
 
   width: 27px;
   height: 27px;
+
+  flex: 0 0 auto;
 }
 
 .brandMark i {
@@ -89,13 +112,13 @@
 }
 
 .brandMark i:nth-child(1) {
-  left: 11px;
   top: 0;
+  left: 11px;
 }
 
 .brandMark i:nth-child(2) {
-  right: 2px;
   top: 7px;
+  right: 2px;
 
   background: #bb7046;
 }
@@ -106,30 +129,40 @@
 }
 
 .brandMark i:nth-child(4) {
-  left: 10px;
   bottom: 0;
+  left: 10px;
 
   background: #bb7046;
 }
 
 .brandMark i:nth-child(5) {
-  left: 0;
   top: 9px;
+  left: 0;
 }
 
 .brandMark i:nth-child(6) {
-  left: 11px;
   top: 11px;
+  left: 11px;
 }
+
+/* =========================
+   NAVIGATIE
+========================= */
 
 .navigation {
   display: flex;
   align-items: center;
 
-  gap: 58px;
+  gap: clamp(
+    30px,
+    4.1vw,
+    62px
+  );
 
   font-size: 14px;
   font-weight: 450;
+
+  white-space: nowrap;
 }
 
 .navigation a,
@@ -138,12 +171,13 @@
 
   text-decoration: none;
 
-  transition: opacity 180ms ease;
+  transition:
+    opacity 180ms ease;
 }
 
 .navigation a:hover,
 .login:hover {
-  opacity: 0.55;
+  opacity: 0.52;
 }
 
 .actions {
@@ -161,6 +195,7 @@
   display: grid;
   place-items: center;
 
+  margin: 0;
   padding: 7px;
 
   border: 0;
@@ -169,33 +204,58 @@
   color: #172832;
 
   cursor: pointer;
+
+  transition:
+    opacity 180ms ease;
 }
+
+.search:hover {
+  opacity: 0.52;
+}
+
+/* =========================
+   HERO COPY
+========================= */
 
 .content {
   position: relative;
-  z-index: 5;
 
-  width: min(100% - 80px, 1500px);
-  height: calc(100% - 112px);
+  z-index: 10;
+
+  width: min(
+    calc(100% - 88px),
+    1540px
+  );
+
+  height: calc(
+    100% - 104px
+  );
 
   margin: 0 auto;
 
   display: flex;
   align-items: center;
+
+  pointer-events: none;
 }
 
 .copy {
   /*
-    Iets omhoog zodat de positie meer overeenkomt
-    met jouw referentie.
+    Net iets boven optisch midden,
+    zoals in je mock-up.
   */
-  transform: translateY(-5%);
+  transform:
+    translateY(-7%);
+
+  pointer-events: auto;
 }
 
 .copy h1 {
+  max-width: 610px;
+
   margin: 0;
 
-  max-width: 610px;
+  color: #102534;
 
   font-family:
     var(--font-serif),
@@ -203,24 +263,22 @@
     serif;
 
   font-size: clamp(
-    52px,
-    4.35vw,
+    54px,
+    4.25vw,
     76px
   );
 
-  font-weight: 450;
+  font-weight: 430;
 
-  line-height: 1.035;
+  line-height: 1.025;
 
-  letter-spacing: -0.035em;
-
-  color: #102534;
+  letter-spacing: -0.036em;
 }
 
 .discover {
   width: 170px;
 
-  margin-top: 72px;
+  margin-top: 70px;
   padding-bottom: 12px;
 
   display: flex;
@@ -228,11 +286,12 @@
   justify-content: space-between;
 
   border-bottom:
-    1px solid rgba(
+    1px solid
+    rgba(
       16,
       37,
       52,
-      0.75
+      0.72
     );
 
   color: #102534;
@@ -242,126 +301,222 @@
   font-size: 15px;
 
   transition:
-    width 250ms ease,
+    width 260ms ease,
     opacity 180ms ease;
 }
 
 .discover:hover {
-  width: 185px;
+  width: 187px;
 }
+
+/* =========================
+   SCROLL INDICATOR
+========================= */
 
 .scrollIndicator {
   position: absolute;
 
-  z-index: 7;
+  z-index: 20;
 
   left: 50%;
-  bottom: 36px;
+  bottom: 34px;
 
   width: 17px;
   height: 29px;
 
-  transform: translateX(-50%);
+  transform:
+    translateX(-50%);
 
-  border: 1.25px solid
-    rgba(16, 37, 52, 0.75);
+  border:
+    1.2px solid
+    rgba(
+      16,
+      37,
+      52,
+      0.68
+    );
 
-  border-radius: 10px;
+  border-radius: 11px;
 }
 
 .scrollIndicator span {
   position: absolute;
 
-  left: 50%;
   top: 6px;
+  left: 50%;
 
   width: 2px;
   height: 5px;
 
-  transform: translateX(-50%);
-
-  border-radius: 2px;
+  border-radius: 10px;
 
   background: #102534;
 
+  transform:
+    translateX(-50%);
+
   animation:
-    scrollDot 1.8s ease-in-out
+    scrollDot
+    1.9s
+    ease-in-out
     infinite;
 }
 
 @keyframes scrollDot {
-  0%,
+  0% {
+    transform:
+      translate(-50%, 0);
+
+    opacity: 0.85;
+  }
+
+  55% {
+    transform:
+      translate(-50%, 8px);
+
+    opacity: 0.28;
+  }
+
   100% {
     transform:
       translate(-50%, 0);
 
-    opacity: 0.9;
-  }
-
-  60% {
-    transform:
-      translate(-50%, 8px);
-
-    opacity: 0.25;
+    opacity: 0.85;
   }
 }
 
-/*
-  Tablet
-*/
-@media (max-width: 1000px) {
-  .header {
+/* =========================
+   KLEINERE LAPTOP
+========================= */
+
+@media (
+  max-width: 1180px
+) {
+  .header,
+  .content {
     width: min(
-      100% - 48px,
-      1500px
+      calc(100% - 56px),
+      1540px
     );
   }
 
   .navigation {
-    gap: 28px;
+    gap: 30px;
   }
 
-  .content {
-    width: min(
-      100% - 48px,
-      1500px
-    );
+  .actions {
+    gap: 28px;
   }
 
   .copy h1 {
     font-size: clamp(
-      46px,
-      6vw,
-      66px
+      50px,
+      5.3vw,
+      68px
     );
   }
 }
 
-/*
-  Mobiel
-*/
-@media (max-width: 720px) {
+/* =========================
+   TABLET
+========================= */
+
+@media (
+  max-width: 900px
+) {
+  .header {
+    height: 92px;
+
+    grid-template-columns:
+      auto
+      1fr
+      auto;
+  }
+
+  .navigation {
+    justify-self: center;
+
+    gap: 22px;
+
+    font-size: 13px;
+  }
+
+  .navigation a:first-child {
+    display: none;
+  }
+
+  .content {
+    height: calc(
+      100% - 92px
+    );
+  }
+
+  .copy {
+    transform:
+      translateY(-10%);
+  }
+
+  .copy h1 {
+    max-width: 440px;
+
+    font-size: clamp(
+      45px,
+      6.4vw,
+      61px
+    );
+  }
+
+  .discover {
+    margin-top: 50px;
+  }
+}
+
+/* =========================
+   MOBIEL
+========================= */
+
+@media (
+  max-width: 720px
+) {
   .hero {
-    height: 100svh;
-    min-height: 700px;
+    min-height: 720px;
+
+    background:
+      radial-gradient(
+        circle at 52% 72%,
+        rgba(
+          241,
+          225,
+          211,
+          0.37
+        ),
+        transparent 38%
+      ),
+      #fcfaf7;
   }
 
   .header {
-    width: calc(100% - 36px);
-    height: 86px;
+    width:
+      calc(
+        100% - 36px
+      );
+
+    height: 82px;
 
     display: flex;
-    justify-content: space-between;
+    justify-content:
+      space-between;
   }
 
   .brand {
-    gap: 11px;
+    gap: 10px;
 
     font-size: 24px;
   }
 
   .brandMark {
-    transform: scale(0.82);
+    transform:
+      scale(0.82);
   }
 
   .navigation {
@@ -369,7 +524,7 @@
   }
 
   .actions {
-    gap: 17px;
+    gap: 0;
   }
 
   .login {
@@ -377,43 +532,86 @@
   }
 
   .content {
-    width: calc(100% - 44px);
+    width:
+      calc(
+        100% - 44px
+      );
+
     height: auto;
 
-    margin: 0 22px;
+    margin:
+      0 22px;
 
     display: block;
   }
 
   .copy {
-    padding-top: 55px;
+    padding-top: 47px;
 
     transform: none;
   }
 
   .copy h1 {
-    max-width: 410px;
+    max-width: 390px;
 
     font-size: clamp(
       42px,
-      12vw,
-      59px
+      11.8vw,
+      58px
     );
+
+    line-height: 1.02;
   }
 
   .discover {
-    margin-top: 38px;
+    width: 148px;
+
+    margin-top: 37px;
+
+    font-size: 14px;
+  }
+
+  .discover:hover {
+    width: 160px;
   }
 
   .scrollIndicator {
-    bottom: 22px;
+    bottom: 20px;
   }
 }
 
+/* =========================
+   KLEINE MOBIEL
+========================= */
+
 @media (
-  prefers-reduced-motion: reduce
+  max-width: 430px
+) {
+  .copy h1 {
+    font-size: clamp(
+      39px,
+      11.5vw,
+      50px
+    );
+  }
+}
+
+/* =========================
+   ACCESSIBILITY
+========================= */
+
+@media (
+  prefers-reduced-motion:
+    reduce
 ) {
   .scrollIndicator span {
     animation: none;
+  }
+
+  .discover,
+  .search,
+  .navigation a,
+  .login {
+    transition: none;
   }
 }

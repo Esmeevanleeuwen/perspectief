@@ -9,17 +9,19 @@ import "./globals.css";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 const newsreader = Newsreader({
   subsets: ["latin"],
   variable: "--font-serif",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Perspectief",
   description:
-    "Een groter beeld ontstaat uit meerdere perspectieven.",
+    "Perspectieven, ervaringen en informatie verbonden tot een groter beeld.",
 };
 
 export default function RootLayout({
