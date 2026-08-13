@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./ParticleHero.module.css";
 
 type Point = {
@@ -24,7 +24,6 @@ type Particle = {
   color: string;
   delay: number;
   phase: number;
-  idleStrength: number;
   isMapParticle: boolean;
 };
 
@@ -37,7 +36,7 @@ type ParticlePosition = {
 const PARTICLE_COUNT = 1200;
 const MAP_PARTICLE_SHARE = 0.84;
 
-const HOLD_TIME = 500;
+const HOLD_TIME = 1800;
 const MORPH_TIME = 6800;
 const MAX_PARTICLE_DELAY = 850;
 
@@ -50,42 +49,6 @@ const COLORS = [
   "184,113,69",
   "201,142,101",
 ];
-
-function createConnectionsFromPoints(
-  points: Point[],
-  maxDistance: number,
-  triesPerPoint = 10
-) {
-  const connections: [number, number][] = [];
-  const random = seededRandom(45291);
-
-  for (let i = 0; i < points.length; i++) {
-    if (random() > 0.42) continue;
-
-    let bestIndex = -1;
-    let bestDistance = Infinity;
-
-    for (let t = 0; t < triesPerPoint; t++) {
-      const j = Math.floor(random() * points.length);
-      if (i === j) continue;
-
-      const dx = points[j].x - points[i].x;
-      const dy = points[j].y - points[i].y;
-      const distance = Math.hypot(dx, dy);
-
-      if (distance < bestDistance && distance < maxDistance) {
-        bestDistance = distance;
-        bestIndex = j;
-      }
-    }
-
-    if (bestIndex >= 0) {
-      connections.push([i, bestIndex]);
-    }
-  }
-
-  return connections;
-}
 
 function seededRandom(seed: number) {
   return function () {
@@ -272,38 +235,21 @@ function createOutsideTarget(random: () => number): Point {
     y: 0.98 + random() * 0.22,
   };
 }
-function createIntroCloudPoint(random: () => number): Point {
-  const centerX = 0.74;
-  const centerY = 0.44;
 
-  const radiusX = 0.29;
-  const radiusY = 0.30;
-
-  const angle = random() * Math.PI * 2;
-
-  // meer punten in het midden, minder aan de buitenkant
-  const distance = Math.pow(random(), 1.8);
-
-  const wobble = 0.018 * Math.sin(angle * 3 + random() * 2);
-
-  return {
-    x: centerX + Math.cos(angle) * (radiusX * distance + wobble),
-    y: centerY + Math.sin(angle) * (radiusY * distance + wobble),
-  };
-}
 function createParticles(mapPoints: Point[]): Particle[] {
   const random = seededRandom(83927);
   let mapIndex = 0;
 
   return Array.from({ length: PARTICLE_COUNT }, () => {
+    const startX =
+      random() < 0.18
+        ? 0.33 + random() * 0.28
+        : 0.51 + Math.pow(random(), 0.42) * 0.51;
 
-    
-const introPoint = createIntroCloudPoint(random);
-
-const startX = introPoint.x;
-const startY = introPoint.y;
-
-
+    const startY =
+      0.1 +
+      random() * 0.78 +
+      Math.sin(startX * 8.5) * 0.028;
 
     const isMapParticle = random() < MAP_PARTICLE_SHARE;
 
@@ -332,8 +278,6 @@ const startY = introPoint.y;
       color: COLORS[Math.floor(random() * COLORS.length)],
       delay: random(),
       phase: random() * Math.PI * 2,
-
-idleStrength: 0.8 + random() * 1.2,
       isMapParticle,
     };
   });
@@ -384,6 +328,7 @@ function createConnections(particles: Particle[]) {
 export default function ParticleHero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const canvasNode = canvasRef.current;
@@ -411,11 +356,12 @@ export default function ParticleHero() {
     let startedAt = 0;
 
     let particles: Particle[] = [];
-let introConnections: [number, number][] = [];
-let mapConnections: [number, number][] = [];
+    let connections: [number, number][] = [];
     let mapAspectRatio = 0.78;
 
-const reducedMotion = false;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
     function resizeCanvas() {
       const rectangle = hero.getBoundingClientRect();
@@ -519,32 +465,18 @@ const reducedMotion = false;
         ? 1
         : smoothstep(elapsed / MORPH_TIME);
 
+      const floatingAmount =
+        0.55 + (1 - progress) * 3.5;
 
-const idleMovement =
-  particle.idleStrength;
+      const time = now / 1650;
 
-const introMovement = 3.5;
+      const floatX =
+        Math.sin(time + particle.phase) * floatingAmount;
 
-// Dit blijft ook bestaan wanneer progress 1 is.
-// Daardoor blijven de punten na de morph bewegen.
-const floatingAmount =
-  particle.idleStrength +
-  (1 - progress) * introMovement;
-
-const time = now / 1800;
-
-const floatX =
-  Math.sin(
-    time + particle.phase
-  ) * floatingAmount;
-
-const floatY =
-  Math.cos(
-    time * 0.73 + particle.phase
-  ) *
-  floatingAmount *
-  0.65;
-
+      const floatY =
+        Math.cos(time * 0.79 + particle.phase) *
+        floatingAmount *
+        0.66;
 
       return {
         x:
@@ -562,15 +494,6 @@ const floatY =
     }
 
     function draw(now: number) {
-      const globalProgress = reducedMotion
-  ? 1
-  : smoothstep(
-      (now - startedAt - HOLD_TIME) /
-      (MORPH_TIME + MAX_PARTICLE_DELAY)
-    );
-
-const introStrength = 1 - globalProgress;
-const mapStrength = globalProgress;
       context.clearRect(0, 0, width, height);
 
       if (particles.length === 0) return;
@@ -579,51 +502,30 @@ const mapStrength = globalProgress;
         getPosition(particle, now)
       );
 
-// BEGINNETWERK
-for (const [firstIndex, secondIndex] of introConnections) {
-  const firstParticle = particles[firstIndex];
-  const secondParticle = particles[secondIndex];
+      for (const [firstIndex, secondIndex] of connections) {
+        const first = positions[firstIndex];
+        const second = positions[secondIndex];
 
-  const firstX = firstParticle.startX * width;
-  const firstY = firstParticle.startY * height;
+        const distance = Math.hypot(
+          second.x - first.x,
+          second.y - first.y
+        );
 
-  const secondX = secondParticle.startX * width;
-  const secondY = secondParticle.startY * height;
+        if (distance > 105) continue;
 
-  const distance = Math.hypot(secondX - firstX, secondY - firstY);
-  if (distance > 120) continue;
+        const progress =
+          (first.progress + second.progress) / 2;
 
-  const opacity = 0.02 + introStrength * 0.08;
+        const opacity = 0.025 + progress * 0.065;
 
-  context.beginPath();
-  context.moveTo(firstX, firstY);
-  context.lineTo(secondX, secondY);
-  context.strokeStyle = `rgba(42,61,69,${opacity})`;
-  context.lineWidth = 0.5;
-  context.stroke();
-}
+        context.beginPath();
+        context.moveTo(first.x, first.y);
+        context.lineTo(second.x, second.y);
 
-// NEDERLAND-NETWERK
-for (const [firstIndex, secondIndex] of mapConnections) {
-  const first = positions[firstIndex];
-  const second = positions[secondIndex];
-
-  const distance = Math.hypot(
-    second.x - first.x,
-    second.y - first.y
-  );
-
-  if (distance > 105) continue;
-
-  const opacity = 0.015 + mapStrength * 0.07;
-
-  context.beginPath();
-  context.moveTo(first.x, first.y);
-  context.lineTo(second.x, second.y);
-  context.strokeStyle = `rgba(42,61,69,${opacity})`;
-  context.lineWidth = 0.55;
-  context.stroke();
-}
+        context.strokeStyle = `rgba(42,61,69,${opacity})`;
+        context.lineWidth = 0.55;
+        context.stroke();
+      }
 
       particles.forEach((particle, index) => {
         const position = positions[index];
@@ -659,9 +561,7 @@ for (const [firstIndex, secondIndex] of mapConnections) {
 
       if (reducedMotion) return;
 
-      animationFrame = requestAnimationFrame(
-        animate
-      );
+      animationFrame = requestAnimationFrame(animate);
     }
 
     async function start() {
@@ -676,19 +576,7 @@ for (const [firstIndex, secondIndex] of mapConnections) {
 
         mapAspectRatio = mask.aspectRatio;
         particles = createParticles(mask.points);
-
-        const introPoints = particles.map((particle) => ({
-  x: particle.startX,
-  y: particle.startY,
-}));
-
-const mapPointsForConnections = particles.map((particle) => ({
-  x: particle.targetX,
-  y: particle.targetY,
-}));
-
-introConnections = createConnectionsFromPoints(introPoints, 0.09, 14);
-mapConnections = createConnectionsFromPoints(mapPointsForConnections, 0.08, 18);
+        connections = createConnections(particles);
 
         resizeCanvas();
 
@@ -738,63 +626,68 @@ mapConnections = createConnectionsFromPoints(mapPointsForConnections, 0.08, 18);
       />
 
       <header className={styles.header}>
-        <Link href="/" className={styles.brand}>
-          <span className={styles.brandMark} aria-hidden="true">
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-            <i />
-          </span>
-
-          <span>perspectief</span>
+        <Link href="/" className={styles.brand} aria-label="Meridian home">
+          <svg
+            className={styles.logoMark}
+            viewBox="0 0 48 42"
+            aria-hidden="true"
+          >
+            <path
+              d="M6 31V6L24 21L42 6V31"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="5.2"
+              strokeLinecap="square"
+              strokeLinejoin="miter"
+            />
+            <circle cx="24" cy="35.5" r="3.8" fill="currentColor" />
+          </svg>
+          <span className={styles.brandName}>MERIDIAN</span>
         </Link>
 
-        <nav
-          className={styles.navigation}
-          aria-label="Hoofdnavigatie"
-        >
+        <nav className={styles.navigation} aria-label="Hoofdnavigatie">
           <Link href="/onderwerpen">Onderwerpen</Link>
           <Link href="/artikelen">Artikelen</Link>
+          <Link href="/netwerk">Netwerk</Link>
           <Link href="/perspectieven">Perspectieven</Link>
           <Link href="/methode">Onze methode</Link>
         </nav>
 
         <div className={styles.actions}>
-          <button
-            type="button"
-            className={styles.search}
-            aria-label="Zoeken"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              aria-hidden="true"
-            >
-              <circle
-                cx="10.8"
-                cy="10.8"
-                r="6.4"
-                stroke="currentColor"
-                strokeWidth="1.45"
-              />
-
-              <path
-                d="M15.6 15.6L21 21"
-                stroke="currentColor"
-                strokeWidth="1.45"
-                strokeLinecap="round"
-              />
+          <button type="button" className={styles.search} aria-label="Zoeken">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="10.8" cy="10.8" r="6.4" stroke="currentColor" strokeWidth="1.45" />
+              <path d="M15.6 15.6L21 21" stroke="currentColor" strokeWidth="1.45" strokeLinecap="round" />
             </svg>
           </button>
 
-          <Link href="/inloggen" className={styles.login}>
-            Inloggen
-          </Link>
+          <Link href="/inloggen" className={styles.login}>Inloggen</Link>
+
+          <button
+            type="button"
+            className={styles.menuButton}
+            aria-label={mobileMenuOpen ? "Menu sluiten" : "Menu openen"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+          >
+            <span />
+            <span />
+          </button>
         </div>
+
+        <nav
+          id="mobile-navigation"
+          className={`${styles.mobileNavigation} ${mobileMenuOpen ? styles.mobileNavigationOpen : ""}`}
+          aria-label="Mobiele navigatie"
+        >
+          <Link href="/onderwerpen" onClick={() => setMobileMenuOpen(false)}>Onderwerpen</Link>
+          <Link href="/artikelen" onClick={() => setMobileMenuOpen(false)}>Artikelen</Link>
+          <Link href="/netwerk" onClick={() => setMobileMenuOpen(false)}>Netwerk</Link>
+          <Link href="/perspectieven" onClick={() => setMobileMenuOpen(false)}>Perspectieven</Link>
+          <Link href="/methode" onClick={() => setMobileMenuOpen(false)}>Onze methode</Link>
+          <Link href="/inloggen" onClick={() => setMobileMenuOpen(false)}>Inloggen</Link>
+        </nav>
       </header>
 
       <div className={styles.content}>
@@ -806,6 +699,10 @@ mapConnections = createConnectionsFromPoints(mapPointsForConnections, 0.08, 18);
             <br />
             verhaal kent?
           </h1>
+
+          <p className={styles.intro}>
+            Nieuws wordt duidelijker wanneer je ziet wat ermee verbonden is.
+          </p>
 
           <Link href="#ontdek" className={styles.discover}>
             <span>Ontdek meer</span>

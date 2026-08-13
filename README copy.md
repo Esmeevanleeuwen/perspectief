@@ -1,49 +1,3 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-
-
-
-
-
-
-
-
-
 Ja. Ik zou nu **één vaste fictieve dataset nemen en die voor alle zes frames exact hetzelfde houden**. Alleen de representatie verandert. Daardoor kun je straks werkelijk vergelijken wat Network, NodeTrix, Sankey, Matrix, Chord en Time ieder zichtbaar maken.
 
 Voor **01 — SAME DATA / NETWORK** zou ik hem niet als een standaard bolletjesnetwerk ontwerpen, maar als een hybride van **network graph + relationeel ERD + semantic zoom + evidence graph**.
@@ -52,7 +6,7 @@ Het frame moet tegelijk antwoord geven op:
 
 > **Wat bestaat er? Wat hoort waarbij? Wat is direct verbonden? Welke tabellen voeden elkaar? Welke verbinding is feitelijk, afgeleid, sociaal of gedragsmatig? En waar kan ik verder inzoomen?**
 
-Je lijst bevat hiervoor precies de relevante netwerkfamilies: gewone network graphs, directional network graphs, varianten met afbeeldingen en radial networks. fileciteturn0file0L443-L450
+Je lijst bevat hiervoor precies de relevante netwerkfamilies: gewone network graphs, directional network graphs, varianten met afbeeldingen en radial networks. 
 
 ---
 
@@ -365,8 +319,8 @@ Bijvoorbeeld:
 
 Dus wanneer je uitzoomt zie je nog steeds:
 
-> daar zitten veel mensen  
-> daar zit content  
+> daar zitten veel mensen
+> daar zit content
 > daar zit bewijs
 
 zonder ieder label te hoeven lezen.
