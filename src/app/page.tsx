@@ -1,13 +1,11 @@
 import ParticleHero from "@/app/components/homepage/ParticleHero";
+import FeaturedArticles from "@/app/components/homepage/FeaturedArticles";
 
 export default function Home() {
   return (
     <main>
       <ParticleHero />
-
-      <section id="ontdek">
-        {/* Hier bouwen we straks de volgende homepage-sectie */}
-      </section>
+      <FeaturedArticles />
     </main>
   );
 }

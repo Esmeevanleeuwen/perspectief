@@ -1279,3 +1279,9 @@ Frame 01 moet vooral vier dingen extreem goed laten zien:
 4. **hoe een inhoudelijke relatie terug te volgen is naar een database-relatie en andersom.**
 
 Pas in **02 — SAME DATA / NODETRIX** veranderen we precies dezelfde data zodat de interne structuur van dichte groepen en tabellen zichtbaar wordt zonder duizenden gekruiste lijnen. Dat tweede frame moet dus letterlijk uit dit eerste voortkomen, niet opnieuw beginnen.
+
+
+
+
+
+oke ik wil een soortgelijk platform/magazine maken maar dan kun je alleen opmerkimngen plaatsen en stemmen op bepaalde dingen, en vooral ook influencers of mensen uit de overheid die met elkaar nu een soort battle hebben waar de meningen van beide worden uitgegd  ,  maar dat duidelijk bang is voor de staat waar de wereld in is nu op  dit momnet, en er zijn zoveel verschrikkelijke dingen, dat dit magazine allles doet om mensen bewust te maken van het belang van gelijkheid en rechtvaardigheid, rechtvaardigheid en gelijkheid zijn de belangrijkste punten van dit platform 
