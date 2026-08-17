@@ -21,7 +21,7 @@ export default function FeaturedArticles() {
   }
 
   return (
-    <section className={styles.section}>
+    <section id="artikelen" className={styles.section}>
       <div className={styles.container}>
         <header className={styles.header}>
           <h2>Uitgelichte artikelen</h2>

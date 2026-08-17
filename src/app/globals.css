@@ -78,7 +78,21 @@ main {
   overflow-x: clip;
 }
 
+/*
+ * ParticleHero bevat nog zijn oude lokale navigatie.
+ * De gedeelde SiteHeader vervangt die, zodat de hele site één menu gebruikt.
+ */
+body > main > section:first-child > header {
+  display: none !important;
+}
+
 ::selection {
   background: rgba(184, 113, 69, 0.18);
   color: #102534;
+}
+
+@media (max-width: 720px) {
+  body {
+    margin: 0 18px;
+  }
 }
