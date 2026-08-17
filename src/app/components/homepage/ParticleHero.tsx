@@ -651,6 +651,7 @@ export default function ParticleHero() {
           <Link href="/netwerk">Netwerk</Link>
           <Link href="/perspectieven">Perspectieven</Link>
           <Link href="/methode">Onze methode</Link>
+          <Link href="/systeem">Ons systeem</Link>
         </nav>
 
         <div className={styles.actions}>
