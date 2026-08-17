@@ -1,41 +1,25 @@
 import Link from "next/link";
+import {
+  getFeaturedArticles,
+} from "@/app/data/articles";
+
 import styles from "./FeaturedArticles.module.css";
 
-const articles = {
-  main: {
-    label: "ONDERZOEK",
-    title: "Waarom ervaren steeds meer jongeren prestatiedruk?",
-    description:
-      "Een onderzoek naar de ervaringen van jongeren, de terugkerende patronen en de mogelijke oorzaken.",
-    image: "/prestatiedruk.jpg",
-    experiences: "438 ervaringen",
-    experts: "12 deskundigen",
-    extra: "11 provincies",
-    date: "18 juli 2026",
-    href: "/artikelen/prestatiedruk",
-  },
-
-  secondary: [
-    {
-      label: "ONDERZOEK",
-      title: "Waarom verlaten steeds meer leraren het onderwijs?",
-      image: "/onderwijs.jpg",
-      experiences: "241 ervaringen",
-      experts: "8 deskundigen",
-      href: "/artikelen/leraren-onderwijs",
-    },
-    {
-      label: "ONDERZOEK",
-      title: "Waarom groeit het gevoel van woningonzekerheid?",
-      image: "/woningonzekerheid.jpg",
-      experiences: "517 ervaringen",
-      experts: "16 deskundigen",
-      href: "/artikelen/woningonzekerheid",
-    },
-  ],
-};
-
 export default function FeaturedArticles() {
+  const featuredArticles = getFeaturedArticles();
+
+  const mainArticle = featuredArticles.find(
+    (article) => article.featuredPosition === "main"
+  );
+
+  const sideArticles = featuredArticles.filter(
+    (article) => article.featuredPosition === "side"
+  );
+
+  if (!mainArticle) {
+    return null;
+  }
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -44,41 +28,58 @@ export default function FeaturedArticles() {
 
           <p>
             De belangrijkste maatschappelijke ontwikkelingen,
-            onderzocht vanuit ervaringen en verder uitgewerkt door onze redactie.
+            onderzocht vanuit ervaringen en verder uitgewerkt
+            door onze redactie.
           </p>
         </header>
 
         <div className={styles.grid}>
           <article className={styles.mainCard}>
-            <Link href={articles.main.href} className={styles.mainImage}>
+            <Link
+              href={`/artikelen/${mainArticle.slug}`}
+              className={styles.mainImage}
+            >
               <img
-                src={articles.main.image}
-                alt={articles.main.title}
+                src={mainArticle.image}
+                alt={mainArticle.title}
               />
             </Link>
 
             <div className={styles.mainContent}>
               <span className={styles.label}>
-                {articles.main.label}
+                {mainArticle.label}
               </span>
 
-              <Link href={articles.main.href}>
-                <h3>{articles.main.title}</h3>
+              <Link
+                href={`/artikelen/${mainArticle.slug}`}
+              >
+                <h3>{mainArticle.title}</h3>
               </Link>
 
               <p className={styles.description}>
-                {articles.main.description}
+                {mainArticle.description}
               </p>
 
               <div className={styles.meta}>
-                <span>{articles.main.experiences}</span>
-                <span>{articles.main.experts}</span>
-                <span>{articles.main.extra}</span>
-                <span>{articles.main.date}</span>
+                <span>
+                  {mainArticle.experiences} ervaringen
+                </span>
+
+                <span>
+                  {mainArticle.experts} deskundigen
+                </span>
+
+                {mainArticle.provinces && (
+                  <span>
+                    {mainArticle.provinces} provincies
+                  </span>
+                )}
+
+                <span>{mainArticle.date}</span>
               </div>
 
               <Link
-                href={articles.main.href}
+                href={`/artikelen/${mainArticle.slug}`}
                 className={styles.readLink}
               >
                 Lees onderzoek <span>→</span>
@@ -87,13 +88,19 @@ export default function FeaturedArticles() {
           </article>
 
           <div className={styles.side}>
-            {articles.secondary.map((article) => (
-              <article className={styles.smallCard} key={article.href}>
+            {sideArticles.map((article) => (
+              <article
+                className={styles.smallCard}
+                key={article.slug}
+              >
                 <Link
-                  href={article.href}
+                  href={`/artikelen/${article.slug}`}
                   className={styles.smallImage}
                 >
-                  <img src={article.image} alt={article.title} />
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                  />
                 </Link>
 
                 <div className={styles.smallContent}>
@@ -102,16 +109,18 @@ export default function FeaturedArticles() {
                       {article.label}
                     </span>
 
-                    <Link href={article.href}>
+                    <Link
+                      href={`/artikelen/${article.slug}`}
+                    >
                       <h3>{article.title}</h3>
                     </Link>
 
                     <span className={styles.experience}>
-                      {article.experiences}
+                      {article.experiences} ervaringen
                     </span>
 
                     <Link
-                      href={article.href}
+                      href={`/artikelen/${article.slug}`}
                       className={styles.readLink}
                     >
                       Lees onderzoek <span>→</span>
@@ -120,10 +129,23 @@ export default function FeaturedArticles() {
 
                   <div className={styles.stats}>
                     <span>Gebaseerd op</span>
-                    <strong>{article.experiences}</strong>
-                    <span className={styles.arrow}>↓</span>
-                    <strong>{article.experts}</strong>
-                    <span className={styles.arrow}>↓</span>
+
+                    <strong>
+                      {article.experiences} ervaringen
+                    </strong>
+
+                    <span className={styles.arrow}>
+                      ↓
+                    </span>
+
+                    <strong>
+                      {article.experts} deskundigen
+                    </strong>
+
+                    <span className={styles.arrow}>
+                      ↓
+                    </span>
+
                     <span>Onderzoek</span>
                   </div>
                 </div>
