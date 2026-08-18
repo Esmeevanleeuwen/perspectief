@@ -1,0 +1,371 @@
+.page {
+  width: min(1380px, calc(100% - 100px));
+  margin: 0 auto;
+  padding: 30px 0 100px;
+  color: #102534;
+}
+
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 44px;
+  color: rgba(16, 37, 52, 0.42);
+  font-size: 12px;
+}
+
+.breadcrumbs a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  border-top: 1px solid rgba(16, 37, 52, 0.1);
+  border-bottom: 1px solid rgba(16, 37, 52, 0.1);
+}
+
+.heroImage {
+  position: relative;
+  min-height: 590px;
+  overflow: hidden;
+  background: #341207;
+}
+
+.heroImage img {
+  object-fit: cover;
+}
+
+.heroCopy {
+  padding: clamp(52px, 7vw, 105px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.eyebrow {
+  margin: 0 0 18px;
+  color: #ad6843;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+.heroCopy h1 {
+  max-width: 640px;
+  margin: 0;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(52px, 5.5vw, 80px);
+  font-weight: 420;
+  line-height: 0.99;
+  letter-spacing: -0.045em;
+}
+
+.summary {
+  max-width: 630px;
+  margin: 28px 0 0;
+  color: rgba(16, 37, 52, 0.64);
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.dimensions {
+  margin-top: 34px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 11px;
+}
+
+.dimensions span {
+  padding: 8px 12px;
+  border: 1px solid rgba(16, 37, 52, 0.12);
+  border-radius: 999px;
+  color: rgba(16, 37, 52, 0.58);
+  font-size: 11px;
+}
+
+.thesis {
+  padding: clamp(70px, 9vw, 125px) max(0px, 6vw);
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1.25fr) minmax(260px, 0.65fr);
+  gap: 50px;
+  align-items: start;
+  border-bottom: 1px solid rgba(16, 37, 52, 0.1);
+}
+
+.thesis > p {
+  margin: 7px 0 0;
+  color: #ad6843;
+  font-size: 10px;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.thesis h2 {
+  margin: 0;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(38px, 4vw, 58px);
+  font-weight: 430;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.thesis div {
+  color: rgba(16, 37, 52, 0.6);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.sections {
+  border-bottom: 1px solid rgba(16, 37, 52, 0.1);
+}
+
+.researchSection {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 800px);
+  gap: clamp(40px, 7vw, 110px);
+  padding: 78px max(0px, 6vw);
+  border-bottom: 1px solid rgba(16, 37, 52, 0.08);
+}
+
+.researchSection:last-child {
+  border-bottom: 0;
+}
+
+.researchSection aside span {
+  display: block;
+  color: rgba(16, 37, 52, 0.28);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 42px;
+}
+
+.researchSection aside p {
+  margin: 10px 0 0;
+  color: #ad6843;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.sectionContent h2 {
+  margin: 0 0 26px;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(34px, 3.5vw, 50px);
+  font-weight: 430;
+  line-height: 1.08;
+  letter-spacing: -0.028em;
+}
+
+.sectionContent > p {
+  max-width: 760px;
+  margin: 0 0 21px;
+  color: rgba(16, 37, 52, 0.7);
+  font-size: 16px;
+  line-height: 1.85;
+}
+
+.sectionIntro {
+  color: #102534 !important;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 22px !important;
+  line-height: 1.5 !important;
+}
+
+.points {
+  margin-top: 34px;
+  border-top: 1px solid rgba(16, 37, 52, 0.12);
+}
+
+.points div {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 16px;
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(16, 37, 52, 0.09);
+}
+
+.points span {
+  width: 5px;
+  height: 5px;
+  margin-top: 10px;
+  border-radius: 50%;
+  background: #b87145;
+}
+
+.points p {
+  margin: 0;
+  color: rgba(16, 37, 52, 0.65);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.articlesSection {
+  padding: clamp(80px, 9vw, 125px) max(0px, 6vw);
+}
+
+.articlesHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.6fr);
+  gap: 70px;
+  margin-bottom: 45px;
+  align-items: end;
+}
+
+.articlesHeader h2 {
+  max-width: 720px;
+  margin: 0;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(40px, 4.3vw, 62px);
+  font-weight: 430;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+.articlesHeader > p {
+  margin: 0 0 5px;
+  color: rgba(16, 37, 52, 0.58);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.articleGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.articleCard {
+  display: grid;
+  grid-template-columns: 42% 1fr;
+  min-height: 300px;
+  overflow: hidden;
+  border: 1px solid rgba(16, 37, 52, 0.1);
+  color: inherit;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.articleImage {
+  overflow: hidden;
+}
+
+.articleImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 350ms ease;
+}
+
+.articleCard:hover .articleImage img {
+  transform: scale(1.025);
+}
+
+.articleCopy {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.articleCopy > span {
+  color: #ad6843;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+}
+
+.articleCopy h3 {
+  margin: 14px 0;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 28px;
+  font-weight: 430;
+  line-height: 1.08;
+}
+
+.articleCopy p {
+  margin: 0;
+  color: rgba(16, 37, 52, 0.58);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.articleCopy b {
+  margin-top: auto;
+  padding-top: 30px;
+  font-size: 12px;
+  font-weight: 450;
+}
+
+.empty {
+  color: rgba(16, 37, 52, 0.5);
+}
+
+.footer {
+  padding: 30px max(0px, 6vw);
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid rgba(16, 37, 52, 0.1);
+}
+
+.footer a {
+  color: #102534;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .page {
+    width: min(100% - 40px, 820px);
+  }
+
+  .hero,
+  .thesis,
+  .researchSection,
+  .articlesHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .heroImage {
+    min-height: 460px;
+  }
+
+  .heroCopy {
+    padding: 54px 0;
+  }
+
+  .thesis,
+  .researchSection,
+  .articlesSection {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .articleGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .page {
+    width: calc(100% - 32px);
+  }
+
+  .heroImage {
+    min-height: 330px;
+  }
+
+  .articleCard {
+    grid-template-columns: 1fr;
+  }
+
+  .articleImage {
+    height: 230px;
+  }
+
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
+    flex-direction: column;
+  }
+}

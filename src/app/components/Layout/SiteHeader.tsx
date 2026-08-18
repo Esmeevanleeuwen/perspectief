@@ -3,16 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+
 import styles from "./SiteHeader.module.css";
 
 const navigation = [
   { href: "/#ontdek", label: "Verken", section: "home" },
   { href: "/artikelen", label: "Artikelen", section: "artikelen" },
-  {
-    href: "/systeem/perspectieven-en-journalistiek",
-    label: "Methode",
-    section: "methode",
-  },
+  { href: "/methode", label: "Methode", section: "methode" },
   { href: "/systeem", label: "Het systeem", section: "systeem" },
 ];
 
@@ -23,15 +20,8 @@ export default function SiteHeader() {
   function isActive(section: string) {
     if (section === "home") return pathname === "/";
     if (section === "artikelen") return pathname.startsWith("/artikelen");
-    if (section === "methode") {
-      return pathname === "/systeem/perspectieven-en-journalistiek";
-    }
-    if (section === "systeem") {
-      return (
-        pathname.startsWith("/systeem") &&
-        pathname !== "/systeem/perspectieven-en-journalistiek"
-      );
-    }
+    if (section === "methode") return pathname.startsWith("/methode");
+    if (section === "systeem") return pathname.startsWith("/systeem");
 
     return false;
   }
