@@ -5,30 +5,41 @@ import styles from "./MeridianPerspective.module.css";
 
 export default function MeridianPerspective() {
   return (
-    <section className={styles.section} aria-labelledby="meridian-perspective-title">
+    <header
+      className={styles.section}
+      aria-labelledby="meridian-method-title"
+    >
       <div className={styles.container}>
         <div className={styles.copy}>
-          <p className={styles.eyebrow}>Hoe Meridian kijkt</p>
+          <p className={styles.eyebrow}>Onze methode</p>
 
-          <h2 id="meridian-perspective-title">
+          <h1 id="meridian-method-title">
             De waarheid
             <br />
             ontstaat tussen
             <br />
             perspectieven.
-          </h2>
+          </h1>
 
-          <div className={styles.keywords} aria-label="Kernbegrippen">
-            <span>Perspectief</span>
+          <p className={styles.lead}>
+            Niet één ervaring is het volledige verhaal. Meridian verzamelt
+            verschillende informatieposities, zoekt terugkerende patronen en
+            onderzoekt vervolgens wat aantoonbaar is.
+          </p>
+
+          <div className={styles.keywords} aria-label="Stappen van de methode">
+            <span>Ervaring</span>
             <span aria-hidden="true">•</span>
-            <span>Verband</span>
+            <span>Patroon</span>
             <span aria-hidden="true">•</span>
-            <span>Betekenis</span>
+            <span>Onderzoek</span>
+            <span aria-hidden="true">•</span>
+            <span>Inzicht</span>
           </div>
 
-          <Link href="/systeem" className={styles.link}>
-            <span>Ontdek het systeem</span>
-            <span aria-hidden="true">→</span>
+          <Link href="#methode" className={styles.link}>
+            <span>Bekijk hoe we werken</span>
+            <span aria-hidden="true">↓</span>
           </Link>
         </div>
 
@@ -48,7 +59,7 @@ export default function MeridianPerspective() {
               src="/meridian-lungs.png"
               alt=""
               fill
-              priority={false}
+              priority
               sizes="(max-width: 900px) 78vw, 44vw"
               className={styles.image}
             />
@@ -57,6 +68,6 @@ export default function MeridianPerspective() {
           <div className={styles.shadow} />
         </div>
       </div>
-    </section>
+    </header>
   );
 }
