@@ -14,7 +14,19 @@
     "Times New Roman",
     serif;
 }
+.header h2,
+.mainContent h3,
+.smallText h3 {
+  font-family: var(--font-serif), serif;
+}
 
+.header h2 {
+  font-family: var(--font-serif), serif;
+  font-size: clamp(42px, 3.5vw, 58px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+}
 * {
   box-sizing: border-box;
 }
