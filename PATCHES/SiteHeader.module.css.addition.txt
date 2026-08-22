@@ -1,0 +1,16 @@
+Voeg aan src/app/components/Layout/SiteHeader.module.css toe:
+
+.accountLink {
+  margin-left: auto;
+  font-size: 0.9rem;
+}
+
+.accountLink a {
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.72;
+}
+
+.accountLink a:hover {
+  opacity: 1;
+}

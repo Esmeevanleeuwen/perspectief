@@ -1,0 +1,15 @@
+Voeg aan src/app/globals.css toe:
+
+@layer components {
+  .field {
+    width: 100%;
+    border: 1px solid rgb(16 37 52 / 0.15);
+    background: transparent;
+    padding: 0.75rem 1rem;
+    outline: none;
+  }
+
+  .field:focus {
+    border-color: rgb(16 37 52 / 0.45);
+  }
+}
