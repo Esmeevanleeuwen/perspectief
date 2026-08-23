@@ -1,0 +1,162 @@
+.field {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.connections {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.connections path {
+  fill: none;
+  stroke: rgba(16, 37, 52, 0.055);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+
+.connections .warmConnection {
+  stroke: rgba(190, 124, 83, 0.03);
+}
+
+.person {
+  --person-scale: 1;
+  --shadow-angle: 22deg;
+  --shadow-length: 50px;
+
+  position: absolute;
+  width: 10px;
+  height: 34px;
+  transform: translate(-50%, -50%) scale(var(--person-scale));
+  transform-origin: 50% 100%;
+  color: #102534;
+}
+
+.shadow {
+  position: absolute;
+  z-index: 0;
+  left: 5px;
+  top: 26px;
+  width: var(--shadow-length);
+  height: 5px;
+  transform: rotate(var(--shadow-angle));
+  transform-origin: left center;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(16, 37, 52, 0.12),
+    rgba(16, 37, 52, 0)
+  );
+  filter: blur(2.4px);
+}
+
+.head {
+  position: absolute;
+  z-index: 3;
+  left: 3px;
+  top: 0;
+  width: 4.6px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.torso {
+  position: absolute;
+  z-index: 3;
+  left: 3.05px;
+  top: 5px;
+  width: 4.5px;
+  height: 13px;
+  border-radius: 48% 48% 35% 35%;
+  background: currentColor;
+}
+
+.leftArm,
+.rightArm,
+.leftLeg,
+.rightLeg {
+  position: absolute;
+  z-index: 2;
+  width: 1.8px;
+  border-radius: 999px;
+  background: currentColor;
+  transform-origin: top center;
+}
+
+.leftArm {
+  left: 2.8px;
+  top: 7px;
+  height: 12px;
+  transform: rotate(15deg);
+}
+
+.rightArm {
+  left: 6px;
+  top: 7px;
+  height: 12px;
+  transform: rotate(-14deg);
+}
+
+.leftLeg {
+  left: 4px;
+  top: 16px;
+  height: 17px;
+  transform: rotate(5deg);
+}
+
+.rightLeg {
+  left: 5.8px;
+  top: 16px;
+  height: 17px;
+  transform: rotate(-5deg);
+}
+
+.node {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(205, 128, 82, 0.42);
+  box-shadow: 0 0 0 2px rgba(205, 128, 82, 0.035);
+}
+
+.nodeOne { left: 19%; top: 78%; }
+.nodeTwo { left: 46%; top: 63%; }
+.nodeThree { left: 70%; top: 68%; }
+.nodeFour { left: 90%; top: 48%; }
+
+@media (max-width: 700px) {
+  .person {
+    width: 9px;
+    height: 31px;
+  }
+
+  .shadow {
+    opacity: 0.75;
+  }
+}
+
+
+@media (max-width: 430px) {
+  .person {
+    width: 8px;
+    height: 28px;
+  }
+
+  .shadow {
+    opacity: 0.55;
+    transform: rotate(var(--shadow-angle)) scaleX(0.8);
+  }
+
+  .connections path {
+    stroke-width: 0.8;
+  }
+}

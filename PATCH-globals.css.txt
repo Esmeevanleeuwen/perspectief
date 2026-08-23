@@ -1,0 +1,15 @@
+Voeg dit onderaan `src/app/globals.css` toe:
+
+@layer components {
+  .meridian-field {
+    width: 100%;
+    border: 1px solid rgb(16 38 51 / 0.16);
+    background: transparent;
+    padding: 0.8rem 0.95rem;
+    outline: none;
+  }
+
+  .meridian-field:focus {
+    border-color: rgb(16 38 51 / 0.48);
+  }
+}

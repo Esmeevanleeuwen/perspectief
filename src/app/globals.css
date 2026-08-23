@@ -96,3 +96,10 @@ body > main > section:first-child > header {
     margin: 0 18px;
   }
 }
+
+
+@media (max-width: 430px) {
+  body {
+    margin: 0 12px;
+  }
+}

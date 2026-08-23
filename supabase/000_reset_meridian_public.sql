@@ -1,0 +1,24 @@
+-- Alleen uitvoeren als de oude Meridian public-data weg mag. auth.users blijft bestaan.
+drop trigger if exists on_auth_user_created on auth.users;
+drop function if exists public.handle_new_user() cascade;
+drop function if exists public.current_role() cascade;
+drop function if exists public.is_editorial() cascade;
+drop function if exists public.can_publish() cascade;
+drop table if exists public.audit_log cascade;
+drop table if exists public.contributions cascade;
+drop table if exists public.perspectives cascade;
+drop table if exists public.content_nodes cascade;
+drop table if exists public.content_claims cascade;
+drop table if exists public.claim_sources cascade;
+drop table if exists public.claim_relations cascade;
+drop table if exists public.claims cascade;
+drop table if exists public.knowledge_relations cascade;
+drop table if exists public.knowledge_nodes cascade;
+drop table if exists public.research_children cascade;
+drop table if exists public.research_dossiers cascade;
+drop table if exists public.content_sections cascade;
+drop table if exists public.content_items cascade;
+drop table if exists public.sources cascade;
+drop table if exists public.saved_items cascade;
+drop table if exists public.profiles cascade;
+drop table if exists public.user_roles cascade;

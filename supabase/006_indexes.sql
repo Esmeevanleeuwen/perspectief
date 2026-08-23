@@ -1,0 +1,9 @@
+create index if not exists content_items_type_status_idx on public.content_items(content_type,status);
+create index if not exists content_sections_content_position_idx on public.content_sections(content_id,position);
+create index if not exists knowledge_nodes_type_idx on public.knowledge_nodes(node_type);
+create index if not exists knowledge_relations_from_idx on public.knowledge_relations(from_node_id);
+create index if not exists knowledge_relations_to_idx on public.knowledge_relations(to_node_id);
+create index if not exists claims_status_idx on public.claims(evidence_status);
+create index if not exists content_claims_content_idx on public.content_claims(content_id);
+create index if not exists content_nodes_content_idx on public.content_nodes(content_id);
+create index if not exists contributions_content_idx on public.contributions(content_id);

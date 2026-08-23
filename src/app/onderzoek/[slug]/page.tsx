@@ -2,10 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { getDbContentBySlug } from "@/lib/meridian/content";
+import DatabaseResearch from "@/app/components/database/DatabaseResearch";
+
 import { getArticlesForResearch } from "@/app/data/articles";
-import { getResearchBySlug, research as allResearch } from "@/app/data/research";
+import {
+  getResearchBySlug,
+  research as allResearch,
+} from "@/app/data/research";
 
 import styles from "./page.module.css";
+
 
 type Props = {
   params: Promise<{
@@ -21,6 +28,22 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
+
+  // Eerst proberen uit Supabase
+  const dbItem = await getDbContentBySlug(slug);
+
+  if (
+    dbItem &&
+    dbItem.status === "published" &&
+    dbItem.content_type === "research"
+  ) {
+    return {
+      title: `${dbItem.title} | Meridian`,
+      description: dbItem.summary ?? "Onderzoek op Meridian",
+    };
+  }
+
+  // Daarna fallback naar bestaande lokale data
   const item = getResearchBySlug(slug);
 
   if (!item) {
@@ -37,6 +60,19 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ResearchPage({ params }: Props) {
   const { slug } = await params;
+
+  // Eerst Supabase controleren
+  const dbItem = await getDbContentBySlug(slug);
+
+  if (
+    dbItem &&
+    dbItem.status === "published" &&
+    dbItem.content_type === "research"
+  ) {
+    return <DatabaseResearch item={dbItem} />;
+  }
+
+  // Fallback naar bestaande research.ts
   const research = getResearchBySlug(slug);
 
   if (!research) {
@@ -49,9 +85,13 @@ export default async function ResearchPage({ params }: Props) {
     <main className={styles.page}>
       <nav className={styles.breadcrumbs}>
         <Link href="/">Meridian</Link>
+
         <span>→</span>
+
         <span>Onderzoek</span>
+
         <span>→</span>
+
         <span>{research.title}</span>
       </nav>
 
@@ -67,22 +107,40 @@ export default async function ResearchPage({ params }: Props) {
         </div>
 
         <div className={styles.heroCopy}>
-          <p className={styles.eyebrow}>{research.label}</p>
-          <h1>{research.title}</h1>
-          <p className={styles.summary}>{research.summary}</p>
+          <p className={styles.eyebrow}>
+            {research.label}
+          </p>
+
+          <h1>
+            {research.title}
+          </h1>
+
+          <p className={styles.summary}>
+            {research.summary}
+          </p>
 
           <div className={styles.dimensions}>
             {research.dimensions.map((dimension) => (
-              <span key={dimension}>{dimension}</span>
+              <span key={dimension}>
+                {dimension}
+              </span>
             ))}
           </div>
         </div>
       </header>
 
       <section className={styles.thesis}>
-        <p>De centrale vraag</p>
-        <h2>{research.question}</h2>
-        <div>{research.method}</div>
+        <p>
+          De centrale vraag
+        </p>
+
+        <h2>
+          {research.question}
+        </h2>
+
+        <div>
+          {research.method}
+        </div>
       </section>
 
       <div className={styles.sections}>
@@ -93,19 +151,32 @@ export default async function ResearchPage({ params }: Props) {
             key={section.id}
           >
             <aside>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              {section.eyebrow && <p>{section.eyebrow}</p>}
+              <span>
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              {section.eyebrow && (
+                <p>
+                  {section.eyebrow}
+                </p>
+              )}
             </aside>
 
             <div className={styles.sectionContent}>
-              <h2>{section.title}</h2>
+              <h2>
+                {section.title}
+              </h2>
 
               {section.intro && (
-                <p className={styles.sectionIntro}>{section.intro}</p>
+                <p className={styles.sectionIntro}>
+                  {section.intro}
+                </p>
               )}
 
               {section.paragraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
+                <p key={paragraph}>
+                  {paragraph}
+                </p>
               ))}
 
               {section.points && (
@@ -113,7 +184,10 @@ export default async function ResearchPage({ params }: Props) {
                   {section.points.map((point) => (
                     <div key={point}>
                       <span />
-                      <p>{point}</p>
+
+                      <p>
+                        {point}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -126,13 +200,19 @@ export default async function ResearchPage({ params }: Props) {
       <section className={styles.articlesSection}>
         <div className={styles.articlesHeader}>
           <div>
-            <p className={styles.eyebrow}>Uit het onderzoek</p>
-            <h2>Artikelen ontstaan vanuit het dossier.</h2>
+            <p className={styles.eyebrow}>
+              Uit het onderzoek
+            </p>
+
+            <h2>
+              Artikelen ontstaan vanuit het dossier.
+            </h2>
           </div>
 
           <p>
-            Het onderzoek is de bredere kennisstructuur. Artikelen zoomen in op
-            een casus, perspectief, document of ontwikkeling die binnen dat
+            Het onderzoek is de bredere kennisstructuur.
+            Artikelen zoomen in op een casus, perspectief,
+            document of ontwikkeling die binnen dat
             onderzoek relevant wordt.
           </p>
         </div>
@@ -146,28 +226,48 @@ export default async function ResearchPage({ params }: Props) {
                 key={article.slug}
               >
                 <div className={styles.articleImage}>
-                  <img src={article.image} alt={article.title} />
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                  />
                 </div>
 
                 <div className={styles.articleCopy}>
-                  <span>{article.label}</span>
-                  <h3>{article.title}</h3>
-                  <p>{article.description}</p>
-                  <b>Lees artikel →</b>
+                  <span>
+                    {article.label}
+                  </span>
+
+                  <h3>
+                    {article.title}
+                  </h3>
+
+                  <p>
+                    {article.description}
+                  </p>
+
+                  <b>
+                    Lees artikel →
+                  </b>
                 </div>
               </Link>
             ))}
           </div>
         ) : (
           <p className={styles.empty}>
-            Voor dit onderzoek zijn nog geen afzonderlijke artikelen gepubliceerd.
+            Voor dit onderzoek zijn nog geen afzonderlijke
+            artikelen gepubliceerd.
           </p>
         )}
       </section>
 
       <footer className={styles.footer}>
-        <Link href="/artikelen">Bekijk alle artikelen →</Link>
-        <Link href="/methode">Bekijk onze methode →</Link>
+        <Link href="/artikelen">
+          Bekijk alle artikelen →
+        </Link>
+
+        <Link href="/methode">
+          Bekijk onze methode →
+        </Link>
       </footer>
     </main>
   );

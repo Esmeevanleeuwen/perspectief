@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
+import { getDbContentBySlug } from "@/lib/meridian/content";
+import DatabaseArticle from "@/app/components/database/DatabaseArticle";
 import { articles } from "@/app/data/articles";
 import { getSystemRelationsForArticle } from "@/app/data/relations";
 import { getResearchBySlug } from "@/app/data/research";
@@ -13,6 +14,15 @@ type Props = {
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
+  const dbItem = await getDbContentBySlug(slug);
+
+if (
+  dbItem &&
+  dbItem.status === "published" &&
+  ["article", "analysis", "case"].includes(dbItem.content_type)
+) {
+  return <DatabaseArticle item={dbItem} />;
+}
   const article = articles.find((item) => item.slug === slug);
 
   if (!article) {
