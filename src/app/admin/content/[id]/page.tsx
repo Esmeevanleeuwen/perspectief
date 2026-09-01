@@ -1,4 +1,288 @@
-import {notFound} from "next/navigation";
-import {requireEditor} from "@/lib/auth/roles";
-import {addSection,publishContent,updateContent,updateResearch} from "../../actions";
-export default async function Page({params}:{params:Promise<{id:string}>}){const {id}=await params;const {supabase}=await requireEditor();const [{data:item},{data:sections},{data:dossier}]=await Promise.all([supabase.from("content_items").select("*").eq("id",id).maybeSingle(),supabase.from("content_sections").select("*").eq("content_id",id).order("position"),supabase.from("research_dossiers").select("*").eq("content_id",id).maybeSingle()]);if(!item)notFound();return <div className="mx-auto max-w-5xl px-6 py-12"><div className="flex justify-between gap-5"><div><p className="text-xs uppercase tracking-[0.12em] text-[#ad6540]">{item.content_type} · {item.status}</p><h1 className="mt-2 font-serif text-5xl">{item.title}</h1></div>{item.status!=="published"&&<form action={publishContent}><input type="hidden" name="id" value={id}/><button className="bg-[#ad6540] px-5 py-3 text-sm text-white">Publiceren</button></form>}</div><form action={updateContent} className="mt-9 space-y-4"><input type="hidden" name="id" value={id}/><input className="meridian-field" name="title" defaultValue={item.title}/><input className="meridian-field" name="slug" defaultValue={item.slug}/><input className="meridian-field" name="eyebrow" defaultValue={item.eyebrow??""}/><textarea className="meridian-field" name="summary" rows={4} defaultValue={item.summary??""}/><input className="meridian-field" name="hero_image" defaultValue={item.hero_image??""}/><select className="meridian-field" name="status" defaultValue={item.status}>{['idea','researching','draft','source_check','editorial_review','ready','published','archived'].map(v=><option key={v}>{v}</option>)}</select><label className="flex gap-3 text-sm"><input type="checkbox" name="featured" defaultChecked={item.featured}/> Uitgelicht</label><select className="meridian-field" name="featured_position" defaultValue={item.featured_position??""}><option value="">Geen</option><option value="main">main</option><option value="side">side</option></select><button className="bg-[#102633] px-5 py-3 text-sm text-white">Opslaan</button></form>{item.content_type==='research'&&<form action={updateResearch} className="mt-12 space-y-4 border-t pt-10"><input type="hidden" name="id" value={id}/><h2 className="font-serif text-3xl">Onderzoeksdossier</h2><textarea className="meridian-field" name="central_question" rows={3} defaultValue={dossier?.central_question??""}/><textarea className="meridian-field" name="method" rows={5} defaultValue={dossier?.method??""}/><textarea className="meridian-field" name="boundaries" rows={5} defaultValue={dossier?.boundaries??""}/><textarea className="meridian-field" name="working_theory" rows={6} defaultValue={dossier?.working_theory??""}/><textarea className="meridian-field" name="dimensions" rows={6} defaultValue={(dossier?.dimensions??[]).join("\n")} placeholder="Dimensies — één per regel"/><textarea className="meridian-field" name="missing_information" rows={6} defaultValue={(dossier?.missing_information??[]).join("\n")} placeholder="Ontbrekende informatie — één per regel"/><button className="bg-[#102633] px-5 py-3 text-sm text-white">Onderzoek opslaan</button></form>}<section className="mt-12 border-t pt-10"><h2 className="font-serif text-3xl">Publicatieblokken</h2><div className="mt-6 space-y-4">{sections?.map(s=><article key={s.id} className="border bg-white p-5"><span className="text-xs uppercase tracking-[0.12em] text-[#ad6540]">{s.section_type}</span>{s.title&&<h3 className="mt-3 font-serif text-2xl">{s.title}</h3>}{s.body&&<p className="mt-3 whitespace-pre-wrap text-sm leading-7 opacity-65">{s.body}</p>}</article>)}</div><form action={addSection} className="mt-7 space-y-3 border border-dashed p-5"><input type="hidden" name="content_id" value={id}/><select className="meridian-field" name="section_type">{['paragraph','heading','intro','quote','stat','callout','graph','claim_cluster','source_list','perspective_cluster','void'].map(v=><option key={v}>{v}</option>)}</select><input className="meridian-field" name="title" placeholder="Titel — optioneel"/><textarea className="meridian-field" name="body" rows={6} placeholder="Inhoud"/><button className="border px-5 py-2 text-sm">Blok toevoegen</button></form></section></div>}
+import { notFound } from "next/navigation";
+
+import { requireEditorialUser } from "@/lib/admin/roles";
+
+import {
+  addSection,
+  deleteSection,
+  publishContent,
+  updateContent,
+  updateSection,
+} from "../../actions";
+
+type Props = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default async function ContentEditorPage({ params }: Props) {
+  const { id } = await params;
+
+  const { supabase, role } = await requireEditorialUser();
+
+  const [{ data: item }, { data: sections }] = await Promise.all([
+    supabase
+      .from("content_items")
+      .select("*")
+      .eq("id", id)
+      .single(),
+
+    supabase
+      .from("content_sections")
+      .select("*")
+      .eq("content_id", id)
+      .order("position"),
+  ]);
+
+  if (!item) {
+    notFound();
+  }
+
+  const canPublish = ["owner", "admin", "editor"].includes(role);
+
+  return (
+    <div className="mx-auto max-w-5xl px-6 py-12 md:px-10">
+      <div className="flex flex-wrap items-start justify-between gap-6">
+        <div>
+          <p className="text-xs uppercase tracking-[0.15em] text-[#9a6748]">
+            {item.content_type}
+          </p>
+
+          <h1 className="mt-2 font-serif text-5xl">
+            {item.title}
+          </h1>
+
+          <p className="mt-3 text-sm text-[#102534]/50">
+            Status: {item.status}
+          </p>
+        </div>
+
+        {canPublish && item.status !== "published" && (
+          <form action={publishContent}>
+            <input type="hidden" name="id" value={id} />
+
+            <button className="bg-[#9a6748] px-5 py-3 text-sm text-white">
+              Publiceren
+            </button>
+          </form>
+        )}
+      </div>
+
+      <section className="mt-10 border-t border-[#102534]/10 pt-8">
+        <h2 className="font-serif text-3xl">
+          Publicatiegegevens
+        </h2>
+
+        <form action={updateContent} className="mt-6 space-y-5">
+          <input type="hidden" name="id" value={id} />
+
+          <div>
+            <label className="mb-2 block text-xs uppercase tracking-[0.12em]">
+              Titel
+            </label>
+
+            <input
+              name="title"
+              defaultValue={item.title}
+              className="field"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-xs uppercase tracking-[0.12em]">
+              Slug
+            </label>
+
+            <input
+              name="slug"
+              defaultValue={item.slug}
+              className="field"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-xs uppercase tracking-[0.12em]">
+              Samenvatting
+            </label>
+
+            <textarea
+              name="summary"
+              defaultValue={item.summary ?? ""}
+              rows={5}
+              className="field resize-y"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-xs uppercase tracking-[0.12em]">
+              Status
+            </label>
+
+            <select
+              name="status"
+              defaultValue={item.status}
+              className="field"
+            >
+              <option value="idea">Idea</option>
+              <option value="researching">Researching</option>
+              <option value="draft">Draft</option>
+              <option value="source_check">Source check</option>
+              <option value="editorial_review">Editorial review</option>
+              <option value="ready">Ready</option>
+              <option value="published">Published</option>
+            </select>
+          </div>
+
+          <button className="bg-[#102534] px-6 py-3 text-sm text-white">
+            Gegevens opslaan
+          </button>
+        </form>
+      </section>
+
+      <section className="mt-14 border-t border-[#102534]/10 pt-10">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.15em] text-[#9a6748]">
+              Artikel
+            </p>
+
+            <h2 className="mt-2 font-serif text-4xl">
+              Inhoud
+            </h2>
+          </div>
+
+          <span className="text-xs text-[#102534]/45">
+            {sections?.length ?? 0} blokken
+          </span>
+        </div>
+
+        <div className="mt-8 space-y-6">
+          {sections?.map((section, index) => (
+            <div
+              key={section.id}
+              className="border border-[#102534]/10 bg-white p-6"
+            >
+              <div className="mb-5 flex items-center justify-between gap-4">
+                <span className="text-xs uppercase tracking-[0.12em] text-[#9a6748]">
+                  {String(index + 1).padStart(2, "0")} ·{" "}
+                  {section.section_type}
+                </span>
+
+                <form action={deleteSection}>
+                  <input
+                    type="hidden"
+                    name="section_id"
+                    value={section.id}
+                  />
+
+                  <input
+                    type="hidden"
+                    name="content_id"
+                    value={id}
+                  />
+
+                  <button className="text-xs text-[#102534]/45 underline">
+                    Verwijderen
+                  </button>
+                </form>
+              </div>
+
+              <form action={updateSection} className="space-y-4">
+                <input
+                  type="hidden"
+                  name="section_id"
+                  value={section.id}
+                />
+
+                <input
+                  type="hidden"
+                  name="content_id"
+                  value={id}
+                />
+
+                <select
+                  name="section_type"
+                  defaultValue={section.section_type}
+                  className="field"
+                >
+                  <option value="paragraph">Alinea</option>
+                  <option value="heading">Kop</option>
+                  <option value="quote">Quote</option>
+                  <option value="stat">Statistiek</option>
+                  <option value="callout">Callout</option>
+                  <option value="graph">Graph</option>
+                  <option value="void">Lege ruimte</option>
+                </select>
+
+                <input
+                  name="title"
+                  defaultValue={section.title ?? ""}
+                  placeholder="Titel — optioneel"
+                  className="field"
+                />
+
+                <textarea
+                  name="body"
+                  defaultValue={section.body ?? ""}
+                  rows={section.section_type === "paragraph" ? 18 : 8}
+                  placeholder="Inhoud"
+                  className="field resize-y font-serif text-lg leading-8"
+                />
+
+                <button className="border border-[#102534]/25 px-5 py-2 text-sm">
+                  Blok opslaan
+                </button>
+              </form>
+            </div>
+          ))}
+        </div>
+
+        <form
+          action={addSection}
+          className="mt-10 space-y-4 border border-dashed border-[#102534]/20 p-6"
+        >
+          <input
+            type="hidden"
+            name="content_id"
+            value={id}
+          />
+
+          <p className="text-xs uppercase tracking-[0.15em] text-[#9a6748]">
+            Nieuw onderdeel
+          </p>
+
+          <select
+            name="section_type"
+            className="field"
+          >
+            <option value="paragraph">Alinea</option>
+            <option value="heading">Kop</option>
+            <option value="quote">Quote</option>
+            <option value="stat">Statistiek</option>
+            <option value="callout">Callout</option>
+            <option value="graph">Graph</option>
+            <option value="void">Lege ruimte</option>
+          </select>
+
+          <input
+            name="title"
+            placeholder="Titel — optioneel"
+            className="field"
+          />
+
+          <textarea
+            name="body"
+            rows={12}
+            placeholder="Inhoud van dit onderdeel"
+            className="field resize-y"
+          />
+
+          <button className="border border-[#102534]/25 px-5 py-2 text-sm">
+            Blok toevoegen
+          </button>
+        </form>
+      </section>
+    </div>
+  );
+}

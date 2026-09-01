@@ -1,2 +1,91 @@
-import {createContent} from "../../actions";
-export default async function Page({searchParams}:{searchParams:Promise<{type?:string}>}){const q=await searchParams;return <div className="mx-auto max-w-3xl px-6 py-12"><h1 className="font-serif text-5xl">{q.type==='research'?'Nieuw onderzoek':'Nieuwe publicatie'}</h1><form action={createContent} className="mt-9 space-y-4"><select name="content_type" defaultValue={q.type==='research'?'research':'article'} className="meridian-field"><option value="article">Artikel</option><option value="research">Onderzoek</option><option value="analysis">Analyse</option><option value="case">Casus</option></select><input name="eyebrow" className="meridian-field" placeholder="Eyebrow"/><input name="title" required className="meridian-field" placeholder="Titel"/><input name="slug" className="meridian-field" placeholder="Slug — optioneel"/><textarea name="summary" rows={4} className="meridian-field" placeholder="Samenvatting"/><textarea name="central_question" rows={3} className="meridian-field" placeholder="Centrale vraag — voor onderzoek"/><textarea name="method" rows={4} className="meridian-field" placeholder="Methode — voor onderzoek"/><textarea name="boundaries" rows={4} className="meridian-field" placeholder="Onderzoeksgrenzen"/><button className="bg-[#102633] px-6 py-3 text-sm text-white">Aanmaken →</button></form></div>}
+import { createContent } from "../../actions";
+
+export default function NewContentPage() {
+  return (
+    <div className="mx-auto max-w-4xl px-6 py-12 md:px-10">
+      <div className="max-w-2xl">
+        <p className="text-xs uppercase tracking-[0.16em] text-[#9a6748]">
+          Meridian redactie
+        </p>
+
+        <h1 className="mt-3 font-serif text-5xl">
+          Nieuwe publicatie
+        </h1>
+
+        <p className="mt-4 text-sm leading-7 text-[#102534]/60">
+          Schrijf hier direct een volledig artikel. Na het aanmaken kun je
+          extra blokken, quotes, statistieken en andere onderdelen toevoegen.
+        </p>
+      </div>
+
+      <form action={createContent} className="mt-10 space-y-6">
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-[0.12em]">
+            Type
+          </label>
+
+          <select name="content_type" className="field">
+            <option value="article">Artikel</option>
+            <option value="analysis">Analyse</option>
+            <option value="case">Casus</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-[0.12em]">
+            Titel
+          </label>
+
+          <input
+            name="title"
+            required
+            placeholder="Titel van het artikel"
+            className="field"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-[0.12em]">
+            Slug
+          </label>
+
+          <input
+            name="slug"
+            placeholder="optioneel-wordt-automatisch-gemaakt"
+            className="field"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-[0.12em]">
+            Samenvatting
+          </label>
+
+          <textarea
+            name="summary"
+            rows={4}
+            placeholder="Korte samenvatting voor kaarten en overzichtspagina's"
+            className="field resize-none"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-xs uppercase tracking-[0.12em]">
+            Volledig artikel
+          </label>
+
+          <textarea
+            name="body"
+            rows={28}
+            placeholder="Schrijf of plak hier het volledige artikel..."
+            className="field min-h-[650px] resize-y font-serif text-lg leading-8"
+          />
+        </div>
+
+        <button className="bg-[#102534] px-7 py-3 text-sm text-white">
+          Artikel aanmaken →
+        </button>
+      </form>
+    </div>
+  );
+}

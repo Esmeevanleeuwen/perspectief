@@ -45,6 +45,9 @@ export default function SiteHeader() {
             />
             <circle cx="24" cy="35.5" r="3.8" fill="currentColor" />
           </svg>
+
+          <span className={styles.brandDivider} />
+
           <span className={styles.brandName}>MERIDIAN</span>
         </Link>
 
@@ -60,16 +63,48 @@ export default function SiteHeader() {
           ))}
         </nav>
 
-        <button
-          type="button"
-          className={styles.menuButton}
-          aria-label={open ? "Menu sluiten" : "Menu openen"}
-          aria-expanded={open}
-          onClick={() => setOpen((value) => !value)}
-        >
-          <span />
-          <span />
-        </button>
+        <div className={styles.actions}>
+          <Link
+            href="/zoeken"
+            className={styles.iconButton}
+            aria-label="Zoeken"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle
+                cx="10.5"
+                cy="10.5"
+                r="6.3"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
+              <path
+                d="M15.2 15.2L20.5 20.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              />
+            </svg>
+          </Link>
+
+          <span className={styles.actionDivider} />
+
+          <Link href="/login" className={styles.loginButton}>
+            Inloggen
+          </Link>
+
+          <button
+            type="button"
+            className={styles.menuButton}
+            aria-label={open ? "Menu sluiten" : "Menu openen"}
+            aria-expanded={open}
+            onClick={() => setOpen((value) => !value)}
+          >
+            <span />
+            <span />
+          </button>
+        </div>
 
         <nav
           className={`${styles.mobileNavigation} ${
@@ -86,6 +121,16 @@ export default function SiteHeader() {
               {item.label}
             </Link>
           ))}
+
+          <div className={styles.mobileUtilities}>
+            <Link href="/zoeken" onClick={() => setOpen(false)}>
+              Zoeken
+            </Link>
+
+            <Link href="/login" onClick={() => setOpen(false)}>
+              Inloggen
+            </Link>
+          </div>
         </nav>
       </div>
     </header>
