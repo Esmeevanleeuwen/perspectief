@@ -14,6 +14,20 @@ type MaskData = {
   aspectRatio: number;
 };
 
+type MapArea = {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
+type MapBounds = {
+  left: number;
+  top: number;
+  mapWidth: number;
+  mapHeight: number;
+};
+
 type Particle = {
   startX: number;
   startY: number;
@@ -39,6 +53,10 @@ const MAP_PARTICLE_SHARE = 0.84;
 const HOLD_TIME = 1800;
 const MORPH_TIME = 6800;
 const MAX_PARTICLE_DELAY = 850;
+
+const MOBILE_HOLD_TIME = 160;
+const MOBILE_MORPH_TIME = 1900;
+const MOBILE_PARTICLE_DELAY = 200;
 
 const COLORS = [
   "14,38,55",
@@ -328,25 +346,28 @@ function createConnections(particles: Particle[]) {
 export default function ParticleHero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const heroRef = useRef<HTMLElement>(null);
+  const mobileMapRef = useRef<HTMLDivElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const canvasNode = canvasRef.current;
     const heroNode = heroRef.current;
+    const mobileMapNode = mobileMapRef.current;
 
-    if (!canvasNode || !heroNode) return;
+    if (!canvasNode || !heroNode || !mobileMapNode) return;
 
     const contextNode = canvasNode.getContext("2d");
 
     if (!contextNode) return;
 
     /*
-      Deze drie aliases zijn bewust expliciet getypeerd.
+      Deze aliases zijn bewust expliciet getypeerd.
       Daardoor blijven ze ook binnen nested functions
       gegarandeerd non-null voor TypeScript.
     */
     const canvas: HTMLCanvasElement = canvasNode;
     const hero: HTMLElement = heroNode;
+    const mobileMap: HTMLDivElement = mobileMapNode;
     const context: CanvasRenderingContext2D = contextNode;
 
     let width = 0;
@@ -358,6 +379,7 @@ export default function ParticleHero() {
     let particles: Particle[] = [];
     let connections: [number, number][] = [];
     let mapAspectRatio = 0.78;
+    let mobileArea: MapArea | null = null;
 
     const reducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -368,6 +390,18 @@ export default function ParticleHero() {
 
       width = rectangle.width;
       height = rectangle.height;
+
+      // CSS reserves real space below the copy on mobile. Measuring that
+      // space keeps the canvas in sync with wrapping, fonts and rotation.
+      const mapRectangle = mobileMap.getBoundingClientRect();
+      mobileArea = mapRectangle.height > 0
+        ? {
+            left: mapRectangle.left - rectangle.left,
+            top: mapRectangle.top - rectangle.top,
+            width: mapRectangle.width,
+            height: mapRectangle.height,
+          }
+        : null;
 
       const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 
@@ -380,22 +414,17 @@ export default function ParticleHero() {
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     }
 
-    function getMapBounds() {
-      if (width < 720) {
-        const availableWidth = width * 0.76;
-        const maxHeight = height * 0.43;
-
-        let mapWidth = availableWidth;
-        let mapHeight = mapWidth / mapAspectRatio;
-
-        if (mapHeight > maxHeight) {
-          mapHeight = maxHeight;
-          mapWidth = mapHeight * mapAspectRatio;
-        }
+    function getMapBounds(): MapBounds {
+      if (mobileArea) {
+        const mapHeight = Math.min(
+          mobileArea.height * 0.86,
+          (mobileArea.width * 0.8) / mapAspectRatio
+        );
+        const mapWidth = mapHeight * mapAspectRatio;
 
         return {
-          left: (width - mapWidth) / 2,
-          top: height * 0.47,
+          left: mobileArea.left + (mobileArea.width - mapWidth) / 2,
+          top: mobileArea.top + (mobileArea.height - mapHeight) / 2,
           mapWidth,
           mapHeight,
         };
@@ -442,12 +471,18 @@ export default function ParticleHero() {
 
     function getPosition(
       particle: Particle,
-      now: number
+      now: number,
+      bounds: MapBounds
     ): ParticlePosition {
-      const bounds = getMapBounds();
-
-      const sourceX = particle.startX * width;
-      const sourceY = particle.startY * height;
+      // Keep even the opening particle cloud away from mobile text/buttons.
+      const sourceX = mobileArea
+        ? mobileArea.left +
+          (0.06 + clamp((particle.startX - 0.33) / 0.69, 0, 1) * 0.88) *
+            mobileArea.width
+        : particle.startX * width;
+      const sourceY = mobileArea
+        ? mobileArea.top + particle.startY * mobileArea.height
+        : particle.startY * height;
 
       const destinationX =
         bounds.left + particle.targetX * bounds.mapWidth;
@@ -458,12 +493,12 @@ export default function ParticleHero() {
       const elapsed =
         now -
         startedAt -
-        HOLD_TIME -
-        particle.delay * MAX_PARTICLE_DELAY;
+        (mobileArea ? MOBILE_HOLD_TIME : HOLD_TIME) -
+        particle.delay * (mobileArea ? MOBILE_PARTICLE_DELAY : MAX_PARTICLE_DELAY);
 
       const progress = reducedMotion
         ? 1
-        : smoothstep(elapsed / MORPH_TIME);
+        : smoothstep(elapsed / (mobileArea ? MOBILE_MORPH_TIME : MORPH_TIME));
 
       const floatingAmount =
         0.55 + (1 - progress) * 3.5;
@@ -498,9 +533,18 @@ export default function ParticleHero() {
 
       if (particles.length === 0) return;
 
+      // Calculate shared geometry once, rather than for every particle.
+      const bounds = getMapBounds();
       const positions = particles.map((particle) =>
-        getPosition(particle, now)
+        getPosition(particle, now, bounds)
       );
+
+      context.save();
+      if (mobileArea) {
+        context.beginPath();
+        context.rect(mobileArea.left, mobileArea.top, mobileArea.width, mobileArea.height);
+        context.clip();
+      }
 
       for (const [firstIndex, secondIndex] of connections) {
         const first = positions[firstIndex];
@@ -530,7 +574,7 @@ export default function ParticleHero() {
       particles.forEach((particle, index) => {
         const position = positions[index];
 
-        const outsideFactor = particle.isMapParticle ? 1 : 0.62;
+        const outsideFactor = particle.isMapParticle ? 1 : (mobileArea ? 0.32 : 0.62);
 
         const fadeOutside = particle.isMapParticle
           ? 1
@@ -544,7 +588,7 @@ export default function ParticleHero() {
         context.arc(
           position.x,
           position.y,
-          particle.size,
+          mobileArea ? Math.max(0.5, particle.size * 0.68) : particle.size,
           0,
           Math.PI * 2
         );
@@ -554,6 +598,7 @@ export default function ParticleHero() {
 
         context.fill();
       });
+      context.restore();
     }
 
     function animate(now: number) {
@@ -607,6 +652,7 @@ export default function ParticleHero() {
     });
 
     resizeObserver.observe(hero);
+    resizeObserver.observe(mobileMap);
 
     void start();
 
@@ -711,6 +757,12 @@ export default function ParticleHero() {
           </Link>
         </div>
       </div>
+
+      <div
+        ref={mobileMapRef}
+        className={styles.mobileMap}
+        aria-hidden="true"
+      />
 
       <div className={styles.scrollIndicator} aria-hidden="true">
         <span />
