@@ -146,6 +146,8 @@ export function ChapterNav({
 
 export async function PartnerLinks({ dossier }: { dossier: DossierSummary }) {
   const items = await partnerDossiers(dossier);
+  const hasMatchingView = dossier.availableOn?.includes("ampara") ?? false;
+  const relatedItems = items.filter((item) => item.slug !== dossier.slug);
 
   return (
     <section className={styles.partnerBand} aria-label={`Verbinding met ${partnerName}`}>
@@ -158,13 +160,21 @@ export async function PartnerLinks({ dossier }: { dossier: DossierSummary }) {
         </p>
       </div>
       <div className={styles.partnerLinks}>
-        {items.length ? items.map((item) => (
+        {hasMatchingView && (
+          <a href={`${partnerUrl}${dossierPath(dossier.slug)}`}>
+            <small>Hetzelfde gedeelde dossier · zelfstandige politieke verwerking</small>
+            <strong>{dossier.title}</strong>
+            <span>Open precies dit dossier bij Ampara →</span>
+          </a>
+        )}
+        {relatedItems.map((item) => (
           <a key={item.slug} href={`${partnerUrl}${dossierPath(item.slug)}`}>
             <small>{item.reason}</small>
             <strong>{item.title}</strong>
-            <span>Bekijk de politieke verwerking →</span>
+            <span>Bekijk een verwante politieke verwerking →</span>
           </a>
-        )) : (
+        ))}
+        {!hasMatchingView && relatedItems.length === 0 && (
           <a href={`${partnerUrl}/dossiers`}>
             <small>Zelfstandig platform</small>
             <strong>Dossiers bij Ampara</strong>
