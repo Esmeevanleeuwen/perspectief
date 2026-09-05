@@ -74,7 +74,7 @@ export function Breadcrumbs({
 
 export function Cards({ items }: { items: DossierSummary[] }) {
   return (
-    <div className={`${styles.grid} ${styles.cardGrid}`}>
+    <div className={styles.grid}>
       {items.map((item, index) => (
         <Link key={item.slug} href={dossierPath(item.slug)} className={styles.card}>
           <div className={styles.cardTop}>
