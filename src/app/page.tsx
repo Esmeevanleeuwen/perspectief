@@ -1,5 +1,6 @@
 import ParticleHero from "@/app/components/homepage/ParticleHero";
 import DossierSystemPreview from "@/app/components/homepage/DossierSystemPreview";
+import FeaturedResearch from "@/app/components/homepage/FeaturedResearch";
 import FeaturedArticles from "@/app/components/homepage/FeaturedArticles";
 import { getDossier, getDossiers } from "@/lib/dossier-network";
 import { pageMetadata } from "@/components/dossiers/DossierUI";
@@ -42,6 +43,7 @@ export default async function Home() {
     <main>
       <ParticleHero />
       <DossierSystemPreview featured={featured} related={related} />
+      <FeaturedResearch />
       <FeaturedArticles />
     </main>
   );
