@@ -1,9 +1,8 @@
-import Link from "next/link";
 import ParticleHero from "@/app/components/homepage/ParticleHero";
+import DossierSystemPreview from "@/app/components/homepage/DossierSystemPreview";
 import FeaturedArticles from "@/app/components/homepage/FeaturedArticles";
-import { getDossiers } from "@/lib/dossier-network";
-import { getTopics } from "@/lib/dossier-core";
-import { Shell, Cards, styles, pageMetadata } from "@/components/dossiers/DossierUI";
+import { getDossier, getDossiers } from "@/lib/dossier-network";
+import { pageMetadata } from "@/components/dossiers/DossierUI";
 
 export const dynamic = "force-dynamic";
 export const metadata = pageMetadata(
@@ -13,32 +12,36 @@ export const metadata = pageMetadata(
 );
 
 export default async function Home() {
-  const dossiers = await getDossiers();
-  const topics = getTopics(dossiers);
+  const [dossiers, crimeDossier] = await Promise.all([
+    getDossiers(),
+    getDossier("criminaliteit-als-systeem"),
+  ]);
+
+  const crimeSummary = crimeDossier ?? dossiers.find((dossier) => dossier.slug === "criminaliteit-als-systeem");
+
+  const featured = {
+    slug: crimeSummary?.slug ?? "criminaliteit-als-systeem",
+    title: crimeSummary?.title ?? "Criminaliteit als systeem",
+    description: crimeSummary?.description ?? "Hoe gedrag, zichtbaarheid, classificatie, capaciteit en strafrechtelijke verwerking één systeem vormen.",
+    status: crimeSummary?.status ?? "Onderzoek in opbouw",
+    pageCount: crimeDossier?.documents?.reduce((total, document) => total + document.pageCount, 0) ?? 0,
+    themeCount: crimeSummary?.themes.length ?? 0,
+  };
+
+  const related = dossiers
+    .filter((dossier) => dossier.slug !== featured.slug)
+    .slice(0, 3)
+    .map((dossier) => ({
+      slug: dossier.slug,
+      title: dossier.title,
+      description: dossier.description,
+      themes: dossier.themes,
+    }));
 
   return (
     <main>
       <ParticleHero />
-      <section id="ontdek" style={{ scrollMarginTop: 90 }}>
-        <Shell>
-          <header className={styles.hero}>
-            <p className={styles.eyebrow}>Doorlopende dossiers</p>
-            <h2 style={{ fontFamily: "var(--font-serif, Georgia), serif", fontSize: "clamp(32px,4vw,52px)", fontWeight: 400, lineHeight: 1.1, margin: "0 0 20px" }}>
-              Het nieuws gaat verder. Het onderzoek blijft.
-            </h2>
-            <p>Begin bij de vraag, volg de hoofdstukken en kijk zelf waarop een verhaal is gebaseerd. Nieuwe artikelen krijgen zo een plek in het grotere verband.</p>
-          </header>
-          <nav className={styles.topics} aria-label="Verken dossieronderwerpen">
-            {topics.map((topic) => <Link key={topic.slug} href={`/themas/${topic.slug}`}>{topic.title}</Link>)}
-          </nav>
-          <Cards items={dossiers.slice(0, 4)} />
-          <nav className={styles.topics} aria-label="Dossierbibliotheek">
-            <Link href="/dossiers">Alle dossiers</Link>
-            <Link href="/themas">Alle thema’s</Link>
-            <Link href="/bronnen">Bronnen en documenten</Link>
-          </nav>
-        </Shell>
-      </section>
+      <DossierSystemPreview featured={featured} related={related} />
       <FeaturedArticles />
     </main>
   );
