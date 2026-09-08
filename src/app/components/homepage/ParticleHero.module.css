@@ -512,3 +512,25 @@
     transition: none;
   }
 }
+
+/* The global SiteHeader owns navigation; keep the hero focused on the editorial opening. */
+@media (min-width: 721px) {
+  .hero {
+    height: calc(100svh - 84px);
+    min-height: 636px;
+  }
+
+  .header {
+    display: none;
+  }
+
+  .content {
+    height: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  .header {
+    display: none;
+  }
+}
