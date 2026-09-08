@@ -1,7 +1,6 @@
 .section {
   background: #faf9f6;
   color: #102633;
-  border-top: 1px solid rgba(16, 38, 51, 0.08);
 }
 
 .container {
@@ -42,7 +41,6 @@
   align-items: center;
   gap: 14px;
   padding-bottom: 5px;
-  border-bottom: 1px solid rgba(16, 38, 51, 0.38);
   color: #102633;
   text-decoration: none;
   font-size: 10px;
@@ -57,8 +55,7 @@
 .list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid rgba(16, 38, 51, 0.09);
-  border-bottom: 1px solid rgba(16, 38, 51, 0.09);
+  gap: clamp(24px, 3vw, 46px);
 }
 
 .item {
@@ -67,19 +64,7 @@
   gap: 14px;
   align-items: start;
   min-width: 0;
-  padding: 24px 24px 26px;
-}
-
-.item:first-child {
-  padding-left: 0;
-}
-
-.item:last-child {
-  padding-right: 0;
-}
-
-.item + .item {
-  border-left: 1px solid rgba(16, 38, 51, 0.09);
+  padding: 24px 0 26px;
 }
 
 .index {
@@ -102,7 +87,7 @@
   position: relative;
   display: block;
   width: 92px;
-  aspect-ratio: 0.72 / 1;
+  height: 128px;
   overflow: hidden;
   background: #ece8e1;
   text-decoration: none;
@@ -113,6 +98,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
   transform: scale(1.001);
   filter: saturate(0.86) contrast(0.97);
   transition: transform 420ms ease, filter 420ms ease;
@@ -177,22 +163,15 @@
     display: block;
   }
 
-  .item,
-  .item:first-child,
-  .item:last-child {
+  .item {
     grid-template-columns: 34px 116px minmax(0, 1fr);
     gap: 18px;
     padding: 24px 0;
   }
 
-  .item + .item {
-    border-left: 0;
-    border-top: 1px solid rgba(16, 38, 51, 0.09);
-  }
-
   .imageLink {
     width: 116px;
-    aspect-ratio: 4 / 5;
+    height: 145px;
   }
 
   .copy p {
@@ -213,15 +192,14 @@
     gap: 18px;
   }
 
-  .item,
-  .item:first-child,
-  .item:last-child {
+  .item {
     grid-template-columns: 28px 92px minmax(0, 1fr);
     gap: 13px;
   }
 
   .imageLink {
     width: 92px;
+    height: 128px;
   }
 
   .copy h3 {
@@ -234,14 +212,13 @@
 }
 
 @media (max-width: 500px) {
-  .item,
-  .item:first-child,
-  .item:last-child {
+  .item {
     grid-template-columns: 28px 78px minmax(0, 1fr);
   }
 
   .imageLink {
     width: 78px;
+    height: 108px;
   }
 }
 
