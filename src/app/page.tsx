@@ -1,8 +1,9 @@
 import ParticleHero from "@/app/components/homepage/ParticleHero";
-import DossierSystemPreview from "@/app/components/homepage/DossierSystemPreview";
+import OtherResearch, { type OtherResearchItem } from "@/app/components/homepage/OtherResearch";
 import FeaturedResearch from "@/app/components/homepage/FeaturedResearch";
 import FeaturedArticles from "@/app/components/homepage/FeaturedArticles";
-import { getDossier, getDossiers } from "@/lib/dossier-network";
+import { getDossiers } from "@/lib/dossier-network";
+import type { DossierSummary } from "@/lib/dossier-core";
 import { pageMetadata } from "@/components/dossiers/DossierUI";
 
 export const dynamic = "force-dynamic";
@@ -12,38 +13,83 @@ export const metadata = pageMetadata(
   "/",
 );
 
-export default async function Home() {
-  const [dossiers, crimeDossier] = await Promise.all([
-    getDossiers(),
-    getDossier("criminaliteit-als-systeem"),
-  ]);
+function normalizeTitle(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
 
-  const crimeSummary = crimeDossier ?? dossiers.find((dossier) => dossier.slug === "criminaliteit-als-systeem");
+function slugify(value: string) {
+  return normalizeTitle(value).replace(/\s+/g, "-");
+}
 
-  const featured = {
-    slug: crimeSummary?.slug ?? "criminaliteit-als-systeem",
-    title: crimeSummary?.title ?? "Criminaliteit als systeem",
-    description: crimeSummary?.description ?? "Hoe gedrag, zichtbaarheid, classificatie, capaciteit en strafrechtelijke verwerking één systeem vormen.",
-    status: crimeSummary?.status ?? "Onderzoek in opbouw",
-    pageCount: crimeDossier?.documents?.reduce((total, document) => total + document.pageCount, 0) ?? 0,
-    themeCount: crimeSummary?.themes.length ?? 0,
-  };
+function findDossier(dossiers: DossierSummary[], title: string) {
+  const target = normalizeTitle(title);
+  return dossiers.find((dossier) => normalizeTitle(dossier.title) === target)
+    ?? dossiers.find((dossier) => normalizeTitle(dossier.title).includes(target) || target.includes(normalizeTitle(dossier.title)));
+}
 
-  const related = dossiers
-    .filter((dossier) => dossier.slug !== featured.slug)
-    .slice(0, 3)
-    .map((dossier) => ({
+function buildOtherResearch(dossiers: DossierSummary[]): OtherResearchItem[] {
+  const preferredTitles = [
+    "Datum publiek",
+    "De Tweede Wereldoorlog als systeem",
+    "De organisatorische netwerklaag van Gelderland",
+  ];
+
+  const items: OtherResearchItem[] = [];
+  const used = new Set<string>();
+
+  for (const title of preferredTitles) {
+    const dossier = findDossier(dossiers, title);
+    if (!dossier || used.has(dossier.slug)) continue;
+    used.add(dossier.slug);
+    items.push({
       slug: dossier.slug,
       title: dossier.title,
       description: dossier.description,
-      themes: dossier.themes,
-    }));
+    });
+  }
+
+  for (const dossier of dossiers) {
+    if (items.length >= 3) break;
+    if (used.has(dossier.slug) || dossier.slug === "tegenspraak") continue;
+    used.add(dossier.slug);
+    items.push({
+      slug: dossier.slug,
+      title: dossier.title,
+      description: dossier.description,
+    });
+  }
+
+  return items.slice(0, 3);
+}
+
+export default async function Home() {
+  const dossiers = await getDossiers();
+  const otherResearch = buildOtherResearch(dossiers);
+
+  const relatedTitles = [
+    "De Tweede Wereldoorlog als systeem",
+    "De organisatorische netwerklaag van Gelderland",
+    "De uitgang is vol",
+  ];
+
+  const relatedDossiers = relatedTitles.map((title) => {
+    const dossier = findDossier(dossiers, title);
+    return {
+      title,
+      slug: dossier?.slug ?? slugify(title),
+    };
+  });
 
   return (
     <main>
       <ParticleHero />
-      <DossierSystemPreview featured={featured} related={related} />
-      <FeaturedResearch />
+      <OtherResearch items={otherResearch} />
+      <FeaturedResearch relatedDossiers={relatedDossiers} />
       <FeaturedArticles />
     </main>
   );
