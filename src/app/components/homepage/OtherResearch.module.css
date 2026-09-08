@@ -7,7 +7,7 @@
 .container {
   width: min(1500px, calc(100% - 100px));
   margin: 0 auto;
-  padding: 56px 0 54px;
+  padding: 58px 0 66px;
 }
 
 .header {
@@ -15,7 +15,7 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 32px;
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
 .eyebrow {
@@ -29,7 +29,7 @@
 .header h2 {
   margin: 0;
   font-family: var(--font-serif), Georgia, serif;
-  font-size: clamp(38px, 3.4vw, 54px);
+  font-size: clamp(40px, 3.5vw, 56px);
   font-weight: 400;
   line-height: 1;
   letter-spacing: -0.035em;
@@ -41,7 +41,7 @@
   display: inline-flex;
   align-items: center;
   gap: 18px;
-  padding-bottom: 5px;
+  padding-bottom: 6px;
   border-bottom: 1px solid rgba(16, 38, 51, 0.42);
   color: #102633;
   text-decoration: none;
@@ -54,111 +54,81 @@
   font-size: 15px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid rgba(16, 38, 51, 0.09);
-  border-bottom: 1px solid rgba(16, 38, 51, 0.09);
+.list {
+  border-top: 1px solid rgba(16, 38, 51, 0.1);
+  border-bottom: 1px solid rgba(16, 38, 51, 0.1);
 }
 
 .item {
   display: grid;
-  grid-template-columns: 104px minmax(0, 1fr);
-  gap: 20px;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+  gap: clamp(30px, 4vw, 62px);
+  align-items: center;
   min-width: 0;
-  padding: 24px 28px 28px 0;
+  padding: 28px 0;
 }
 
 .item + .item {
-  padding-left: 28px;
-  border-left: 1px solid rgba(16, 38, 51, 0.09);
+  border-top: 1px solid rgba(16, 38, 51, 0.1);
 }
 
-.visual {
+.imageLink {
   position: relative;
-  height: 126px;
-  overflow: hidden;
-  border-radius: 2px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.9), rgba(236,232,224,.56)),
-    radial-gradient(circle at 70% 30%, rgba(173,101,64,.11), transparent 45%);
-}
-
-.visual span,
-.visual i {
-  position: absolute;
   display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #ece8e1;
+  text-decoration: none;
 }
 
-.visual span {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #102633;
-  opacity: .82;
+.imageLink img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.001);
+  filter: saturate(0.88) contrast(0.96);
+  transition: transform 420ms ease, filter 420ms ease;
 }
 
-.visual span:nth-child(1) { left: 18%; top: 25%; }
-.visual span:nth-child(2) { left: 68%; top: 18%; width: 5px; height: 5px; background: #ad6540; }
-.visual span:nth-child(3) { left: 42%; top: 54%; width: 4px; height: 4px; }
-.visual span:nth-child(4) { left: 76%; top: 68%; width: 4px; height: 4px; }
-.visual span:nth-child(5) { left: 24%; top: 78%; width: 3px; height: 3px; background: #ad6540; }
-
-.visual i {
-  height: 1px;
-  background: rgba(16, 38, 51, .14);
-  transform-origin: left center;
+.item:hover .imageLink img {
+  transform: scale(1.025);
+  filter: saturate(0.98) contrast(1);
 }
-
-.visual i:nth-of-type(1) { left: 20%; top: 29%; width: 58%; transform: rotate(22deg); }
-.visual i:nth-of-type(2) { left: 41%; top: 56%; width: 39%; transform: rotate(-34deg); }
-
-.visual2 span:nth-child(1) { left: 12%; top: 55%; }
-.visual2 span:nth-child(2) { left: 54%; top: 22%; }
-.visual2 span:nth-child(3) { left: 78%; top: 48%; }
-.visual2 span:nth-child(4) { left: 42%; top: 74%; }
-.visual2 span:nth-child(5) { left: 18%; top: 25%; }
-.visual2 i:nth-of-type(1) { left: 14%; top: 57%; width: 67%; transform: rotate(-8deg); }
-.visual2 i:nth-of-type(2) { left: 19%; top: 28%; width: 46%; transform: rotate(39deg); }
-
-.visual3 span:nth-child(1) { left: 23%; top: 18%; }
-.visual3 span:nth-child(2) { left: 73%; top: 28%; }
-.visual3 span:nth-child(3) { left: 48%; top: 48%; }
-.visual3 span:nth-child(4) { left: 72%; top: 78%; }
-.visual3 span:nth-child(5) { left: 20%; top: 72%; }
-.visual3 i:nth-of-type(1) { left: 25%; top: 22%; width: 55%; transform: rotate(25deg); }
-.visual3 i:nth-of-type(2) { left: 22%; top: 74%; width: 57%; transform: rotate(-31deg); }
 
 .copy {
   min-width: 0;
+  max-width: 880px;
 }
 
 .meta {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 9px;
+  gap: 13px;
+  margin-bottom: 10px;
   color: rgba(16, 38, 51, 0.45);
   font-size: 8px;
   font-weight: 650;
-  letter-spacing: .12em;
+  letter-spacing: 0.14em;
 }
 
 .meta span:first-child {
   color: #ad6540;
   font-family: var(--font-serif), Georgia, serif;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 400;
   letter-spacing: 0;
 }
 
 .copy h3 {
   margin: 0;
+  max-width: 760px;
   font-family: var(--font-serif), Georgia, serif;
-  font-size: clamp(21px, 1.55vw, 28px);
+  font-size: clamp(27px, 2.25vw, 38px);
   font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
 }
 
 .copy h3 a {
@@ -167,19 +137,16 @@
 }
 
 .copy p {
-  margin: 11px 0 0;
-  color: rgba(16, 38, 51, 0.55);
-  font-size: 10px;
-  line-height: 1.65;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  max-width: 760px;
+  margin: 13px 0 0;
+  color: rgba(16, 38, 51, 0.56);
+  font-size: 12px;
+  line-height: 1.68;
 }
 
 .readLink {
-  margin-top: 16px;
-  gap: 12px;
+  margin-top: 18px;
+  gap: 13px;
   font-size: 10px;
 }
 
@@ -188,26 +155,16 @@
     width: min(100% - 48px, 940px);
   }
 
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .item,
-  .item + .item {
-    grid-template-columns: 110px minmax(0, 1fr);
-    padding: 24px 0;
-    border-left: 0;
-  }
-
-  .item + .item {
-    border-top: 1px solid rgba(16, 38, 51, 0.09);
+  .item {
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 30px;
   }
 }
 
-@media (max-width: 620px) {
+@media (max-width: 720px) {
   .container {
     width: calc(100% - 32px);
-    padding: 42px 0 44px;
+    padding: 44px 0 50px;
   }
 
   .header {
@@ -216,13 +173,23 @@
     gap: 18px;
   }
 
-  .item,
-  .item + .item {
-    grid-template-columns: 84px minmax(0, 1fr);
-    gap: 16px;
+  .item {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 24px 0 30px;
   }
 
-  .visual {
-    height: 108px;
+  .imageLink {
+    aspect-ratio: 1.65 / 1;
+  }
+
+  .copy h3 {
+    font-size: clamp(27px, 8vw, 34px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imageLink img {
+    transition: none;
   }
 }
