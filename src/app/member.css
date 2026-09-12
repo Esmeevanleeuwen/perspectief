@@ -609,7 +609,7 @@ body:has(.member-shell) {
 }
 .member-card h2 {
   font-size: 14px;
-  margin: 9px 0 6px;
+  margin: 6px 0 4px;
   overflow-wrap: anywhere;
 }
 .member-card p {
@@ -639,7 +639,7 @@ body:has(.member-shell) {
   background: #f1f2f6;
   color: #5c6472;
   border-radius: 4px;
-  padding: 3px 7px;
+  padding: 2px 7px;
   font-size: 10px;
   font-weight: 500;
 }
@@ -655,6 +655,7 @@ body:has(.member-shell) {
   display: block;
 }
 .workspace-panel .member-card {
+  padding: 14px 16px;
   border: 0;
   border-bottom: 1px solid var(--line);
   border-radius: 0;
@@ -1084,7 +1085,7 @@ body:has(.member-shell) {
   color: var(--muted);
   margin-top: 3px;
 }
-@media (min-width: 1300px) {
+@media (min-width: 1100px) {
   .auth-register .member-form {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1170,6 +1171,26 @@ body:has(.member-shell) {
   }
 }
 @media (max-width: 700px) {
+  .member-form input:not([type="checkbox"]),
+  .member-form textarea,
+  .member-form select,
+  .member-search input,
+  .member-search select {
+    font-size: 16px;
+  }
+  .member-button,
+  .member-secondary,
+  .member-danger,
+  .workspace-mobile-toggle {
+    min-height: 44px;
+  }
+  .workspace-mobile-toggle {
+    min-width: 44px;
+  }
+  .member-editor textarea[name="body"] {
+    height: 40dvh;
+    min-height: 260px;
+  }
   .workspace-shell,
   .workspace-shell.workspace-compact {
     display: block;
