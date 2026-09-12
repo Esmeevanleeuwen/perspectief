@@ -11,25 +11,26 @@ export default async function Page() {
   if (error) throw new Error("Je profiel kon niet worden geladen.");
   return (
     <div className="member-profile">
-      <p className="member-eyebrow">Jij houdt de regie</p>
       <h1>Profiel & privacy</h1>
       <p className="member-intro">
         Kies hoe je binnen Meridian wilt heten en wat je over jezelf wilt delen.
       </p>
-      <section className="member-profile-panel">
-        <h2>Je gegevens</h2>
-        <ProfileForm profile={profile ?? {}} email={user.email ?? ""} />
-      </section>
-      <section className="member-profile-panel">
-        <h2>Toegang tot je account</h2>
-        <p>
-          Gebruik een uniek wachtwoord. Via een e-mail aan jezelf kun je het
-          veilig opnieuw instellen.
-        </p>
-        <Link href="/wachtwoord-vergeten" className="member-secondary">
-          Wachtwoord herstellen
-        </Link>
-      </section>
+      <div className="member-profile-grid">
+        <section className="member-profile-panel">
+          <h2>Je gegevens</h2>
+          <ProfileForm profile={profile ?? {}} email={user.email ?? ""} />
+        </section>
+        <section className="member-profile-panel">
+          <h2>Toegang tot je account</h2>
+          <p>
+            Gebruik een uniek wachtwoord. Via een e-mail aan jezelf kun je het
+            veilig opnieuw instellen.
+          </p>
+          <Link href="/wachtwoord-vergeten" className="member-secondary">
+            Wachtwoord herstellen
+          </Link>
+        </section>
+      </div>
     </div>
   );
 }

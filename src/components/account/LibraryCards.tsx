@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { publicationHref } from "@/lib/members";
+import WorkspaceIcon from "./WorkspaceIcon";
 export default function LibraryCards({
   items,
 }: {
@@ -20,18 +21,27 @@ export default function LibraryCards({
           href={publicationHref(item.slug)}
           key={item.id}
         >
-          <div className="member-card-top">
-            <span className="member-eyebrow">
-              {item.kind === "text" ? "Tekst" : "Artikel"}
-            </span>
-            <span className="member-badge">
-              {item.audience === "selected" ? "Voor jou" : "Voor leden"}
-            </span>
+          <span
+            className={`workspace-feature-icon ${item.kind === "text" ? "orange" : "violet"}`}
+          >
+            <WorkspaceIcon name={item.kind === "text" ? "write" : "library"} />
+          </span>
+          <div>
+            <div className="member-card-top">
+              <span className="member-eyebrow">
+                {item.kind === "text" ? "Tekst" : "Artikel"}
+              </span>
+              <span
+                className={`member-badge${item.audience === "selected" ? " member-badge-personal" : ""}`}
+              >
+                {item.audience === "selected" ? "Voor jou" : "Voor leden"}
+              </span>
+            </div>
+            <h2>{item.title}</h2>
+            {item.summary && <p>{item.summary}</p>}
           </div>
-          <h2>{item.title}</h2>
-          {item.summary && <p>{item.summary}</p>}
-          <span className="member-card-link">
-            Lees verder <span aria-hidden="true">↗</span>
+          <span className="member-card-arrow">
+            <WorkspaceIcon name="arrow" />
           </span>
         </Link>
       ))}

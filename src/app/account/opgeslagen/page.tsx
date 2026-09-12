@@ -18,7 +18,6 @@ export default async function Page() {
   ]);
   return (
     <>
-      <p className="member-eyebrow">Voor later</p>
       <h1>Opgeslagen</h1>
       <p className="member-intro">
         De publicaties waar je naar terug wilt keren. Teksten waarvoor je geen

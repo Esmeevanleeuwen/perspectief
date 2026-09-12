@@ -1,4 +1,6 @@
 import Link from "next/link";
+import WorkspaceShell from "@/components/account/WorkspaceShell";
+import WorkspaceIcon from "@/components/account/WorkspaceIcon";
 import "@/app/member.css";
 export const metadata = { robots: { index: false, follow: false } };
 export default function AuthLayout({
@@ -7,39 +9,65 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="member-shell auth-shell">
-      <header className="member-header">
-        <Link href="/" className="member-brand">
-          MERIDIAN<span>Ruimte voor perspectief.</span>
-        </Link>
-        <Link href="/">← Terug naar de site</Link>
-      </header>
-      <div className="auth-grid">
-        <div className="auth-story">
-          <p className="member-eyebrow">Meer ruimte om te lezen</p>
-          <h2>
-            Een eigen plek.
-            <br />
-            Een breder perspectief.
-          </h2>
-          <p>
-            Met een gratis account vind je extra artikelen, teksten van de
-            redactie en publicaties die persoonlijk met jou worden gedeeld.
-          </p>
-          <div className="auth-benefits">
-            <span>
-              01 <strong>Lees verder</strong>
+    <WorkspaceShell
+      mode="welcome"
+      items={[
+        { href: "/artikelen", label: "Artikelen", icon: "library" },
+        { href: "/themas", label: "Thema’s", icon: "overview" },
+        { href: "/onderzoek", label: "Onderzoeken", icon: "research" },
+        { href: "/systeem", label: "Systeemkaart", icon: "globe" },
+      ]}
+    >
+      <div className="auth-workspace">
+        <div className="auth-main">{children}</div>
+        <aside
+          className="workspace-context auth-context"
+          aria-label="Over je account"
+        >
+          <p className="member-eyebrow">Met een gratis account</p>
+          <h2>Meer te ontdekken.</h2>
+          <div className="workspace-feature">
+            <span className="workspace-feature-icon violet">
+              <WorkspaceIcon name="library" />
             </span>
-            <span>
-              02 <strong>Bewaar voor later</strong>
-            </span>
-            <span>
-              03 <strong>Houd zelf de regie</strong>
-            </span>
+            <div>
+              <h3>Je eigen bibliotheek</h3>
+              <p>Extra artikelen en teksten, overzichtelijk bij elkaar.</p>
+            </div>
           </div>
-        </div>
-        {children}
+          <div className="workspace-feature">
+            <span className="workspace-feature-icon orange">
+              <WorkspaceIcon name="write" />
+            </span>
+            <div>
+              <h3>Persoonlijk gedeeld</h3>
+              <p>Lees wat de redactie speciaal voor jou klaarzet.</p>
+            </div>
+          </div>
+          <div className="workspace-feature">
+            <span className="workspace-feature-icon teal">
+              <WorkspaceIcon name="bookmark" />
+            </span>
+            <div>
+              <h3>Bewaren voor later</h3>
+              <p>Ga snel terug naar publicaties die je wilt onthouden.</p>
+            </div>
+          </div>
+          <div className="workspace-context-note">
+            <WorkspaceIcon name="lock" />
+            <div>
+              <strong>Jij bepaalt wat je deelt</strong>
+              <p>
+                Je profiel is standaard privé. Een pseudoniem gebruiken mag.
+              </p>
+            </div>
+          </div>
+          <Link href="/artikelen" className="workspace-context-link">
+            Eerst rondkijken
+            <WorkspaceIcon name="arrow" />
+          </Link>
+        </aside>
       </div>
-    </main>
+    </WorkspaceShell>
   );
 }
