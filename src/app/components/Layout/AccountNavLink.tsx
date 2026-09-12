@@ -1,24 +1,25 @@
-import Link from "next/link";
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import HeaderAccount from "./HeaderAccount";
 
-export default async function AccountNavLink() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key =
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!url || !key) {
-    return <Link href="/login">Inloggen</Link>;
+const isSignedIn = cache(async () => {
+  if (!isSupabaseConfigured()) return false;
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return Boolean(user && !user.is_anonymous);
+  } catch {
+    return false;
   }
+});
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return (
-    <Link href={user ? "/account" : "/login"}>
-      {user ? "Mijn Meridian" : "Inloggen"}
-    </Link>
-  );
+export default async function AccountNavLink({
+  variant = "header",
+}: {
+  variant?: "header" | "mobile";
+}) {
+  return <HeaderAccount signedIn={await isSignedIn()} variant={variant} />;
 }
