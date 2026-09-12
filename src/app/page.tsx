@@ -2,6 +2,7 @@ import ParticleHero from "@/app/components/homepage/ParticleHero";
 import OtherResearch, { type OtherResearchItem } from "@/app/components/homepage/OtherResearch";
 import FeaturedResearch from "@/app/components/homepage/FeaturedResearch";
 import FeaturedArticles from "@/app/components/homepage/FeaturedArticles";
+import CurrentDevelopments from "@/app/components/homepage/CurrentDevelopments";
 import { getDossiers } from "@/lib/dossier-network";
 import type { DossierSummary } from "@/lib/dossier-core";
 import { pageMetadata } from "@/components/dossiers/DossierUI";
@@ -87,6 +88,7 @@ export default async function Home() {
       <OtherResearch items={otherResearch} />
       <FeaturedResearch relatedDossiers={relatedDossiers} />
       <FeaturedArticles />
+      <CurrentDevelopments />
     </main>
   );
 }
