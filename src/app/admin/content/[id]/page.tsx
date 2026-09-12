@@ -120,7 +120,23 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
               {!sections?.length && <p className="rounded-sm border border-dashed border-[#102534]/18 p-6 text-center text-sm text-[#102534]/40">Nog geen leesblokken.</p>}
             </div>
 
-            <form action={addSection} className="mt-6 rounded-sm border border-dashed border-[#102534]/22 p-4 md:p-5"><input type="hidden" name="content_id" value={id} /><div className="flex items-center justify-between"><h3 className="font-serif text-2xl">Nieuw blok</h3><span className="text-xs text-[#102534]/35">Wordt onderaan toegevoegd</span></div><div className="mt-4 grid gap-4 md:grid-cols-2"><label className="grid gap-1.5 text-[0.68rem] font-medium">Type<select name="section_type" className={field}>{sectionTypes.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className="grid gap-1.5 text-[0.68rem] font-medium">Klein label<input name="eyebrow" className={field} /></label></div><label className="mt-4 grid gap-1.5 text-[0.68rem] font-medium">Titel<input name="title" className={field} /></label><label className="mt-4 grid gap-1.5 text-[0.68rem] font-medium">Inhoud<textarea name="body" rows={5} className={`${field} resize-y`} /></label><label className="mt-4 grid gap-1.5 text-[0.68rem] font-medium">Punten<textarea name="points" rows={3} className={`${field} resize-y`} /></label><div className="mt-4 flex justify-end"><button className="rounded-sm bg-[#102534] px-4 py-2.5 text-xs font-medium text-white">Blok toevoegen</button></div></form>
+            <details className="group mt-6">
+              <summary className="flex min-h-16 cursor-pointer list-none items-center justify-center gap-3 rounded-sm border border-dashed border-[#102534]/22 bg-[#fbfbfa] px-4 text-[#102534] transition hover:border-[#102534]/40 hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9a6748] [&::-webkit-details-marker]:hidden">
+                <span aria-hidden="true" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#102534] text-2xl font-light leading-none text-white transition-transform duration-200 group-open:rotate-45">+</span>
+                <span className="text-sm font-medium">Iets toevoegen</span>
+                <span className="hidden text-xs text-[#102534]/35 sm:inline">Nieuw leesblok</span>
+              </summary>
+
+              <form action={addSection} className="mt-3 rounded-sm border border-[#102534]/10 bg-[#fbfbfa] p-4 md:p-5">
+                <input type="hidden" name="content_id" value={id} />
+                <div className="flex items-center justify-between gap-4"><div><p className="text-[0.65rem] uppercase tracking-[0.16em] text-[#9a6748]">Toevoegen</p><h3 className="mt-1 font-serif text-2xl">Nieuw blok</h3></div><span className="text-xs text-[#102534]/35">Wordt onderaan toegevoegd</span></div>
+                <div className="mt-4 grid gap-4 md:grid-cols-2"><label className="grid gap-1.5 text-[0.68rem] font-medium">Type<select name="section_type" className={field}>{sectionTypes.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className="grid gap-1.5 text-[0.68rem] font-medium">Klein label<input name="eyebrow" className={field} /></label></div>
+                <label className="mt-4 grid gap-1.5 text-[0.68rem] font-medium">Titel<input name="title" className={field} /></label>
+                <label className="mt-4 grid gap-1.5 text-[0.68rem] font-medium">Inhoud<textarea name="body" rows={5} className={`${field} resize-y`} /></label>
+                <label className="mt-4 grid gap-1.5 text-[0.68rem] font-medium">Punten<textarea name="points" rows={3} className={`${field} resize-y`} /></label>
+                <div className="mt-4 flex justify-end"><button className="rounded-sm bg-[#102534] px-4 py-2.5 text-xs font-medium text-white">Blok toevoegen</button></div>
+              </form>
+            </details>
           </section>
         </div>
 
