@@ -14,6 +14,7 @@ export default function SiteShell({
 }) {
   const pathname = usePathname();
   const isAdmin =
+    pathname === "/design-review" ||
     pathname.startsWith("/admin") ||
     pathname.startsWith("/account") ||
     [
