@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { createPublicClient } from "@/lib/supabase/public";
+import { DOSSIER_CACHE_TAG, PUBLIC_CACHE_SECONDS } from "@/lib/public-cache";
 import { research } from "@/app/data/research";
 import { getArticlesForResearch } from "@/app/data/articles";
 import { pilotDossier } from "@/lib/pilot-dossier";
@@ -62,14 +64,15 @@ async function requestCore(params: Record<string, string>, tag: string): Promise
   try {
     const query = new URLSearchParams({ platform: PLATFORM, ...params });
     const response = await fetch(`${url}?${query.toString()}`, {
+      cache: "force-cache",
       headers: {
         Authorization: `Bearer ${key}`,
         apikey: key,
         Accept: "application/json",
       },
       next: {
-        revalidate: 300,
-        tags: ["dossier-core", tag],
+        revalidate: PUBLIC_CACHE_SECONDS,
+        tags: [DOSSIER_CACHE_TAG, tag],
       },
     });
 
@@ -349,11 +352,46 @@ export const getSource = cache(async (slug: string): Promise<SourceDocument | un
 });
 
 export const getArticleDossiers = cache(async (slug: string): Promise<DossierSummary[]> => {
+  if (!SLUG_PATTERN.test(slug)) return [];
   const href = `/artikelen/${encodeURIComponent(slug)}`;
-  const dossiers = await getDossiers();
-  const details = await Promise.all(dossiers.map((dossier) => getDossier(dossier.slug)));
+  try {
+    const supabase = createPublicClient([DOSSIER_CACHE_TAG]);
+    // Filter the published presentations in Postgres and join their public core
+    // in the same request. No catalogue or full dossier bundles are needed.
+    const { data, error } = await supabase
+      .from("dossier_presentations")
+      .select(`
+        title,summary,status_label,indexable,updated_at,state,article_links,
+        core:dossier_core_records!inner(
+          id,slug,title,summary,themes,shared_status,source_owner,updated_at,
+          views:dossier_presentations(platform,state)
+        )
+      `)
+      .eq("platform", PLATFORM)
+      .eq("state", "published")
+      .eq("core.visibility", "public")
+      .eq("core.views.state", "published")
+      // Pass JSON explicitly: the SDK otherwise treats JS arrays as Postgres arrays.
+      .contains("article_links", JSON.stringify([{ href }]))
+      .order("updated_at", { referencedTable: "core", ascending: false });
 
-  return details.filter(
-    (dossier): dossier is Dossier => Boolean(dossier?.articles.some((article) => article.href === href)),
-  );
+    if (error) throw error;
+    return (data ?? []).flatMap((value) => {
+      const view = object(value);
+      // Retain the same validation used by full dossier pages.
+      if (!(Array.isArray(view.article_links) ? view.article_links : [])
+        .some((link) => articleFromApi(link)?.href === href)) return [];
+      const core = object(view.core);
+      const summary = summaryFromApi({
+        core,
+        view,
+        available_on: (Array.isArray(core.views) ? core.views : [])
+          .map((item) => object(item).platform),
+      });
+      return summary ? [summary] : [];
+    });
+  } catch {
+    // Keep local/offline content available without recreating the network fan-out.
+    return localIndex.filter((dossier) => dossier.articles.some((article) => article.href === href));
+  }
 });

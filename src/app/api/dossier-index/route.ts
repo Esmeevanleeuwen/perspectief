@@ -1,6 +1,6 @@
 import { getDossiers } from "@/lib/dossier-network";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export async function GET() {
   const items = (await getDossiers())

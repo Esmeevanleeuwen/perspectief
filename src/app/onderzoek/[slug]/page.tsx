@@ -6,7 +6,7 @@ import { getPublishedContentBySlug, mediaPath, publicContentHref, relationOne } 
 import { getResearchBySlug } from "@/app/data/research";
 import { getArticlesForResearch } from "@/app/data/articles";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 type Props = { params: Promise<{ slug: string }> };
 
 type ChildRow = {

@@ -3,7 +3,7 @@ import { getDossiers, getDossier, getSources } from "@/lib/dossier-network";
 import { dossierPath, chapterPath, sourcePath, getTopics } from "@/lib/dossier-core";
 import { absoluteUrl, isPreview } from "@/lib/dossier-platforms";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (isPreview) return [];

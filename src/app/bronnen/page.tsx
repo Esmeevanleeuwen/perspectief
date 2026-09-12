@@ -8,7 +8,7 @@ import {
   styles,
 } from "@/components/dossiers/DossierUI";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 async function sourceReferences() {
   const dossiers = await Promise.all(

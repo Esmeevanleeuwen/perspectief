@@ -11,7 +11,7 @@ import {
   styles,
 } from "@/components/dossiers/DossierUI";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 type Props = { params: Promise<{ slug: string; chapter: string }> };
 
 export async function generateMetadata({ params }: Props) {

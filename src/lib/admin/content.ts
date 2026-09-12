@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 
 export type ContentSection = {
   id: string;
@@ -60,7 +60,7 @@ export function relationOne<T>(value: T | T[] | null | undefined): T | null {
 
 export async function getPublishedContentBySlug(slug: string, type?: string) {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     let query = supabase
       .from("content_items")
       .select(`
@@ -83,7 +83,7 @@ export async function getPublishedContentBySlug(slug: string, type?: string) {
 
 export async function getPublishedArticles() {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("content_items")
       .select("id,slug,title,eyebrow,subtitle,summary,hero_image,image_alt,published_at,updated_at,content_type,featured,featured_position,metadata,status")
@@ -100,7 +100,7 @@ export async function getPublishedArticles() {
 
 export async function getPublishedResearch() {
   try {
-    const supabase = await createClient();
+    const supabase = createPublicClient();
     const { data, error } = await supabase
       .from("content_items")
       .select("id,slug,title,eyebrow,subtitle,summary,hero_image,image_alt,published_at,updated_at,content_type,featured,featured_position,metadata,status")

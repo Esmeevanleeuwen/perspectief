@@ -9,7 +9,7 @@ import {
   pageMetadata,
 } from "@/components/dossiers/DossierUI";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export async function generateMetadata() {
   const dossiers = await getDossiers();

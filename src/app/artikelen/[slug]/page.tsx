@@ -4,7 +4,7 @@ import ContentSections from "@/components/content/ContentSections";
 import { getPublishedContentBySlug, mediaPath } from "@/lib/admin/content";
 import { articles } from "@/app/data/articles";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 type Props = { params: Promise<{ slug: string }> };
 
 function numberMeta(metadata: Record<string, unknown> | null, key: string) {

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { articles as staticArticles } from "@/app/data/articles";
 import { getPublishedArticles, mediaPath } from "@/lib/admin/content";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 export const metadata = {
   title: "Artikelen | Meridian",
   description: "Onderzoeken waarin gebeurtenissen, ervaringen en onderliggende structuren met elkaar worden verbonden.",

@@ -4,7 +4,7 @@ import { getDossiers } from "@/lib/dossier-network";
 import { getTopics } from "@/lib/dossier-core";
 import { Shell, Breadcrumbs, Cards, styles, pageMetadata } from "@/components/dossiers/DossierUI";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 type Props = { params: Promise<{ theme: string }> };
 
 async function loadTheme(slug: string) {

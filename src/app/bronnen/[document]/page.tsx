@@ -10,7 +10,7 @@ import {
   pageMetadata,
 } from "@/components/dossiers/DossierUI";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 type Props = { params: Promise<{ document: string }> };
 
 export async function generateMetadata({ params }: Props) {

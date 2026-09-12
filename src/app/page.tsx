@@ -6,7 +6,7 @@ import { getDossiers } from "@/lib/dossier-network";
 import type { DossierSummary } from "@/lib/dossier-core";
 import { pageMetadata } from "@/components/dossiers/DossierUI";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 export const metadata = pageMetadata(
   "Meridian — het verhaal achter de gebeurtenis",
   "Onderzoek maatschappelijke vragen via doorlopende dossiers, hoofdstukken, artikelen en bronnen.",

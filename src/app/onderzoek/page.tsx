@@ -2,7 +2,7 @@ import Link from "next/link";
 import { research as staticResearch } from "@/app/data/research";
 import { getPublishedResearch, mediaPath } from "@/lib/admin/content";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 export const metadata = {
   title: "Onderzoeken | Meridian",
   description: "Doorlopende Meridian-onderzoeken, opgebouwd uit vragen, bronnen, artikelen en zichtbare onzekerheid.",

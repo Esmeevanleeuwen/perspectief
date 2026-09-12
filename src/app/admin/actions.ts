@@ -1,10 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireEditorialUser } from "@/lib/admin/roles";
 import { makeSlug } from "@/lib/admin/slug";
 import { publicContentHref } from "@/lib/admin/content";
+import { DOSSIER_CACHE_TAG, PUBLIC_CONTENT_CACHE_TAG } from "@/lib/public-cache";
 
 const allowedSectionTypes = new Set([
   "paragraph","heading","intro","quote","stat","callout","graph","timeline","claim_cluster","source_list","perspective_cluster","void",
@@ -29,7 +30,14 @@ function lines(formData: FormData, key: string) {
   return text(formData, key).split("\n").map((item) => item.trim()).filter(Boolean);
 }
 
+function expirePublicContent() {
+  updateTag(PUBLIC_CONTENT_CACHE_TAG);
+  // Database triggers also update the shared dossier presentations and links.
+  updateTag(DOSSIER_CACHE_TAG);
+}
+
 function revalidateContent(contentType: string, slug: string) {
+  expirePublicContent();
   revalidatePath("/");
   revalidatePath("/artikelen");
   revalidatePath("/onderzoek");
@@ -200,6 +208,7 @@ export async function addSection(formData: FormData) {
     position: (last?.position ?? 0) + 10,
   });
 
+  expirePublicContent();
   revalidatePath(`/admin/content/${contentId}`);
 }
 
@@ -223,6 +232,7 @@ export async function updateSection(formData: FormData) {
     updated_at: new Date().toISOString(),
   }).eq("id", id);
 
+  expirePublicContent();
   revalidatePath(`/admin/content/${contentId}`);
   revalidatePath("/");
 }
@@ -232,6 +242,7 @@ export async function deleteSection(formData: FormData) {
   const id = text(formData, "section_id");
   const contentId = text(formData, "content_id");
   await supabase.from("content_sections").delete().eq("id", id);
+  expirePublicContent();
   revalidatePath(`/admin/content/${contentId}`);
   revalidatePath("/");
 }
@@ -253,6 +264,7 @@ export async function moveSection(formData: FormData) {
     await supabase.from("content_sections").update({ position: current.position }).eq("id", target.id);
   }
 
+  expirePublicContent();
   revalidatePath(`/admin/content/${contentId}`);
   revalidatePath("/");
 }

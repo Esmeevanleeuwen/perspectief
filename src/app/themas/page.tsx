@@ -3,7 +3,7 @@ import { getDossiers } from "@/lib/dossier-network";
 import { getTopics } from "@/lib/dossier-core";
 import { Shell, Breadcrumbs, styles, pageMetadata } from "@/components/dossiers/DossierUI";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export async function generateMetadata() {
   const dossiers = await getDossiers();
