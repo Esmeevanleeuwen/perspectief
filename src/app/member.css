@@ -1,6 +1,6 @@
 body:has(.member-shell) {
   margin: 0;
-  background: #fff;
+  background: #fffefc;
 }
 .member-shell,
 .member-admin {
@@ -9,7 +9,7 @@ body:has(.member-shell) {
   --line: #e6e9ef;
   --accent: #6651b8;
   color: var(--ink);
-  background: #fff;
+  background: #fffefc;
   font-family: var(--font-sans), Arial, sans-serif;
   font-size: 14px;
   line-height: 1.55;
@@ -65,7 +65,7 @@ body:has(.member-shell) {
   top: -100px;
   left: 20px;
   z-index: 100;
-  background: #fff;
+  background: #fffefc;
   padding: 10px;
 }
 .member-skip:focus {
@@ -88,7 +88,7 @@ body:has(.member-shell) {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: #fff;
+  background: #fffefc;
   border-bottom: 1px solid var(--line);
 }
 .workspace-brand {
@@ -172,7 +172,7 @@ body:has(.member-shell) {
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: #fffefc;
   z-index: 30;
   overflow-y: auto;
 }
@@ -307,7 +307,7 @@ body:has(.member-shell) {
   align-items: start;
 }
 .workspace-panel {
-  background: #fff;
+  background: #fffefc;
   border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
@@ -335,7 +335,7 @@ body:has(.member-shell) {
 }
 .workspace-context {
   min-width: 0;
-  background: #fff;
+  background: #fffefc;
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 20px;
@@ -433,7 +433,7 @@ body:has(.member-shell) {
   align-items: center;
   gap: 14px;
   padding: 16px;
-  background: #fff;
+  background: #fffefc;
   border: 1px solid var(--line);
   border-radius: 7px;
   text-decoration: none;
@@ -473,7 +473,7 @@ body:has(.member-shell) {
   background: #334354;
 }
 .member-secondary {
-  background: #fff;
+  background: #fffefc;
   color: var(--ink);
   border-color: #d8dee6;
 }
@@ -520,7 +520,7 @@ body:has(.member-shell) {
   border: 1px solid #d5dbe4;
   border-radius: 5px;
   padding: 9px 11px;
-  background: #fff;
+  background: #fffefc;
   color: var(--ink);
   min-height: 39px;
 }
@@ -597,7 +597,7 @@ body:has(.member-shell) {
   border: 1px solid var(--line);
   border-radius: 7px;
   padding: 18px;
-  background: #fff;
+  background: #fffefc;
   text-decoration: none !important;
   transition:
     border-color 0.15s,
@@ -665,7 +665,7 @@ body:has(.member-shell) {
 }
 .member-empty {
   border: 1px solid var(--line);
-  background: #fff;
+  background: #fffefc;
   border-radius: 7px;
   padding: 28px;
   margin: 16px 0;
@@ -688,7 +688,7 @@ body:has(.member-shell) {
   display: flex;
   align-items: end;
   gap: 12px;
-  background: #fff;
+  background: #fffefc;
   border: 1px solid var(--line);
   border-radius: 7px;
   padding: 14px;
@@ -713,7 +713,7 @@ body:has(.member-shell) {
   max-width: 880px;
   margin: 0 auto;
   padding: 28px 36px;
-  background: #fff;
+  background: #fffefc;
   border: 1px solid var(--line);
   border-radius: 8px;
 }
@@ -783,7 +783,7 @@ body:has(.member-shell) {
   border: 1px solid var(--line);
   border-radius: 9px;
   padding: 26px;
-  background: #fff;
+  background: #fffefc;
   box-shadow: 0 3px 10px #19232e03;
 }
 .auth-card h1 {
@@ -859,7 +859,7 @@ body:has(.member-shell) {
 .member-editor-settings {
   border: 1px solid var(--line);
   border-radius: 7px;
-  background: #fff;
+  background: #fffefc;
   padding: 20px;
   min-width: 0;
 }
@@ -953,7 +953,7 @@ body:has(.member-shell) {
   overflow: auto;
   border: 1px solid var(--line);
   border-radius: 7px;
-  background: #fff;
+  background: #fffefc;
 }
 .member-table {
   width: 100%;
@@ -1023,7 +1023,7 @@ body:has(.member-shell) {
   border: 1px solid var(--line);
   border-radius: 7px;
   padding: 22px;
-  background: #fff;
+  background: #fffefc;
 }
 .member-profile-panel h2 {
   font-size: 15px;
@@ -1035,7 +1035,7 @@ body:has(.member-shell) {
   margin: 0 0 18px;
 }
 .member-saved-row {
-  background: #fff;
+  background: #fffefc;
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 16px 20px;
