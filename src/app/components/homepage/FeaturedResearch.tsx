@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getFeaturedResearch } from "@/app/data/research";
+import { getFeaturedResearch as getStaticFeaturedResearch } from "@/app/data/research";
+import { getFeaturedResearch as getCmsFeaturedResearch, mediaPath } from "@/lib/admin/content";
 import styles from "./FeaturedResearch.module.css";
 
 export type FeaturedResearchDossierLink = {
@@ -12,9 +13,22 @@ type FeaturedResearchProps = {
   relatedDossiers?: FeaturedResearchDossierLink[];
 };
 
-export default function FeaturedResearch({ relatedDossiers = [] }: FeaturedResearchProps) {
-  const research = getFeaturedResearch();
+export default async function FeaturedResearch({ relatedDossiers = [] }: FeaturedResearchProps) {
+  const cmsResearch = await getCmsFeaturedResearch();
+  const staticResearch = getStaticFeaturedResearch();
+
+  const research = cmsResearch
+    ? {
+        slug: cmsResearch.slug,
+        title: cmsResearch.title,
+        summary: cmsResearch.summary ?? "",
+        image: mediaPath(cmsResearch.hero_image) ?? staticResearch?.image ?? "/onderzoek-tegenspraak.jpg",
+        imageAlt: cmsResearch.image_alt ?? staticResearch?.imageAlt ?? cmsResearch.title,
+      }
+    : staticResearch;
+
   if (!research) return null;
+  const isRemote = research.image.startsWith("http://") || research.image.startsWith("https://");
 
   return (
     <section className={styles.section} aria-labelledby="featured-research-title">
@@ -24,13 +38,17 @@ export default function FeaturedResearch({ relatedDossiers = [] }: FeaturedResea
           className={styles.imageLink}
           aria-label={`Open onderzoek: ${research.title}`}
         >
-          <Image
-            src={research.image}
-            alt={research.imageAlt}
-            fill
-            sizes="(max-width: 860px) 100vw, 48vw"
-            className={styles.image}
-          />
+          {isRemote ? (
+            <img src={research.image} alt={research.imageAlt} className={styles.image} />
+          ) : (
+            <Image
+              src={research.image}
+              alt={research.imageAlt}
+              fill
+              sizes="(max-width: 860px) 100vw, 48vw"
+              className={styles.image}
+            />
+          )}
         </Link>
 
         <div className={styles.copy}>

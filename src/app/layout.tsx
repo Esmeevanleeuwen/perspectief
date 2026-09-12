@@ -3,6 +3,7 @@ import { Inter, Newsreader } from "next/font/google";
 
 import SiteFooter from "@/app/components/Layout/SiteFooter";
 import SiteHeader from "@/app/components/Layout/SiteHeader";
+import SiteShell from "@/app/components/Layout/SiteShell";
 
 import "./globals.css";
 
@@ -32,9 +33,9 @@ export default function RootLayout({
   return (
     <html lang="nl">
       <body className={`${inter.variable} ${newsreader.variable}`}>
-        <SiteHeader />
-        {children}
-        <SiteFooter />
+        <SiteShell header={<SiteHeader />} footer={<SiteFooter />}>
+          {children}
+        </SiteShell>
       </body>
     </html>
   );

@@ -1,19 +1,46 @@
 import Link from "next/link";
 import PeopleField from "@/app/components/visuals/PeopleField";
-import { getFeaturedArticles } from "@/app/data/articles";
+import { getFeaturedArticles as getStaticFeaturedArticles } from "@/app/data/articles";
+import { getFeaturedArticles as getCmsFeaturedArticles, mediaPath } from "@/lib/admin/content";
 import styles from "./FeaturedArticles.module.css";
 
-export default function FeaturedArticles() {
-  const featuredArticles = getFeaturedArticles();
+function numberMeta(metadata: Record<string, unknown> | null, key: string) {
+  const value = metadata?.[key];
+  return typeof value === "number" ? value : 0;
+}
+
+function stringMeta(metadata: Record<string, unknown> | null, key: string) {
+  const value = metadata?.[key];
+  return typeof value === "string" ? value : "";
+}
+
+export default async function FeaturedArticles() {
+  const cmsArticles = await getCmsFeaturedArticles();
+  const cmsMain = cmsArticles.find((article) => article.featured_position === "main");
+
+  const featuredArticles = cmsMain
+    ? cmsArticles.map((article) => ({
+        slug: article.slug,
+        title: article.title,
+        description: article.summary ?? "",
+        image: mediaPath(article.hero_image) ?? "/artikelsad.jpg",
+        label: article.eyebrow ?? "ARTIKEL",
+        experiences: numberMeta(article.metadata, "experiences"),
+        experts: numberMeta(article.metadata, "experts"),
+        provinces: numberMeta(article.metadata, "provinces") || undefined,
+        date: stringMeta(article.metadata, "display_date"),
+        featuredPosition: article.featured_position,
+      }))
+    : getStaticFeaturedArticles();
+
   const mainArticle = featuredArticles.find((article) => article.featuredPosition === "main");
-  const sideArticles = featuredArticles.filter((article) => article.featuredPosition === "side");
+  const sideArticles = featuredArticles.filter((article) => article.featuredPosition === "side").slice(0, 2);
   if (!mainArticle) return null;
 
   return (
     <section id="artikelen" className={styles.section}>
       <div className={styles.container}>
         <div className={styles.journey}>
-  
           <div className={styles.peopleWrap}><PeopleField /></div>
         </div>
 
@@ -42,7 +69,7 @@ export default function FeaturedArticles() {
                   <span>{mainArticle.experiences} ervaringen</span>
                   <span>{mainArticle.experts} deskundigen</span>
                   {mainArticle.provinces && <span>{mainArticle.provinces} provincies</span>}
-                  <span>{mainArticle.date}</span>
+                  {mainArticle.date && <span>{mainArticle.date}</span>}
                 </div>
               </div>
             </div>
