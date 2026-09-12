@@ -37,10 +37,12 @@ export default function AuthForm({
   mode,
   next = "/account",
   notice,
+  enabled = true,
 }: {
   mode: Mode;
   next?: string;
   notice?: string;
+  enabled?: boolean;
 }) {
   const [state, action] = useActionState<FormState, FormData>(
     actions[mode],
@@ -59,6 +61,12 @@ export default function AuthForm({
             ? "Ga verder waar je gebleven bent."
             : "We helpen je weer toegang te krijgen tot je account."}
       </p>
+      {!enabled && (
+        <p role="status" className="member-notice">
+          Accounts zijn in deze omgeving tijdelijk niet beschikbaar. Probeer het
+          later opnieuw.
+        </p>
+      )}
       {notice && (
         <p className="member-notice" role="status">
           {notice}
@@ -74,7 +82,7 @@ export default function AuthForm({
           {state.success}
         </p>
       )}
-      {!state.success && (
+      {!state.success && enabled && (
         <form action={action} className="member-form">
           <input type="hidden" name="next" value={next} />
           {mode === "register" && (

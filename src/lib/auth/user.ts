@@ -1,9 +1,14 @@
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { safeNext } from "./paths";
 
 export const requireUser = cache(async (next = "/account") => {
+  if (!isSupabaseConfigured())
+    redirect(
+      `/login?error=unavailable&next=${encodeURIComponent(safeNext(next))}`,
+    );
   const supabase = await createClient();
   const {
     data: { user },

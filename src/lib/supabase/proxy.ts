@@ -11,6 +11,22 @@ export async function updateSession(request: NextRequest) {
   // Preview and local builds may intentionally run without Supabase.
   // In that case public pages use their checked local fallback content.
   if (!url || !key) {
+    if (
+      request.nextUrl.pathname.startsWith("/account") ||
+      request.nextUrl.pathname.startsWith("/admin")
+    ) {
+      const login = request.nextUrl.clone();
+      login.pathname = "/login";
+      login.search = "";
+      login.searchParams.set("error", "unavailable");
+      login.searchParams.set(
+        "next",
+        request.nextUrl.pathname + request.nextUrl.search,
+      );
+      return NextResponse.redirect(login, {
+        headers: { "Cache-Control": "private, no-store" },
+      });
+    }
     return response;
   }
 

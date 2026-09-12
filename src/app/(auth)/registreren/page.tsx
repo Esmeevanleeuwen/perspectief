@@ -1,3 +1,4 @@
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import AuthForm from "@/components/account/AuthForm";
 import { safeNext } from "@/lib/auth/paths";
 export default async function Page({
@@ -15,6 +16,11 @@ export default async function Page({
           ? "Controleer je e-mail om je account te bevestigen."
           : undefined;
   return (
-    <AuthForm mode="register" next={safeNext(query.next)} notice={notice} />
+    <AuthForm
+      enabled={isSupabaseConfigured()}
+      mode="register"
+      next={safeNext(query.next)}
+      notice={notice}
+    />
   );
 }

@@ -29,6 +29,8 @@ E-mailregistratie en e-mailbevestiging zijn ingeschakeld in het gekoppelde Supab
 3. De standaard `{{ .ConfirmationURL }}`-template werkt met de PKCE-callback in dezelfde browser. Voor bevestigen op een ander apparaat ondersteunt Meridian ook token-hash-links via `/auth/confirm?token_hash={{ .TokenHash }}&type=email` en herstel via `type=recovery`. Gebruik hiervoor een vaste, vertrouwde Meridian-origin in de betreffende template; houd rekening met de andere apps in het gedeelde project.
 4. Controleer de mailprovider/SMTP en doe vóór een brede uitrol een echte registratie en wachtwoordhersteltest met een eigen mailbox. SMTP-aflevering en de dashboardinstellingen voor toegestane redirects zijn niet via de beschikbare connector te verifiëren of te wijzigen.
 
+De Vercel-previewomgeving mist momenteel de Supabase-URL/key; de productieomgeving is wel gekoppeld. Voeg dezelfde openbare Supabase-URL/key ook aan de Preview-environment toe om daar accounts te testen. Zonder deze configuratie toont de UI een beschikbaarheidsmelding in plaats van een serverfout.
+
 Gebruik `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` of de bestaande `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Er is geen service-role-sleutel nodig in de applicatie.
 
 ## Database en verificatie
