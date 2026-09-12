@@ -1,15 +1,21 @@
 body:has(.member-shell) {
   margin: 0;
-  background: #fffefc;
+  background: var(--background);
 }
 .member-shell,
 .member-admin {
-  --ink: #19232e;
-  --muted: #65707e;
-  --line: #e6e9ef;
-  --accent: #6651b8;
+  /* Use the homepage background and ink; accents match its navigation and research sections. */
+  --ink: var(--foreground);
+  --muted: rgba(16, 37, 52, 0.68);
+  --line: rgba(16, 37, 52, 0.09);
+  --accent: #ad6540;
+  --paper: #fffefd;
+  --canvas: var(--background);
+  --soft: #faf9f6;
+  --accent-soft: rgba(184, 113, 69, 0.1);
+  --accent-line: rgba(184, 113, 69, 0.32);
   color: var(--ink);
-  background: #fffefc;
+  background: var(--paper);
   font-family: var(--font-sans), Arial, sans-serif;
   font-size: 14px;
   line-height: 1.55;
@@ -46,7 +52,7 @@ body:has(.member-shell) {
   text-decoration: underline;
 }
 .member-shell :focus-visible {
-  outline: 2px solid #7560c9;
+  outline: 2px solid #b87145;
   outline-offset: 3px;
 }
 .member-shell button {
@@ -65,7 +71,7 @@ body:has(.member-shell) {
   top: -100px;
   left: 20px;
   z-index: 100;
-  background: #fffefc;
+  background: var(--paper);
   padding: 10px;
 }
 .member-skip:focus {
@@ -88,7 +94,8 @@ body:has(.member-shell) {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: #fffefc;
+  background: rgba(252, 250, 247, 0.92);
+  backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--line);
 }
 .workspace-brand {
@@ -112,7 +119,7 @@ body:has(.member-shell) {
   line-height: 1;
 }
 .workspace-mark span {
-  color: #e89258;
+  color: #b87145;
   font-size: 16px;
   position: absolute;
   right: -4px;
@@ -136,7 +143,7 @@ body:has(.member-shell) {
   justify-content: center;
 }
 .workspace-icon-button:hover {
-  background: #f4f5f8;
+  background: var(--soft);
   border-color: var(--line);
 }
 .workspace-breadcrumb {
@@ -160,7 +167,7 @@ body:has(.member-shell) {
 }
 .workspace-top-actions > a:first-child:not(:last-child) {
   padding: 5px 10px;
-  background: #f4f5f8;
+  background: var(--soft);
   border: 1px solid var(--line);
   border-radius: 5px;
 }
@@ -172,7 +179,7 @@ body:has(.member-shell) {
   border-right: 1px solid var(--line);
   display: flex;
   flex-direction: column;
-  background: #fffefc;
+  background: var(--paper);
   z-index: 30;
   overflow-y: auto;
 }
@@ -197,16 +204,16 @@ body:has(.member-shell) {
   border-radius: 6px;
   font-size: 12px;
   text-decoration: none;
-  color: #56616f;
+  color: var(--muted);
 }
 .workspace-sidebar nav a:hover,
 .workspace-sidebar-footer > a:hover {
-  background: #f7f8fa;
+  background: var(--soft);
   color: var(--ink);
 }
 .workspace-sidebar nav a[aria-current="page"] {
-  background: #f0edfa;
-  color: #5f49ad;
+  background: var(--accent-soft);
+  color: var(--accent);
   font-weight: 600;
 }
 .workspace-sidebar-footer {
@@ -233,7 +240,7 @@ body:has(.member-shell) {
   display: inline-block;
   width: 6px;
   height: 6px;
-  background: #8070bd;
+  background: var(--accent);
   border-radius: 50%;
   margin-right: 7px;
 }
@@ -258,7 +265,7 @@ body:has(.member-shell) {
 }
 .workspace-content {
   min-width: 0;
-  background: #f8f9fc;
+  background: var(--canvas);
 }
 .workspace-content:focus {
   outline: none;
@@ -307,7 +314,7 @@ body:has(.member-shell) {
   align-items: start;
 }
 .workspace-panel {
-  background: #fffefc;
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 8px;
   overflow: hidden;
@@ -335,7 +342,7 @@ body:has(.member-shell) {
 }
 .workspace-context {
   min-width: 0;
-  background: #fffefc;
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 20px;
@@ -398,16 +405,16 @@ body:has(.member-shell) {
   flex-shrink: 0;
 }
 .workspace-feature-icon.violet {
-  background: #f0edfa;
-  color: #7861bf;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 .workspace-feature-icon.orange {
-  background: #fff0e6;
-  color: #b46a39;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 .workspace-feature-icon.teal {
-  background: #e8f4f1;
-  color: #3c8677;
+  background: rgba(16, 37, 52, 0.06);
+  color: var(--ink);
 }
 .workspace-feature h3 {
   margin: 0 0 5px;
@@ -433,7 +440,7 @@ body:has(.member-shell) {
   align-items: center;
   gap: 14px;
   padding: 16px;
-  background: #fffefc;
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 7px;
   text-decoration: none;
@@ -470,15 +477,15 @@ body:has(.member-shell) {
   color: #fff !important;
 }
 .member-button:hover {
-  background: #334354;
+  background: #172832;
 }
 .member-secondary {
-  background: #fffefc;
+  background: var(--paper);
   color: var(--ink);
-  border-color: #d8dee6;
+  border-color: rgba(16, 37, 52, 0.18);
 }
 .member-secondary:hover {
-  background: #f8f9fc;
+  background: var(--soft);
 }
 .member-danger {
   background: #963f3f;
@@ -517,10 +524,10 @@ body:has(.member-shell) {
   font: inherit;
   font-weight: 400;
   font-size: 13px;
-  border: 1px solid #d5dbe4;
+  border: 1px solid rgba(16, 37, 52, 0.2);
   border-radius: 5px;
   padding: 9px 11px;
-  background: #fffefc;
+  background: var(--paper);
   color: var(--ink);
   min-height: 39px;
 }
@@ -529,7 +536,7 @@ body:has(.member-shell) {
   line-height: 1.75;
 }
 .member-form input[readonly] {
-  background: #f7f8fb;
+  background: var(--soft);
   color: var(--muted);
 }
 .member-form input[type="checkbox"],
@@ -597,15 +604,15 @@ body:has(.member-shell) {
   border: 1px solid var(--line);
   border-radius: 7px;
   padding: 18px;
-  background: #fffefc;
+  background: var(--paper);
   text-decoration: none !important;
   transition:
     border-color 0.15s,
     background 0.15s;
 }
 .member-card:hover {
-  border-color: #b7abde;
-  background: #fdfcff;
+  border-color: var(--accent-line);
+  background: var(--soft);
 }
 .member-card h2 {
   font-size: 14px;
@@ -636,20 +643,20 @@ body:has(.member-shell) {
 .member-badge {
   display: inline-block;
   white-space: nowrap;
-  background: #f1f2f6;
-  color: #5c6472;
+  background: rgba(16, 37, 52, 0.06);
+  color: var(--muted);
   border-radius: 4px;
   padding: 2px 7px;
   font-size: 10px;
   font-weight: 500;
 }
 .member-badge-personal {
-  background: #f0edfa;
-  color: #6b51b2;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 .member-card-arrow {
   align-self: center;
-  color: #87909d;
+  color: rgba(16, 37, 52, 0.5);
 }
 .workspace-panel .member-cards {
   display: block;
@@ -665,7 +672,7 @@ body:has(.member-shell) {
 }
 .member-empty {
   border: 1px solid var(--line);
-  background: #fffefc;
+  background: var(--paper);
   border-radius: 7px;
   padding: 28px;
   margin: 16px 0;
@@ -688,7 +695,7 @@ body:has(.member-shell) {
   display: flex;
   align-items: end;
   gap: 12px;
-  background: #fffefc;
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 7px;
   padding: 14px;
@@ -713,7 +720,7 @@ body:has(.member-shell) {
   max-width: 880px;
   margin: 0 auto;
   padding: 28px 36px;
-  background: #fffefc;
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 8px;
 }
@@ -783,8 +790,8 @@ body:has(.member-shell) {
   border: 1px solid var(--line);
   border-radius: 9px;
   padding: 26px;
-  background: #fffefc;
-  box-shadow: 0 3px 10px #19232e03;
+  background: var(--paper);
+  box-shadow: 0 3px 10px rgba(16, 37, 52, 0.02);
 }
 .auth-card h1 {
   font-size: 25px;
@@ -859,7 +866,7 @@ body:has(.member-shell) {
 .member-editor-settings {
   border: 1px solid var(--line);
   border-radius: 7px;
-  background: #fffefc;
+  background: var(--paper);
   padding: 20px;
   min-width: 0;
 }
@@ -915,9 +922,9 @@ body:has(.member-shell) {
   margin: 10px 0;
 }
 .member-selected button {
-  border: 1px solid #d8ceed;
-  background: #f3effb;
-  color: #6550a4;
+  border: 1px solid var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent);
   border-radius: 5px;
   padding: 5px 8px;
   font-size: 10px;
@@ -953,7 +960,7 @@ body:has(.member-shell) {
   overflow: auto;
   border: 1px solid var(--line);
   border-radius: 7px;
-  background: #fffefc;
+  background: var(--paper);
 }
 .member-table {
   width: 100%;
@@ -964,7 +971,7 @@ body:has(.member-shell) {
 .member-table th {
   font-size: 10px;
   font-weight: 500;
-  background: #fafbfc;
+  background: var(--soft);
   color: var(--muted);
 }
 .member-table th,
@@ -976,7 +983,7 @@ body:has(.member-shell) {
   border-bottom: 0;
 }
 .member-table tbody tr:hover {
-  background: #fbfaff;
+  background: var(--soft);
 }
 .member-table td:first-child {
   min-width: 200px;
@@ -1023,7 +1030,7 @@ body:has(.member-shell) {
   border: 1px solid var(--line);
   border-radius: 7px;
   padding: 22px;
-  background: #fffefc;
+  background: var(--paper);
 }
 .member-profile-panel h2 {
   font-size: 15px;
@@ -1035,7 +1042,7 @@ body:has(.member-shell) {
   margin: 0 0 18px;
 }
 .member-saved-row {
-  background: #fffefc;
+  background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 6px;
   padding: 16px 20px;
