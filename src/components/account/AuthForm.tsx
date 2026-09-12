@@ -112,10 +112,11 @@ export default function AuthForm({
           )}
           {["login", "register", "password"].includes(mode) && (
             <>
-              <label>
-                Wachtwoord
+              <div>
+                <label htmlFor="auth-password">Wachtwoord</label>
                 <span className="password-field">
                   <input
+                    id="auth-password"
                     name="password"
                     type={show ? "text" : "password"}
                     autoComplete={
@@ -139,7 +140,7 @@ export default function AuthForm({
                     {show ? "Verberg" : "Toon"}
                   </button>
                 </span>
-              </label>
+              </div>
               {mode !== "login" && (
                 <>
                   <small id="password-help">

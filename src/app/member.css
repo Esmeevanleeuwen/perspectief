@@ -515,6 +515,7 @@ body:has(.member-shell) {
   font-size: 0.8rem;
 }
 .password-field {
+  margin-top: 7px;
   display: flex;
   position: relative;
 }
