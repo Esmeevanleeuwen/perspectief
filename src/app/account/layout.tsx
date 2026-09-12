@@ -1,30 +1,55 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireUser } from "@/lib/auth/user";
 import { signOut } from "@/app/(auth)/actions";
-
+import AccountNav from "@/components/account/AccountNav";
+import SubmitButton from "@/components/account/SubmitButton";
+import "@/app/member.css";
+export const dynamic = "force-dynamic";
+export const metadata = {
+  title: "Mijn Meridian",
+  robots: { index: false, follow: false },
+};
 export default async function AccountLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login");
-
+}: {
+  children: React.ReactNode;
+}) {
+  const { supabase, user } = await requireUser();
+  const { data } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const editorial = [
+    "owner",
+    "admin",
+    "editor",
+    "researcher",
+    "fact_checker",
+  ].includes(data?.role ?? "");
   return (
-    <main className="min-h-screen bg-[#f7f3ed] text-[#102534]">
-      <header className="border-b border-[#102534]/10">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5 px-6 py-6 md:px-10">
-          <Link href="/" className="font-serif text-2xl no-underline">Meridian</Link>
-          <nav className="flex gap-5 text-sm">
-            <Link href="/account">Overzicht</Link>
-            <Link href="/account/opgeslagen">Opgeslagen</Link>
-            <Link href="/account/profiel">Profiel & privacy</Link>
-            <form action={signOut}><button>Uitloggen</button></form>
-          </nav>
+    <main className="member-shell">
+      <a className="member-skip" href="#account-content">
+        Naar de inhoud
+      </a>
+      <header className="member-header">
+        <Link className="member-brand" href="/">
+          MERIDIAN<span>Jouw eigen perspectief.</span>
+        </Link>
+        <div className="member-header-actions">
+          <Link href="/artikelen">Ontdek Meridian ↗</Link>
+          {editorial && <Link href="/admin">Beheer</Link>}
+          <form action={signOut}>
+            <SubmitButton className="member-text-button">
+              Uitloggen
+            </SubmitButton>
+          </form>
         </div>
       </header>
-      {children}
+      <AccountNav />
+      <div id="account-content" className="member-container">
+        {children}
+      </div>
     </main>
   );
 }

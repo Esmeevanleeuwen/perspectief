@@ -14,5 +14,5 @@ export default async function Page({
         : query.message === "check_email"
           ? "Controleer je e-mail om je account te bevestigen."
           : undefined;
-  return <AuthForm mode="login" next={safeNext(query.next)} notice={notice} />;
+  return <AuthForm mode="reset" next={safeNext(query.next)} notice={notice} />;
 }

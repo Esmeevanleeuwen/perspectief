@@ -13,7 +13,16 @@ export default function SiteShell({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const isAdmin = pathname.startsWith("/admin");
+  const isAdmin =
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/account") ||
+    [
+      "/login",
+      "/registreren",
+      "/bevestigen",
+      "/wachtwoord-vergeten",
+      "/wachtwoord-instellen",
+    ].includes(pathname);
 
   if (isAdmin) return <>{children}</>;
 

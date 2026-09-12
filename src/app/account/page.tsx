@@ -1,41 +1,81 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-
-export default async function AccountPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  const [{ data: profile }, { count: savedCount }, { count: contributionCount }] =
-    await Promise.all([
-      supabase.from("profiles").select("display_name").eq("id", user!.id).single(),
-      supabase.from("saved_items").select("*", { count: "exact", head: true }).eq("user_id", user!.id),
-      supabase.from("contributions").select("*", { count: "exact", head: true }).eq("user_id", user!.id),
-    ]);
-
+import { requireUser } from "@/lib/auth/user";
+import { memberLibrary } from "@/lib/members";
+import LibraryCards from "@/components/account/LibraryCards";
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ password_updated?: string; error?: string }>;
+}) {
+  const { supabase, user } = await requireUser();
+  const [query, { data: profile }, library] = await Promise.all([
+    searchParams,
+    supabase
+      .from("profiles")
+      .select("display_name")
+      .eq("id", user.id)
+      .maybeSingle(),
+    memberLibrary(),
+  ]);
   return (
-    <div className="mx-auto max-w-7xl px-6 py-16 md:px-10">
-      <p className="text-xs uppercase tracking-[0.2em] text-[#9a6748]">Jouw Meridian</p>
-      <h1 className="mt-5 font-serif text-6xl tracking-[-0.04em]">
-        Welkom{profile?.display_name ? `, ${profile.display_name}` : ""}.
-      </h1>
-      <p className="mt-6 max-w-2xl text-[#102534]/55">
-        Niet een feed die leert wat je graag gelooft, maar een plek waar je terugkomt naar wat nog open staat.
-      </p>
-
-      <div className="mt-12 grid gap-px bg-[#102534]/10 md:grid-cols-3">
-        <Card href="/account/opgeslagen" title={`${savedCount ?? 0} opgeslagen`} text="Bewaar routes, bronnen en onderzoeken." />
-        <Card href="/account/profiel" title="Profiel & privacy" text="Bepaal zelf wat Meridian mag onthouden." />
-        <Card href="/admin" title={`${contributionCount ?? 0} bijdragen`} text="Voor beheerders en redactie: ga naar de beheeromgeving." />
+    <>
+      <section className="member-welcome">
+        <p className="member-eyebrow">Mijn Meridian</p>
+        <h1>
+          Welkom{profile?.display_name ? `, ${profile.display_name}` : ""}.
+        </h1>
+        <p>
+          Een plek om verder te lezen, nieuwe perspectieven te vinden en terug
+          te keren naar wat je wilt bewaren.
+        </p>
+        <Link href="/account/bibliotheek" className="member-button">
+          Open mijn bibliotheek →
+        </Link>
+      </section>
+      {query.password_updated && (
+        <p className="member-notice" role="status">
+          Je nieuwe wachtwoord is opgeslagen.
+        </p>
+      )}
+      {query.error === "signout" && (
+        <p className="member-notice member-error" role="alert">
+          Uitloggen lukte niet. Probeer het opnieuw.
+        </p>
+      )}
+      <div className="member-section-heading">
+        <div>
+          <p className="member-eyebrow">Voor jou beschikbaar</p>
+          <h2>Verder lezen</h2>
+        </div>
+        <Link href="/account/bibliotheek">Bekijk alles →</Link>
       </div>
-    </div>
-  );
-}
-
-function Card({ href, title, text }: { href: string; title: string; text: string }) {
-  return (
-    <Link href={href} className="min-h-52 bg-[#fcfaf7] p-7 text-inherit no-underline">
-      <h2 className="font-serif text-3xl">{title}</h2>
-      <p className="mt-4 text-sm text-[#102534]/50">{text}</p>
-    </Link>
+      {library.error ? (
+        <p className="member-notice member-error" role="alert">
+          Je bibliotheek kon niet worden geladen. Probeer de pagina opnieuw te
+          openen.
+        </p>
+      ) : library.data?.length ? (
+        <LibraryCards items={library.data.slice(0, 3)} />
+      ) : (
+        <div className="member-empty">
+          <h2>Je bibliotheek staat klaar.</h2>
+          <p>
+            Zodra de redactie een ledenartikel of een persoonlijke tekst
+            publiceert, vind je die hier.
+          </p>
+          <Link href="/artikelen">Ontdek de openbare artikelen →</Link>
+        </div>
+      )}
+      <div className="member-shortcuts">
+        <Link href="/account/opgeslagen">
+          <h2>Bewaar voor later</h2>
+          <p>Je opgeslagen ledenpublicaties op één plek.</p>
+        </Link>
+        <Link href="/account/profiel">
+          <h2>Jij houdt de regie</h2>
+          <p>Beheer je naam, profiel en privacyvoorkeuren.</p>
+        </Link>
+      </div>
+    </>
   );
 }
