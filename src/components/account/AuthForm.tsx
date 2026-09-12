@@ -51,12 +51,27 @@ export default function AuthForm({
   const [show, setShow] = useState(false);
   const params = `?next=${encodeURIComponent(next)}`;
   return (
-    <section className="auth-card" aria-labelledby="auth-title">
-      <p className="member-eyebrow">Jouw Meridian</p>
+    <section className={`auth-card auth-${mode}`} aria-labelledby="auth-title">
+      {(mode === "login" || mode === "register") && (
+        <nav className="auth-tabs" aria-label="Accounttoegang">
+          <Link
+            href={"/login" + params}
+            aria-current={mode === "login" ? "page" : undefined}
+          >
+            Inloggen
+          </Link>
+          <Link
+            href={"/registreren" + params}
+            aria-current={mode === "register" ? "page" : undefined}
+          >
+            Account maken
+          </Link>
+        </nav>
+      )}
       <h1 id="auth-title">{titles[mode]}</h1>
       <p className="member-muted">
         {mode === "register"
-          ? "Lees meer, bewaar wat je raakt en vind de teksten die voor jou zijn klaargezet."
+          ? "Je bibliotheek, bewaarde artikelen en persoonlijke teksten op één plek."
           : mode === "login"
             ? "Ga verder waar je gebleven bent."
             : "We helpen je weer toegang te krijgen tot je account."}
@@ -144,7 +159,7 @@ export default function AuthForm({
               {mode !== "login" && (
                 <>
                   <small id="password-help">
-                    Minimaal 8 tekens. Een lange, unieke wachtzin werkt ook.
+                    Gebruik minimaal 8 tekens, of een lange wachtzin.
                   </small>
                   <label>
                     Herhaal wachtwoord
@@ -173,9 +188,6 @@ export default function AuthForm({
       <div className="auth-links">
         {mode === "login" ? (
           <>
-            <Link href={"/registreren" + params}>
-              Nog geen account? Maak er een aan
-            </Link>
             <Link href="/wachtwoord-vergeten">Wachtwoord vergeten?</Link>
             <Link href={"/bevestigen" + params}>
               Geen bevestigingsmail ontvangen?

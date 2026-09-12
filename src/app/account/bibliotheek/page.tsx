@@ -15,11 +15,9 @@ export default async function LibraryPage({
     `/account/bibliotheek?${new URLSearchParams({ q, pagina: String(n), voor: personal ? "jou" : "alle" })}`;
   return (
     <>
-      <p className="member-eyebrow">Jouw leesruimte</p>
       <h1>Mijn bibliotheek</h1>
       <p className="member-intro">
-        Extra artikelen voor leden en teksten die de redactie met jou heeft
-        gedeeld.
+        Artikelen voor leden en teksten die persoonlijk met je zijn gedeeld.
       </p>
       <form className="member-search" role="search">
         <label className="member-grow">
