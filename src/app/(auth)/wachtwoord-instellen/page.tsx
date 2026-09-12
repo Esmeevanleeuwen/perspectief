@@ -18,7 +18,7 @@ export default async function Page({
   return (
     <AuthForm
       enabled={isSupabaseConfigured()}
-      mode="register"
+      mode="password"
       next={safeNext(query.next)}
       notice={notice}
     />
