@@ -1,0 +1,34 @@
+/* Shared module appearance. Import via AdminModuleLayout; keep every selector admin-scoped. */
+.meridian-admin .admin-module {
+  --accent: var(--module-accent, #63469c);
+  --accent-soft: color-mix(in srgb, var(--accent) 10%, var(--paper));
+  --accent-line: color-mix(in srgb, var(--accent) 30%, var(--paper));
+  min-width: 0;
+}
+.meridian-admin .admin-module .member-button:hover { background: color-mix(in srgb, var(--accent) 85%, #000); border-color: var(--accent); }
+.meridian-admin .admin-module-content { min-width: 0; }
+.meridian-admin .admin-module-filter-bar { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.meridian-admin .admin-module-filter-bar label { min-width: min(150px, 100%); flex: 1 1 150px; }
+.meridian-admin .admin-module-filter-bar .member-grow { flex: 2 1 200px; }
+.meridian-admin .admin-module-filter-bar input,
+.meridian-admin .admin-module-filter-bar select { width: 100%; }
+.meridian-admin .admin-module-state { border-block: 1px solid var(--line); padding: 28px 0; color: var(--muted); font-size: 13px; }
+.meridian-admin .admin-module-state h2 { color: var(--ink); margin: 0 0 8px; }
+.meridian-admin .admin-module-state p { margin: 0 0 12px; }
+.meridian-admin .admin-module-table td { overflow-wrap: anywhere; }
+.meridian-admin .admin-module-table td:first-child { width: 35%; min-width: 180px; }
+.meridian-admin .admin-module-table .admin-row-actions { justify-content: flex-start; }
+@container (max-width: 760px) {
+  .meridian-admin .admin-module-table-wrap { overflow: visible; }
+  .meridian-admin .admin-module-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .meridian-admin .admin-module-table,
+  .meridian-admin .admin-module-table tbody { display: block; }
+  .meridian-admin .admin-module-table tr { display: grid; grid-template-columns: minmax(0, 1fr); padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .meridian-admin .admin-module-table tr:last-child { border-bottom: 0; }
+  .meridian-admin .admin-module-table td,
+  .meridian-admin .admin-module-table td:first-child { display: grid; grid-template-columns: minmax(90px, .4fr) minmax(0, 1fr); align-items: start; gap: 12px; padding: 7px 0; border: 0; min-width: 0; width: auto; }
+  .meridian-admin .admin-module-table td::before { content: attr(data-label); font-size: 11px; color: var(--muted); }
+}
+@media (pointer: coarse) {
+  .meridian-admin .admin-module-table a { min-height: 44px; display: inline-flex; align-items: center; }
+}
