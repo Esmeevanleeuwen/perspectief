@@ -124,7 +124,6 @@
   object-fit: contain;
   object-position: center;
   mix-blend-mode: normal;
-  filter: drop-shadow(0 10px 14px rgba(16, 37, 52, 0.035));
 }
 
 .shadow {
