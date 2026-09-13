@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import WritingMenu from "./WritingMenu";
 import type { WritingState } from "@/lib/admin/writing/model";
 
 export default function Collections({
@@ -8,32 +9,44 @@ export default function Collections({
   onCreate,
   onRename,
   onRemove,
-  onSession,
-  onRemoveSession,
 }: {
   state: WritingState;
   onSelect: (id: string) => void;
   onCreate: (name: string) => void;
   onRename: (id: string, name: string) => void;
   onRemove: (id: string) => void;
-  onSession: (id: string) => void;
-  onRemoveSession: (id: string) => void;
 }) {
   const [name, setName] = useState("");
   return (
-    <>
-      <p className="writing-label">Mijn schrijfwerk</p>
-      <nav className="writing-collections" aria-label="Collecties">
+    <WritingMenu
+      className="writing-folders"
+      ariaLabel="Kies een map"
+      label={
+        <>
+          {state.view.collection === "all"
+            ? "Alle teksten"
+            : state.view.collection === "inbox"
+              ? "Inbox"
+              : (state.collections.find((c) => c.id === state.view.collection)
+                  ?.name ?? "Alle teksten")}
+          <span aria-hidden="true">⌄</span>
+        </>
+      }
+    >
+      <p className="writing-label">Mappen</p>
+      <nav className="writing-collections" aria-label="Mappen">
         <button
           type="button"
           aria-pressed={state.view.collection === "all"}
+          data-close-menu
           onClick={() => onSelect("all")}
         >
-          Alles
+          Alle teksten
         </button>
         <button
           type="button"
           aria-pressed={state.view.collection === "inbox"}
+          data-close-menu
           onClick={() => onSelect("inbox")}
         >
           Inbox <span>Nog niet ingedeeld</span>
@@ -43,13 +56,14 @@ export default function Collections({
             <button
               type="button"
               aria-pressed={state.view.collection === c.id}
+              data-close-menu
               onClick={() => onSelect(c.id)}
             >
               {c.name}
               <span>{c.items.length}</span>
             </button>
             <details>
-              <summary aria-label={`Beheer collectie ${c.name}`}>⋯</summary>
+              <summary aria-label={`Beheer map ${c.name}`}>⋯</summary>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -72,7 +86,7 @@ export default function Collections({
                 </label>
                 <button type="submit">Hernoemen</button>
                 <button type="button" onClick={() => onRemove(c.id)}>
-                  Collectie opheffen
+                  Map opheffen
                 </button>
                 <small>De stukken blijven bewaard.</small>
               </form>
@@ -81,13 +95,16 @@ export default function Collections({
         ))}
       </nav>
       <details className="writing-add">
-        <summary>+ Nieuwe collectie</summary>
+        <summary>+ Nieuwe map</summary>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             if (!name.trim()) return;
             onCreate(name.trim());
             setName("");
+            e.currentTarget
+              .closest("details.writing-popup")!
+              .removeAttribute("open");
             e.currentTarget.closest("details")!.open = false;
           }}
         >
@@ -103,29 +120,6 @@ export default function Collections({
           <button type="submit">Aanmaken</button>
         </form>
       </details>
-      <p className="writing-label writing-separated">Bewaarde sessies</p>
-      <div className="writing-sessions">
-        {state.sessions.map((s) => (
-          <div className="writing-session" key={s.id}>
-            <button type="button" onClick={() => onSession(s.id)}>
-              {s.name}
-              <span>{s.view.tabs.length}</span>
-            </button>
-            <button
-              type="button"
-              aria-label={`Verwijder sessie ${s.name}`}
-              onClick={() => onRemoveSession(s.id)}
-            >
-              ×
-            </button>
-          </div>
-        ))}
-      </div>
-      {!state.sessions.length && (
-        <p className="writing-hint">
-          Bewaar je open tabbladen als sessie om later verder te gaan.
-        </p>
-      )}
-    </>
+    </WritingMenu>
   );
 }

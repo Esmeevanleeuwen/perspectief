@@ -2,6 +2,16 @@
 
 De route `/admin/content` gebruikt de bestaande layout van Meridian Beheer. Header, zijbalk, broodkruimel, kleuren en lettertypes komen uit dezelfde admincomponenten. De werkplek vult de inhoud van `PublicationsModule.tsx`.
 
+## Werken vanuit je teksten
+
+De basis volgt het gebruik van een notitie-app: kies een map, herken een tekst in de lijst en open hem om verder te schrijven. Op een breed scherm staan lijst en tekst naast elkaar. Onder 700px beschikbare inhoudsbreedte zie je één van beide. **Terug naar lijst** bewaart je zoekopdracht, lijstpagina en scrollpositie. Elke geopende tekst onthoudt ook zijn eigen scrollpositie tijdens dit paginabezoek.
+
+De mapkiezer staat boven de lijst. **＋** opent een nieuwe privénotitie in het schrijfvlak. De titel mag later. Onder **⋯** naast die knop staan open teksten, bewaarde sessies en de bestaande actie om een publicatie aan te maken. Filters klappen onder het zoekveld open.
+
+Bij de geopende tekst blijft opslaan zichtbaar. De tekst groeit mee met de inhoud; losse secties hebben geen eigen scrollvak. Onder **⋯** bij de tekst staan mappen, koppelingen, alleen het schrijfvlak tonen en publicatie-instellingen. Een bestaande koppeling opent de andere tekst; **Ernaast** kiest bewust voor vergelijken. Ook vanuit **⋯** op een rij in de lijst kun je een tweede stuk ernaast openen.
+
+Alle bestaande collecties, sessies, teksten en rechten blijven bruikbaar. In de interface heten collecties nu mappen; de opgeslagen structuur blijft hetzelfde en een tekst kan nog steeds in meer dan één map staan.
+
 ## Welke bouwsteen pas je aan?
 
 De componenten staan in `src/components/admin/publications/workspace/`.
@@ -11,13 +21,15 @@ De componenten staan in `src/components/admin/publications/workspace/`.
 | Samenstellen van Publicaties | `../PublicationsModule.tsx` | Titel, acties, gedeelde modulelayout en de gegevenscomponent |
 | Gegevens ophalen bij openen | `WritingWorkspaceData.tsx` | Controleert toegang en laadt de bewaarde werkplek, eerste lijstpagina en geselecteerde stukken |
 | Gedrag van de werkplek | `WritingWorkspace.tsx` | Verbindt gebruikershandelingen met de losse onderdelen |
-| Indeling | `WorkspaceLayout.tsx` | Benoemde plekken voor navigatie, tabbladen, lijst, schrijfvlak, tweede stuk en meldingen |
+| Indeling | `WorkspaceLayout.tsx` | Benoemde plekken voor lijstkop, lijst, schrijfvlak, tweede stuk en meldingen; bewaart scrollposities |
 | Uiterlijk | `workspace.css` | Gebruikt bestaande adminvariabelen zoals `--paper`, `--ink`, `--line` en `--accent` |
-| Collecties en sessies | `Collections.tsx` | Handmatig indelen, hernoemen, opheffen en sessies heropenen |
-| Open stukken | `DocumentTabs.tsx` | Wisselen, sluiten en tabbladen als sessie bewaren |
+| Mapkiezer | `Collections.tsx` | Handmatige mappen kiezen, aanmaken, hernoemen en opheffen |
+| Open stukken en sessies | `DocumentTabs.tsx` | Wisselen, sluiten, als sessie bewaren en heropenen, onder het menu bij de lijst |
 | Zoeken en selecteren | `WritingList.tsx` | Titel/tekst zoeken, type, status, homepagefilter en pagina's |
 | Schrijven | `DocumentEditor.tsx` | Titel, samenvatting en tekstsecties bewerken; opslaan, koppelen en indelen |
 | Stuk ernaast | `ReferencePane.tsx` | Lezen en vergelijken terwijl het schrijfvlak beschikbaar blijft |
+| Uitklapmenu | `WritingMenu.tsx` | Native uitklapbediening met sluiten via Escape of buiten het menu klikken |
+| Meegroeiende tekst | `WritingText.tsx` | Past de hoogte van een tekstveld aan de inhoud en breedte aan |
 | Snel vastleggen | `QuickCapture.tsx` | Een privénotitie maken zonder eerst publicatiegegevens te kiezen |
 | Indeling bewaren | `useWritingSpace.ts` | Schrijft wijzigingen na een korte pauze, in volgorde en met versiecontrole |
 | Open teksten en wijzigingen | `useWritingDocuments.ts` | Laadt stukken, bewaart lokale bewerkingen en verwerkt opslaan |
@@ -53,7 +65,7 @@ De indeling wordt automatisch onder je account bewaard. Teksten hebben een eigen
 
 Verder typen tijdens het opslaan is mogelijk. Het antwoord van de eerdere opslag overschrijft die nieuwe aanslagen niet. Bij een andere opgeslagen versie stopt het opslaan voordat er gegevens worden gewijzigd. Je kunt de nieuwste versie ernaast lezen. **Verder met deze opgeslagen versie** vraagt bevestiging voordat het lokale schrijfvlak wordt vervangen.
 
-Artikeltekst en secties worden samen in één transactie opgeslagen. Bestaande sectietypes, aanvullende blokgegevens, afbeeldingen, slug, status en homepage-instellingen blijven behouden. Nieuwe secties worden als alineablokken achteraan toegevoegd. Overige blokinstellingen en publicatiebeheer blijven bereikbaar via **Instellingen**.
+Artikeltekst en secties worden samen in één transactie opgeslagen. Bestaande sectietypes, aanvullende blokgegevens, afbeeldingen, slug, status en homepage-instellingen blijven behouden. Nieuwe secties worden als alineablokken achteraan toegevoegd. Overige blokinstellingen en publicatiebeheer blijven bereikbaar via **Publicatie-instellingen**.
 
 Een mislukte opslag wordt zichtbaar gemeld. Niet opgeslagen tekst blijft in het geopende schrijfvlak; bij het verlaten of verversen van de pagina waarschuwt de browser. Dit is geen offline editor: sla je tekst op voordat je de werkplek verlaat. Bij een verlopen sessie kan opnieuw inloggen nodig zijn.
 
@@ -70,4 +82,4 @@ npm run test:workspace
 npm run build
 ```
 
-De databasetests voeren de echte migratie uit in een tijdelijke PostgreSQL-omgeving met RLS en afzonderlijke gebruikers. De React-tests gebruiken de echte componenten met testantwoorden voor de serveracties. Ze wijzigen geen productieartikelen. De live database is apart gecontroleerd op de nieuwe tabellen, RLS en uitvoerrechten. Voor een visuele controle van jouw ingelogde beheeromgeving is jouw eigen sessie nodig.
+De databasetests voeren de echte migratie uit in een tijdelijke PostgreSQL-omgeving met RLS en afzonderlijke gebruikers. De React-tests gebruiken de echte componenten met testantwoorden voor de serveracties. Ze controleren ook de lijst/tekst-navigatie, zoekopdracht- en scrollbehoud en het sluiten van menu’s met Escape. Ze wijzigen geen productieartikelen. De live database is apart gecontroleerd op de nieuwe tabellen, RLS en uitvoerrechten. Voor een visuele controle van jouw ingelogde beheeromgeving is jouw eigen sessie nodig.

@@ -31,6 +31,7 @@ export default function QuickCapture({
       className="writing-capture"
       onSubmit={async (e) => {
         e.preventDefault();
+        if (saving) return;
         setSaving(true);
         setError("");
         try {
@@ -49,14 +50,16 @@ export default function QuickCapture({
       }}
     >
       <div className="writing-row">
-        <h2>Idee vastleggen</h2>
+        <span className="writing-muted">Nieuwe privénotitie</span>
         <button type="button" onClick={onClose} disabled={saving}>
           Sluiten
         </button>
       </div>
       <label>
-        Titel <span className="writing-muted">· mag later</span>
+        <span className="writing-visually-hidden">Titel · mag later</span>
         <input
+          className="writing-capture-title"
+          placeholder="Titel"
           value={title}
           onChange={(e) => {
             setTitle(e.target.value);
@@ -66,7 +69,7 @@ export default function QuickCapture({
         />
       </label>
       <label>
-        Gedachte
+        <span className="writing-visually-hidden">Gedachte</span>
         <textarea
           ref={textarea}
           value={body}
@@ -74,7 +77,8 @@ export default function QuickCapture({
             setBody(e.target.value);
             onDirty(!!(e.target.value || title));
           }}
-          rows={4}
+          rows={14}
+          placeholder="Begin met schrijven…"
           maxLength={200000}
           required
         />
@@ -91,7 +95,7 @@ export default function QuickCapture({
           </label>
         )}
         <button className="member-button" disabled={saving} type="submit">
-          {saving ? "Opslaan…" : "Bewaar in inbox"}
+          {saving ? "Opslaan…" : "Tekst bewaren"}
         </button>
       </div>
       {error && <p role="alert">{error}</p>}

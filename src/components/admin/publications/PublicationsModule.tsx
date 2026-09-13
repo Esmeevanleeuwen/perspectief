@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import AdminModuleLayout from "../modules/AdminModuleLayout";
 import AdminModuleState from "../modules/AdminModuleState";
 import AdminPageHeading from "../AdminPageHeading";
-import PublicationActions from "./PublicationActions";
 import PublicationNotice from "./PublicationNotice";
 import WritingWorkspaceData from "./workspace/WritingWorkspaceData";
 import type { PublicationFilters as Filters } from "@/lib/admin/publications/model";
@@ -21,10 +20,8 @@ export default function PublicationsModule({
       header={
         <AdminPageHeading
           title="Publicaties"
-          description="Verzamel je schrijfwerk, leg verbanden en werk je publicaties uit."
-        >
-          <PublicationActions />
-        </AdminPageHeading>
+          description="Je teksten, op één plek."
+        />
       }
       notice={<PublicationNotice deleted={deleted} />}
     >
