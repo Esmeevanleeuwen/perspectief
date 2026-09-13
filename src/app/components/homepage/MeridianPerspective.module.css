@@ -107,6 +107,7 @@
   height: 520px;
   justify-self: center;
   isolation: isolate;
+  mix-blend-mode: multiply;
 }
 
 .imageWrap {

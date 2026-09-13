@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import lungsImage from "../../../../public/meridian-lungs.png";
 
 import styles from "./MeridianPerspective.module.css";
 
@@ -56,11 +57,11 @@ export default function MeridianPerspective() {
 
           <div className={styles.imageWrap}>
             <Image
-              src="/meridian-lungs.png"
+              src={lungsImage}
               alt=""
               fill
               priority
-              sizes="(max-width: 900px) 78vw, 44vw"
+              sizes="(max-width: 540px) 250px, (max-width: 820px) 300px, 340px"
               className={styles.image}
             />
           </div>

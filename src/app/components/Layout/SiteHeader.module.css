@@ -139,16 +139,27 @@
 .shell .registerButton:hover {
   background: #f4eee7;
 }
-.shell .accountButton {
-  min-height: 36px;
-  padding: 0 10px;
-  gap: 6px;
+.shell .loginButton.accountButton {
+  position: relative;
+  flex: 0 0 auto;
+  width: fit-content;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0 8px;
+  gap: 5px;
+  border-color: rgba(16, 37, 52, 0.18);
   border-radius: 5px;
+  background: transparent;
+  color: #102534;
   font-size: 11px;
 }
+.shell .loginButton.accountButton:hover {
+  background: rgba(16, 37, 52, 0.04);
+  border-color: rgba(16, 37, 52, 0.32);
+}
 .accountButton svg {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
 }
 .accountLoading {
   display: inline-flex;
@@ -355,6 +366,13 @@
   }
   .mobileAccountButtons {
     grid-template-columns: 1fr;
+  }
+}
+@media (pointer: coarse) {
+  .accountButton::before {
+    content: "";
+    position: absolute;
+    inset: -6px 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
