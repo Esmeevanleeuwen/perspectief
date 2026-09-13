@@ -1,6 +1,11 @@
 name: Update shared Olympus workspace
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/sync-olympus-workspace.yml
+      - scripts/sync-workspace-ui.mjs
   schedule:
     - cron: '7,22,37,52 * * * *'
   workflow_dispatch:
