@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AdminPageHeading from "@/components/admin/AdminPageHeading";
 import { requireMemberAdmin } from "@/lib/auth/user";
 import { pageNumber, publicationFields, publicationHref } from "@/lib/members";
 export default async function Page({
@@ -29,18 +30,9 @@ export default async function Page({
     `/admin/ledencontent?${new URLSearchParams({ q, status: query.status ?? "", pagina: String(n) })}`;
   return (
     <>
-      <div className="member-section-heading">
-        <div>
-          <p className="member-eyebrow">Account & redactie</p>
-          <h1>Ledenpublicaties</h1>
-          <p>
-            Artikelen voor alle leden en teksten voor specifieke gebruikers.
-          </p>
-        </div>
-        <Link href="/admin/ledencontent/nieuw" className="member-button">
-          + Nieuwe publicatie
-        </Link>
-      </div>
+      <AdminPageHeading title="Ledenpublicaties" description="Artikelen voor alle leden en teksten voor specifieke gebruikers.">
+        <Link href="/admin/ledencontent/nieuw" className="member-button">+ Nieuwe publicatie</Link>
+      </AdminPageHeading>
       {query.deleted && (
         <p role="status" className="member-notice">
           De publicatie is verwijderd.
@@ -98,7 +90,7 @@ export default async function Page({
                       </small>
                     </td>
                     <td>
-                      <span className="member-badge">
+                      <span className="admin-status" data-status={item.status}>
                         {item.status === "published"
                           ? "Gepubliceerd"
                           : "Concept"}

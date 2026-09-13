@@ -1,0 +1,133 @@
+/* Admin-only presentation. The public site and member workspace keep their own styles. */
+body:has(.meridian-admin) { margin: 0; background: #fffefc; }
+.meridian-admin,
+.meridian-admin .member-admin {
+  --ink: #24272c;
+  --muted: #686b71;
+  --line: #e8e7e3;
+  --accent: #63469c;
+  --paper: #fffefc;
+  --canvas: #fffefc;
+  --soft: #f6f4f1;
+  --accent-soft: #efebf8;
+  --accent-line: #d5c8ed;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.meridian-admin *,
+.meridian-admin *::before,
+.meridian-admin *::after { box-sizing: border-box; }
+.meridian-admin .meridian-admin-main { container-type: inline-size; }
+.meridian-admin .workspace-admin-content > div,
+.meridian-admin .member-admin { padding: 0; }
+.meridian-admin .admin-page { min-width: 0; }
+.meridian-admin .meridian-admin-main h1 {
+  margin: 0 0 8px;
+  font: 500 25px/1.25 Arial, Helvetica, sans-serif;
+  letter-spacing: -.035em;
+  overflow-wrap: anywhere;
+}
+.meridian-admin .meridian-admin-main h2,
+.meridian-admin .meridian-admin-main legend {
+  font: 500 16px/1.4 Arial, Helvetica, sans-serif;
+  letter-spacing: 0;
+}
+.meridian-admin .meridian-admin-main h3 { font: 500 14px/1.4 Arial, Helvetica, sans-serif; }
+.meridian-admin .meridian-admin-main a { text-underline-offset: 4px; }
+.meridian-admin .meridian-admin-main a:hover { text-decoration: underline; }
+.meridian-admin :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.meridian-admin button { cursor: pointer; }
+.meridian-admin button:disabled { cursor: wait; opacity: .6; }
+.meridian-admin .admin-page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+.meridian-admin .admin-page-heading > div { min-width: 0; }
+.meridian-admin .admin-page-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+.meridian-admin .admin-page-heading > a { flex-shrink: 0; }
+.meridian-admin .admin-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.meridian-admin .admin-section-heading h2 { margin: 0; font-size: 14px; }
+.meridian-admin .admin-section-heading > a { color: var(--muted); font-size: 12px; }
+.meridian-admin .member-button { background: var(--accent); border-color: var(--accent); font-weight: 500; }
+.meridian-admin .member-button:hover { background: #533885; border-color: #533885; }
+.meridian-admin .member-secondary { border-color: var(--line); font-weight: 500; }
+.meridian-admin .member-secondary:hover { background: var(--soft); }
+.meridian-admin .member-search {
+  margin: 0 0 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  flex-wrap: wrap;
+}
+.meridian-admin .admin-content-filters { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(120px, .5fr) minmax(150px, .6fr) auto; gap: 12px; align-items: end; }
+.meridian-admin .member-search input,
+.meridian-admin .member-search select,
+.meridian-admin .member-form input:not([type="checkbox"]),
+.meridian-admin .member-form textarea,
+.meridian-admin .member-form select { border-color: var(--line); border-radius: 6px; }
+.meridian-admin .member-search label { font-weight: 400; color: var(--muted); }
+.meridian-admin .admin-content-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.meridian-admin .admin-content-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 112px; align-items: center; gap: 12px 20px; padding: 19px 0; border-bottom: 1px solid var(--line); }
+.meridian-admin .admin-content-title { min-width: 0; }
+.meridian-admin .admin-content-title > a { font-size: 14px; font-weight: 500; color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+.meridian-admin .admin-content-title > a:hover { color: var(--accent); }
+.meridian-admin .admin-content-meta { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+.meridian-admin .admin-content-description { margin: 7px 0 0; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.meridian-admin .admin-status { display: inline-block; width: fit-content; border-radius: 4px; padding: 3px 8px; background: #f1efeb; color: #615e59; font-size: 11px; white-space: nowrap; }
+.meridian-admin .admin-status[data-status="published"] { background: #edf2ee; color: #41604a; }
+.meridian-admin .admin-row-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px 12px; font-size: 12px; }
+.meridian-admin .admin-row-actions a { color: var(--muted); }
+.meridian-admin .member-table-wrap { border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); border-radius: 0; }
+.meridian-admin .member-table th { background: transparent; font-size: 11px; padding-top: 12px; padding-bottom: 12px; }
+.meridian-admin .member-table td { padding-top: 18px; padding-bottom: 18px; font-size: 12px; }
+.meridian-admin .member-table :is(th, td):first-child { padding-left: 0; }
+.meridian-admin .member-table :is(th, td):last-child { padding-right: 0; }
+.meridian-admin .member-table strong { font-weight: 500; font-size: 14px; }
+.meridian-admin .member-empty { border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); border-radius: 0; padding: 30px 0; background: transparent; }
+.meridian-admin .member-empty h2 { margin: 0 0 8px; }
+.meridian-admin .member-empty p { margin: 0 0 12px; color: var(--muted); font-size: 13px; }
+.meridian-admin .member-notice { font-size: 13px; }
+.meridian-admin .admin-create { max-width: 840px; }
+.meridian-admin .admin-editor-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: 28px; }
+.meridian-admin .admin-editor-grid > *,
+.meridian-admin .admin-editor-grid form { min-width: 0; }
+.meridian-admin .member-editor { grid-template-columns: minmax(0, 1fr); }
+.meridian-admin .member-editor-main,
+.meridian-admin .member-editor-settings { background: var(--paper); border-color: var(--line); }
+.meridian-admin .member-section-heading { margin-top: 0; margin-bottom: 28px; }
+.meridian-admin .os-brand { font-weight: 500; }
+.meridian-admin .os-brand small { font-size: 11px; }
+.meridian-admin .os-label { font-size: 11px; text-transform: none; letter-spacing: .02em; }
+.meridian-admin .os-nav-row:has([aria-current="page"]) { background: var(--accent-soft); border-radius: 6px; }
+.meridian-admin .os-settings label { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.meridian-admin .os-settings select { width: 100px; }
+.meridian-admin .os-footer .member-text-button { color: var(--muted); }
+@container (min-width: 1000px) {
+  .meridian-admin .admin-editor-grid { grid-template-columns: minmax(0, 1fr) 280px; }
+  .meridian-admin .admin-editor-aside { align-self: start; position: sticky; top: 90px; }
+  .meridian-admin .member-editor { grid-template-columns: minmax(0, 1fr) 280px; }
+}
+@container (max-width: 760px) {
+  .meridian-admin .admin-content-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .meridian-admin .admin-content-row { grid-template-columns: minmax(0, 1fr) auto; gap: 10px 14px; }
+  .meridian-admin .admin-row-actions { grid-column: 1 / -1; justify-content: flex-start; }
+}
+@container (max-width: 440px) {
+  .meridian-admin .admin-content-filters { grid-template-columns: minmax(0, 1fr); }
+  .meridian-admin .admin-content-row { grid-template-columns: minmax(0, 1fr); }
+  .meridian-admin .admin-row-actions { grid-column: auto; }
+  .meridian-admin .meridian-admin-main h1 { font-size: 23px; }
+}
+@media (pointer: coarse) {
+  .meridian-admin :is(button, .member-button, .member-secondary, .admin-row-actions a) { min-height: 44px; }
+  .meridian-admin .admin-row-actions a { display: inline-flex; align-items: center; }
+  .meridian-admin :is(input:not([type="checkbox"]), select, textarea) { font-size: 16px; }
+}

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AdminPageHeading from "@/components/admin/AdminPageHeading";
 import { requireMemberAdmin } from "@/lib/auth/user";
 import { pageNumber, type Member } from "@/lib/members";
 import "@/app/member.css";
@@ -20,11 +21,7 @@ export default async function Page({
     `/admin/gebruikers?${new URLSearchParams({ q, pagina: String(n) })}`;
   return (
     <div className="member-admin">
-      <p className="member-eyebrow">Accountbeheer</p>
-      <h1>Gebruikers</h1>
-      <p className="member-intro">
-        Zoek een account en zet direct een artikel of persoonlijke tekst klaar.
-      </p>
+      <AdminPageHeading title="Gebruikers" description="Zoek een account en zet een artikel of persoonlijke tekst klaar." />
       <form className="member-search">
         <label className="member-grow">
           Naam of e-mailadres

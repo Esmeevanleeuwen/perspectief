@@ -9,6 +9,7 @@ import WorkspaceIcon from "@/components/account/WorkspaceIcon";
 import "@/app/member.css";
 import "@olympus/workspace-ui/styles.css";
 import "./shared-sidebar.css";
+import "./admin.css";
 export default async function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {

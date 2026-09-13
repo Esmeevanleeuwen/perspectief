@@ -1,4 +1,6 @@
 import { requireMemberAdmin } from "@/lib/auth/user";
+import Link from "next/link";
+import AdminPageHeading from "@/components/admin/AdminPageHeading";
 import MemberEditor from "@/components/account/MemberEditor";
 import type { Member } from "@/lib/members";
 export default async function Page({
@@ -17,5 +19,12 @@ export default async function Page({
     });
     recipients = data ?? [];
   }
-  return <MemberEditor members={members ?? []} recipients={recipients} />;
+  return (
+    <>
+      <AdminPageHeading title="Nieuwe ledenpublicatie" description="Schrijf een artikel of tekst en kies wie deze mag lezen.">
+        <Link href="/admin/ledencontent" className="member-secondary">Alle ledenpublicaties</Link>
+      </AdminPageHeading>
+      <MemberEditor members={members ?? []} recipients={recipients} />
+    </>
+  );
 }
