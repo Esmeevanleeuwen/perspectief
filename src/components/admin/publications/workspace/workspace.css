@@ -1,0 +1,641 @@
+/* This workbench inherits Meridian Beheer's paper, typography and accent. */
+.meridian-admin .writing-workspace {
+  min-width: 0;
+  container-type: inline-size;
+  border-top: 1px solid var(--line);
+}
+.meridian-admin .writing-workspace button,
+.meridian-admin .writing-capture button {
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 7px 10px;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 34px;
+}
+.meridian-admin .writing-workspace button:hover,
+.meridian-admin .writing-capture button:hover {
+  background: var(--soft);
+}
+.meridian-admin .writing-workspace button:disabled,
+.meridian-admin .writing-capture button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+.meridian-admin .writing-workspace button[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+.meridian-admin .writing-workspace .member-button,
+.meridian-admin .writing-capture .member-button {
+  color: var(--paper);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.meridian-admin .writing-workspace input:not([type="checkbox"]),
+.meridian-admin .writing-workspace select,
+.meridian-admin .writing-workspace textarea,
+.meridian-admin .writing-capture input:not([type="checkbox"]),
+.meridian-admin .writing-capture textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 8px 10px;
+  background: var(--paper);
+  margin-top: 5px;
+}
+.meridian-admin .writing-workspace textarea,
+.meridian-admin .writing-capture textarea {
+  resize: vertical;
+  line-height: 1.75;
+}
+.meridian-admin .writing-workspace label,
+.meridian-admin .writing-capture label {
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 0;
+}
+.meridian-admin .writing-workspace input[type="checkbox"],
+.meridian-admin .writing-capture input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+.meridian-admin .writing-workspace summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 7px 0;
+}
+.meridian-admin .writing-workspace form {
+  display: grid;
+  gap: 9px;
+  min-width: 0;
+}
+.meridian-admin .writing-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  flex-wrap: wrap;
+}
+.meridian-admin .writing-view-controls {
+  display: flex;
+  gap: 4px;
+}
+.meridian-admin .writing-view-controls button {
+  border-color: transparent;
+}
+.meridian-admin .writing-body {
+  display: grid;
+  grid-template-columns: 155px minmax(0, 1fr);
+  border-block: 1px solid var(--line);
+}
+.meridian-admin .writing-navigation {
+  padding: 20px 12px 20px 0;
+  border-right: 1px solid var(--line);
+  min-width: 0;
+}
+.meridian-admin .writing-stage {
+  min-width: 0;
+}
+.meridian-admin .writing-label {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 0 0 9px;
+}
+.meridian-admin .writing-separated {
+  margin-top: 26px;
+}
+.meridian-admin .writing-collections {
+  display: grid;
+  gap: 5px;
+}
+.meridian-admin .writing-collections > button,
+.meridian-admin .writing-collection > button,
+.meridian-admin .writing-session > button:first-child {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  align-items: center;
+  overflow-wrap: anywhere;
+  padding: 8px;
+}
+.meridian-admin .writing-collections > button {
+  flex-wrap: wrap;
+}
+.meridian-admin .writing-collections span,
+.meridian-admin .writing-session span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.meridian-admin .writing-collection {
+  display: flex;
+  gap: 2px;
+  position: relative;
+  min-width: 0;
+}
+.meridian-admin .writing-collection > button {
+  min-width: 0;
+}
+.meridian-admin .writing-collection details > summary {
+  padding: 5px 7px;
+  list-style: none;
+}
+.meridian-admin .writing-collection details > form {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 220px;
+  z-index: 10;
+  background: var(--paper);
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.meridian-admin .writing-session {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  min-width: 0;
+}
+.meridian-admin .writing-session > button:first-child {
+  min-width: 0;
+}
+.meridian-admin .writing-session > button:last-child {
+  border: 0;
+  padding: 5px;
+  flex-shrink: 0;
+}
+.meridian-admin .writing-hint {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 12px 0 0;
+}
+.meridian-admin .writing-tabbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: var(--soft);
+  border-bottom: 1px solid var(--line);
+  padding: 6px 12px 0;
+  flex-wrap: wrap;
+}
+.meridian-admin .writing-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+.meridian-admin .writing-tab {
+  display: flex;
+  border-bottom: 2px solid transparent;
+  max-width: 230px;
+  min-width: 0;
+}
+.meridian-admin .writing-tab[data-active="true"] {
+  border-bottom-color: var(--accent);
+  background: var(--paper);
+}
+.meridian-admin .writing-tab button {
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  min-width: 0;
+  font-size: 11px;
+  padding: 8px;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+.meridian-admin .writing-tab button:last-child {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+.meridian-admin .writing-tab button[aria-pressed="true"] {
+  background: transparent;
+}
+.meridian-admin .writing-save-session {
+  position: relative;
+}
+.meridian-admin .writing-save-session form {
+  position: absolute;
+  z-index: 10;
+  right: 0;
+  top: 100%;
+  width: 230px;
+  padding: 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.meridian-admin .writing-panes {
+  display: grid;
+  grid-template-columns: minmax(210px, 0.8fr) minmax(0, 1.6fr);
+  min-height: 500px;
+}
+.meridian-admin .writing-list {
+  min-width: 0;
+  border-right: 1px solid var(--line);
+}
+.meridian-admin .writing-search {
+  padding: 18px 14px 6px;
+}
+.meridian-admin .writing-filter-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 9px;
+}
+.meridian-admin .writing-filter-row select {
+  font-size: 11px;
+  padding: 7px 4px;
+}
+.meridian-admin .writing-list-count {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 7px 14px 12px;
+}
+.meridian-admin .writing-list-item {
+  padding: 14px;
+  border-top: 1px solid var(--line);
+}
+.meridian-admin .writing-list-item[data-active="true"] {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 var(--accent);
+}
+.meridian-admin .writing-list-item .writing-item-open {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  min-height: 0;
+}
+.meridian-admin .writing-item-open strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.meridian-admin .writing-item-open > span {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 5px;
+  white-space: pre-line;
+}
+.meridian-admin .writing-item-meta {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 9px;
+}
+.meridian-admin .writing-item-meta button {
+  font-size: 11px;
+  padding: 3px 6px;
+  min-height: 28px;
+  background: transparent;
+}
+.meridian-admin .writing-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  flex-wrap: wrap;
+  padding: 16px 12px;
+  font-size: 11px;
+}
+.meridian-admin .writing-pagination button {
+  font-size: 11px;
+}
+.meridian-admin .writing-results.is-loading {
+  opacity: 0.55;
+}
+.meridian-admin .writing-document {
+  min-width: 0;
+  padding: 24px;
+}
+.meridian-admin .writing-editor-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.meridian-admin .writing-editor-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.meridian-admin .writing-editor-actions button {
+  font-size: 11px;
+}
+.meridian-admin .writing-memberships {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  margin: 0 0 20px;
+  border: 1px solid var(--line);
+}
+.meridian-admin .writing-workspace .writing-check,
+.meridian-admin .writing-capture .writing-check {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  color: var(--ink);
+}
+.meridian-admin .writing-workspace textarea.writing-title {
+  font-size: 23px;
+  line-height: 1.35;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  border: 0;
+  padding: 4px 0;
+  border-radius: 0;
+  margin-bottom: 16px;
+}
+.meridian-admin .writing-summary {
+  margin-bottom: 20px;
+}
+.meridian-admin .writing-section {
+  margin: 0 0 25px;
+}
+.meridian-admin .writing-workspace input.writing-section-title {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0 0 8px;
+}
+.meridian-admin .writing-section textarea {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  font-size: 14px;
+}
+.meridian-admin .writing-block-points {
+  font-size: 13px;
+}
+.meridian-admin .writing-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.meridian-admin .writing-save-row {
+  margin-top: 22px;
+}
+.meridian-admin .writing-save-status {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+  margin: 8px 0 0;
+}
+.meridian-admin .writing-connections {
+  border-top: 1px solid var(--line);
+  padding-top: 17px;
+  margin-top: 23px;
+}
+.meridian-admin .writing-connections h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.meridian-admin .writing-connections h3 span {
+  color: var(--muted);
+  margin-left: 8px;
+}
+.meridian-admin .writing-link {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+.meridian-admin .writing-link button:first-child {
+  border: 0;
+  padding: 7px 0;
+  color: var(--accent);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.meridian-admin .writing-link button:last-child {
+  font-size: 11px;
+  flex-shrink: 0;
+  border: 0;
+  color: var(--muted);
+}
+.meridian-admin .writing-connect-form {
+  margin-top: 14px;
+}
+.meridian-admin .writing-reference {
+  min-width: 0;
+  padding: 23px;
+  background: var(--soft);
+  border-left: 1px solid var(--line);
+}
+.meridian-admin .writing-reference h2 {
+  margin: 24px 0 18px;
+  font-size: 20px;
+  overflow-wrap: anywhere;
+}
+.meridian-admin .writing-reference h3 {
+  margin: 22px 0 9px;
+}
+.meridian-admin .writing-reference p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  font-size: 13px;
+}
+.meridian-admin .writing-muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+.meridian-admin .writing-footer {
+  padding: 13px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--muted);
+}
+.meridian-admin .writing-footer button {
+  font-size: 11px;
+  margin-left: 8px;
+}
+.meridian-admin .writing-empty {
+  padding: 24px 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.meridian-admin .writing-empty button {
+  display: block;
+  margin-top: 12px;
+}
+.meridian-admin .writing-error {
+  margin-top: 14px;
+  font-size: 12px;
+  border-left: 3px solid var(--accent);
+  padding: 4px 12px;
+}
+.meridian-admin .writing-capture {
+  padding: 20px;
+  border: 1px solid var(--line);
+  background: var(--soft);
+  margin: 0 0 20px;
+  display: grid;
+  gap: 12px;
+  border-radius: 6px;
+}
+.meridian-admin .writing-capture h2 {
+  margin: 0;
+}
+.meridian-admin .writing-capture[hidden] {
+  display: none;
+}
+.meridian-admin .writing-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.meridian-admin .writing-workspace[data-mode="focus"] .writing-body {
+  grid-template-columns: minmax(0, 1fr);
+}
+.meridian-admin .writing-workspace[data-mode="focus"] .writing-navigation,
+.meridian-admin .writing-workspace[data-mode="focus"] .writing-list,
+.meridian-admin .writing-workspace[data-mode="reference"] .writing-list {
+  display: none;
+}
+.meridian-admin .writing-workspace[data-mode="focus"] .writing-panes {
+  grid-template-columns: minmax(0, 1fr);
+}
+.meridian-admin .writing-workspace[data-mode="focus"] .writing-document {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 34px;
+}
+.meridian-admin .writing-workspace[data-mode="reference"] .writing-panes {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@container (max-width:900px) {
+  .meridian-admin .writing-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .meridian-admin .writing-navigation {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
+  }
+  .meridian-admin .writing-collections,
+  .meridian-admin .writing-sessions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .meridian-admin .writing-collections > button {
+    width: auto;
+  }
+  .meridian-admin .writing-collection > button {
+    width: auto;
+  }
+  .meridian-admin .writing-label {
+    margin-bottom: 5px;
+  }
+  .meridian-admin .writing-separated {
+    margin-top: 14px;
+  }
+  .meridian-admin .writing-add {
+    max-width: 300px;
+  }
+}
+@container (max-width:580px) {
+  .meridian-admin .writing-panes,
+  .meridian-admin .writing-workspace[data-mode="reference"] .writing-panes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .meridian-admin .writing-list {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .meridian-admin .writing-results {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .meridian-admin .writing-document {
+    padding: 22px 8px;
+  }
+  .meridian-admin .writing-reference {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 20px 14px;
+  }
+  .meridian-admin .writing-save-session form {
+    position: static;
+    width: min(230px, 100%);
+  }
+  .meridian-admin .writing-tabbar {
+    padding: 7px 0;
+  }
+  .meridian-admin .writing-tab {
+    max-width: 180px;
+  }
+  .meridian-admin .writing-link {
+    align-items: flex-start;
+  }
+  .meridian-admin .writing-workspace[data-mode="focus"] .writing-document {
+    padding: 22px 8px;
+  }
+}
+@media (pointer: coarse) {
+  .meridian-admin .writing-workspace button,
+  .meridian-admin .writing-workspace summary,
+  .meridian-admin .writing-workspace .writing-check,
+  .meridian-admin .writing-capture button {
+    min-height: 44px;
+  }
+  .meridian-admin .writing-workspace input:not([type="checkbox"]),
+  .meridian-admin .writing-workspace textarea,
+  .meridian-admin .writing-workspace select,
+  .meridian-admin .writing-capture input:not([type="checkbox"]),
+  .meridian-admin .writing-capture textarea {
+    font-size: 16px;
+  }
+}
