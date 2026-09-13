@@ -1,4 +1,5 @@
 "use client";
+import WritingMenu from "./WritingMenu";
 import {
   optionLabel,
   publicationTypes,
@@ -10,6 +11,13 @@ import {
   type WritingPage,
   type WritingView,
 } from "@/lib/admin/writing/model";
+
+const dateFormat = new Intl.DateTimeFormat("nl-NL", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "Europe/Amsterdam",
+});
 
 export default function WritingList({
   view,
@@ -38,61 +46,76 @@ export default function WritingList({
     <>
       <div className="writing-search">
         <label>
-          Zoek in je verzameling
+          <span className="writing-visually-hidden">
+            Zoek in je verzameling
+          </span>
           <input
             type="search"
             value={view.query}
             maxLength={100}
-            placeholder="Titel of tekst…"
+            placeholder="Zoeken"
             onChange={(e) => onFilters({ query: e.target.value })}
           />
         </label>
-        <div className="writing-filter-row">
-          <label>
-            Soort
-            <select
-              value={view.type}
-              onChange={(e) => onFilters({ type: e.target.value })}
-            >
-              <option value="">Alle soorten</option>
-              {publicationTypes.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-              <option value="note">Notitie</option>
-            </select>
-          </label>
-          <label>
-            Status
-            <select
-              value={view.status}
-              onChange={(e) => onFilters({ status: e.target.value })}
-            >
-              <option value="">Alle statussen</option>
-              {publicationStatuses.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <details className="writing-placement">
+        <details className="writing-filters">
           <summary>
-            Homepage-instelling{view.placement ? " · actief" : ""}
+            Filters
+            {[view.type, view.status, view.placement].some(Boolean)
+              ? " · actief"
+              : ""}
           </summary>
-          <label>
-            Uitlichten
-            <select
-              value={view.placement}
-              onChange={(e) => onFilters({ placement: e.target.value })}
+          <div className="writing-filter-row">
+            <label>
+              Soort
+              <select
+                value={view.type}
+                onChange={(e) => onFilters({ type: e.target.value })}
+              >
+                <option value="">Alle soorten</option>
+                {publicationTypes.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+                <option value="note">Notitie</option>
+              </select>
+            </label>
+            <label>
+              Status
+              <select
+                value={view.status}
+                onChange={(e) => onFilters({ status: e.target.value })}
+              >
+                <option value="">Alle statussen</option>
+                {publicationStatuses.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+          <div className="writing-placement">
+            <label>
+              Uitlichten
+              <select
+                value={view.placement}
+                onChange={(e) => onFilters({ placement: e.target.value })}
+              >
+                <option value="">Alles</option>
+                <option value="featured">Uitgelicht</option>
+                <option value="unfeatured">Niet uitgelicht</option>
+              </select>
+            </label>
+          </div>
+          {[view.type, view.status, view.placement].some(Boolean) && (
+            <button
+              type="button"
+              onClick={() => onFilters({ type: "", status: "", placement: "" })}
             >
-              <option value="">Alles</option>
-              <option value="featured">Uitgelicht</option>
-              <option value="unfeatured">Niet uitgelicht</option>
-            </select>
-          </label>
+              Filters wissen
+            </button>
+          )}
         </details>
       </div>
       <div className="writing-list-count" role="status">
@@ -121,29 +144,41 @@ export default function WritingList({
               <button
                 type="button"
                 className="writing-item-open"
+                aria-label={`${item.title}${dirty.includes(item.key) ? " •" : ""}`}
+                aria-current={item.key === view.active ? "true" : undefined}
                 onClick={() => onOpen(item.key)}
               >
                 <strong>
                   {item.title}
                   {dirty.includes(item.key) && " •"}
                 </strong>
-                {item.summary && <span>{item.summary}</span>}
+                <time dateTime={item.updatedAt}>
+                  {dateFormat.format(new Date(item.updatedAt))}
+                </time>
+                <span>{item.summary || "Nog geen tekst"}</span>
               </button>
               <div className="writing-item-meta">
-                <span>
-                  {item.type === "note"
-                    ? "Notitie"
-                    : optionLabel(publicationTypes, item.type)}{" "}
-                  · {optionLabel(publicationStatuses, item.status)}
-                </span>
                 {view.active && view.active !== item.key && (
-                  <button
-                    type="button"
-                    aria-label={`Open ${item.title} ernaast`}
-                    onClick={() => onReference(item.key)}
+                  <WritingMenu
+                    className="writing-item-menu"
+                    label="⋯"
+                    ariaLabel={`Opties voor ${item.title}`}
                   >
-                    Ernaast
-                  </button>
+                    <span className="writing-muted">
+                      {item.type === "note"
+                        ? "Notitie"
+                        : optionLabel(publicationTypes, item.type)}{" "}
+                      · {optionLabel(publicationStatuses, item.status)}
+                    </span>
+                    <button
+                      type="button"
+                      data-close-menu
+                      aria-label={`Open ${item.title} ernaast`}
+                      onClick={() => onReference(item.key)}
+                    >
+                      Ernaast openen
+                    </button>
+                  </WritingMenu>
                 )}
               </div>
             </article>

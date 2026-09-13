@@ -169,7 +169,8 @@ const element = (selector) => {
 };
 const button = (text, scope = container) => {
   const found = [...scope.querySelectorAll("button")].find(
-    (b) => b.textContent.trim() === text,
+    (b) =>
+      b.getAttribute("aria-label") === text || b.textContent.trim() === text,
   );
   assert.ok(found, `button: ${text}`);
   return found;
@@ -219,13 +220,17 @@ test("real React workspace retains drafts, compares documents, captures notes an
   await click(element('button[aria-label="Sluit tabblad Eerste stuk"]'));
   await click(button("Eerste stuk •", element(".writing-list")));
   assert.equal(element(".writing-section textarea").value, "Mijn bewerking");
+  await click(element(".writing-document-menu > summary"));
   await click(button("Koppelen"));
-  await click(button("Tweede stuk ↗", element(".writing-connections")));
+  await click(button("Ernaast", element(".writing-connections")));
   assert.equal(element(".writing-workspace").dataset.mode, "reference");
   assert.ok(element(".writing-reference").textContent.includes("Tweede stuk"));
-  await click(button("Focus", element(".writing-toolbar")));
+  await click(element(".writing-document-menu > summary"));
+  await click(button("Alleen schrijfvlak"));
   assert.equal(element(".writing-workspace").dataset.mode, "focus");
-  await click(button("Overzicht", element(".writing-toolbar")));
+  await click(button("‹ Terug naar lijst"));
+  await click(element(".writing-open-menu > summary"));
+  await click(element(".writing-save-session > summary"));
   await input(element(".writing-save-session input"), "Mijn sessie");
   await submit(element(".writing-save-session form"));
   await click(element('button[aria-label="Sluit tabblad Tweede stuk"]'));
@@ -235,10 +240,10 @@ test("real React workspace retains drafts, compares documents, captures notes an
     ),
   );
   assert.equal(container.querySelectorAll(".writing-tab").length, 2);
-  await click(button("+ Idee vastleggen", element(".writing-toolbar")));
+  await click(button("Nieuwe tekst"));
   await input(element(".writing-capture textarea"), "Een nieuwe gedachte");
   await click(button("Sluiten", element(".writing-capture")));
-  await click(button("+ Idee vastleggen", element(".writing-toolbar")));
+  await click(button("Nieuwe tekst"));
   assert.equal(
     element(".writing-capture textarea").value,
     "Een nieuwe gedachte",
@@ -316,11 +321,58 @@ test("typing during a save is retained; a later conflict never discards or overw
   await settle();
 });
 
+test("Notes navigation preserves search, list position and drafts; menus dismiss with Escape", async () => {
+  await click(button("‹ Terug naar lijst"));
+  const list = element(".writing-list");
+  const previousRects = list.getClientRects;
+  list.getClientRects = () => [{ width: 300, height: 500 }];
+  await input(element('input[type="search"]'), "gedachte");
+  await settle();
+  list.scrollTop = 320;
+  await act(async () => list.dispatchEvent(new window.Event("scroll")));
+  const currentKey = "note:10000000-0000-4000-8000-000000000003";
+  await click(button("Een nieuwe gedachte", list));
+  assert.equal(element(".writing-workspace").dataset.detail, "true");
+  await input(
+    element(".writing-section textarea"),
+    "Verder schrijven na teruggaan",
+  );
+  await click(button("‹ Terug naar lijst"));
+  assert.equal(element(".writing-workspace").dataset.detail, "false");
+  assert.equal(element('input[type="search"]').value, "gedachte");
+  assert.equal(element(".writing-list"), list);
+  assert.equal(list.scrollTop, 320);
+  await click(button("Een nieuwe gedachte •", list));
+  assert.equal(
+    element(".writing-section textarea").value,
+    "Verder schrijven na teruggaan",
+  );
+  const menu = element(".writing-document-menu");
+  await click(menu.querySelector("summary"));
+  assert.equal(menu.open, true);
+  await act(async () =>
+    menu.dispatchEvent(
+      new window.KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    ),
+  );
+  assert.equal(menu.open, false);
+  assert.equal(document.activeElement, menu.querySelector("summary"));
+  assert.equal(
+    backend.get(currentKey).sections[0].body,
+    "Verder getypt tijdens opslaan",
+  );
+  await click(button("Tekst opslaan"));
+  list.getClientRects = previousRects;
+});
+
 test("all tab close leaves original documents available; collection membership stores references only", async () => {
-  await click(button("Overzicht", element(".writing-toolbar")));
+  await click(button("‹ Terug naar lijst"));
+  await click(element(".writing-folders > summary"));
+  await click(element(".writing-add > summary"));
   await input(element(".writing-add input"), "Mijn collectie");
   await submit(element(".writing-add form"));
-  await click(button("In collectie"));
+  await click(element(".writing-document-menu > summary"));
+  await click(element(".writing-organize > summary"));
   await click(element(".writing-memberships input"));
   await settle(600);
   const c = spaceWrites.at(-1).state.collections.at(-1);

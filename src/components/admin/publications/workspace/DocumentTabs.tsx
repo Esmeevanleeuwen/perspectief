@@ -1,5 +1,9 @@
 "use client";
-import type { ItemKey, WritingView } from "@/lib/admin/writing/model";
+import type {
+  ItemKey,
+  WritingView,
+  WritingSession,
+} from "@/lib/admin/writing/model";
 
 export default function DocumentTabs({
   view,
@@ -8,7 +12,13 @@ export default function DocumentTabs({
   onOpen,
   onClose,
   onSaveSession,
+  sessions,
+  onSession,
+  onRemoveSession,
 }: {
+  sessions: WritingSession[];
+  onSession: (id: string) => void;
+  onRemoveSession: (id: string) => void;
   view: WritingView;
   title: (key: ItemKey) => string;
   dirty: ItemKey[];
@@ -18,6 +28,7 @@ export default function DocumentTabs({
 }) {
   return (
     <div className="writing-tabbar">
+      <p className="writing-label">Open teksten</p>
       <div className="writing-tabs" aria-label="Open stukken">
         {view.tabs.map((key) => (
           <div
@@ -28,6 +39,7 @@ export default function DocumentTabs({
             <button
               type="button"
               aria-pressed={key === view.active}
+              data-close-menu
               onClick={() => onOpen(key)}
             >
               {title(key)}
@@ -68,6 +80,35 @@ export default function DocumentTabs({
           </form>
         </details>
       )}
+      <details className="writing-session-history">
+        <summary>Bewaarde sessies ({sessions.length})</summary>
+        <div className="writing-sessions">
+          {sessions.map((s) => (
+            <div className="writing-session" key={s.id}>
+              <button
+                type="button"
+                data-close-menu
+                onClick={() => onSession(s.id)}
+              >
+                {s.name}
+                <span>{s.view.tabs.length}</span>
+              </button>
+              <button
+                type="button"
+                aria-label={`Verwijder sessie ${s.name}`}
+                onClick={() => onRemoveSession(s.id)}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          {!sessions.length && (
+            <p className="writing-hint">
+              Bewaar je open teksten als sessie om later verder te gaan.
+            </p>
+          )}
+        </div>
+      </details>
     </div>
   );
 }
