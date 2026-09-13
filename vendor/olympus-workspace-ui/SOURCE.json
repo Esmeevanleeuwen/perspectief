@@ -1,0 +1,12 @@
+{
+  "repository": "Esmeevanleeuwen/olympus",
+  "commit": "79401220e9823843d9eb7750a07a87967ddfdab1",
+  "version": "1.0.0",
+  "files": {
+    "package.json": "340924c4edf1c065f9f5b739417a329e4d7c9065b91e5d2c4fddc52ae750f83c",
+    "model.ts": "6cf8da6080573e20d806758cb18e8e550d64884f25a1e081e5215ee47ac2823a",
+    "sidebar.tsx": "5d128b41c2c804ebc7436555dc0209696dd76ceb04725b757f92954078583f28",
+    "access.tsx": "94d15da448f552d4a2c9eb3e61b469c0d718a13c7982476fb3e19d680daf01f1",
+    "styles.css": "57fa0ebc8733f3af3a26ad26b9c7bc1f347dc89f9ba49e1ede8f09f3c3c3dc8a"
+  }
+}

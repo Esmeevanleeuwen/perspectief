@@ -2,15 +2,18 @@ import Link from "next/link";
 import { requireEditorialUser } from "@/lib/admin/roles";
 import { signOut } from "@/app/(auth)/actions";
 import SubmitButton from "@/components/account/SubmitButton";
-import WorkspaceShell, {
-  type WorkspaceLink,
-} from "@/components/account/WorkspaceShell";
+import type { WorkspaceLink } from "@/components/account/WorkspaceShell";
+import SharedAdminShell from "@/components/admin/SharedAdminShell";
+import type { FeatureAccess } from "@olympus/workspace-ui/model";
 import WorkspaceIcon from "@/components/account/WorkspaceIcon";
 import "@/app/member.css";
+import "@olympus/workspace-ui/styles.css";
+import "./shared-sidebar.css";
 export default async function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { role } = await requireEditorialUser();
+  const { role, supabase } = await requireEditorialUser();
+  const { data: featureAccess } = await supabase.from("suite_feature_access").select("platform_id,feature_id,enabled,revision,updated_at").eq("platform_id", "meridian");
   const items: WorkspaceLink[] = [
     { href: "/admin", label: "Overzicht", icon: "overview" },
     { href: "/admin/content", label: "Publicaties", icon: "library" },
@@ -31,8 +34,8 @@ export default async function AdminLayout({
       : []),
   ];
   return (
-    <WorkspaceShell
-      mode="admin"
+    <SharedAdminShell
+      initialRows={(featureAccess ?? []) as FeatureAccess[]}
       items={items}
       switcher={<Link href="/account">Mijn account</Link>}
       footer={
@@ -50,6 +53,6 @@ export default async function AdminLayout({
       }
     >
       <div className="workspace-admin-content">{children}</div>
-    </WorkspaceShell>
+    </SharedAdminShell>
   );
 }

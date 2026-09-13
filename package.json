@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync:workspace": "node scripts/sync-workspace-ui.mjs",
+    "test:workspace": "node --test tests/workspace-package.test.cjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
@@ -14,7 +16,8 @@
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "server-only": "0.0.1"
+    "server-only": "0.0.1",
+    "@olympus/workspace-ui": "file:vendor/olympus-workspace-ui"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
