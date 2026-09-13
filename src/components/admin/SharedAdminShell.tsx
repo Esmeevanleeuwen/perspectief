@@ -19,7 +19,7 @@ function Shell({ children, items, footer, switcher }: Props) {
   return <main className={`meridian-admin ${access.collapsed ? "is-collapsed" : ""}`} style={{ "--os-width": access.preferences.width === "wide" ? "280px" : "240px", "--admin-sidebar-space": access.collapsed ? "0px" : access.preferences.width === "wide" ? "280px" : "240px" } as React.CSSProperties}>
     <a className="member-skip" href="#workspace-content">Naar de inhoud</a>
     <header className="meridian-admin-header"><Link href="/" className="meridian-admin-brand" aria-label="Meridian homepage"><MeridianMark className="workspace-mark" /><span>MERIDIAN</span></Link><div className="meridian-admin-header-actions">{switcher}<Link href="/">Naar de site ↗</Link></div></header>
-    <SharedSidebar id="meridian-admin-sidebar" label="Redactie" brand={<span>Werkruimte<small>Mijn Meridian</small></span>}
+    <SharedSidebar id="meridian-admin-sidebar" label="Redactie" brand={<span>Beheer<small>Meridian</small></span>}
       items={items.map(item => ({ id: item.href, href: item.href, label: item.label, icon: <WorkspaceIcon name={item.icon}/>, active: active?.href === item.href }))}
       collapsed={access.collapsed} onCollapse={access.setCollapsed} flags={access.flags} preferences={access.preferences}
       onPreferences={access.savePreferences} saving={access.saving} canSave={!!access.userId} footer={footer}/>

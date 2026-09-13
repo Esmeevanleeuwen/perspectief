@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
+import AdminPageHeading from "@/components/admin/AdminPageHeading";
 import { requireMemberAdmin } from "@/lib/auth/user";
 import MemberEditor from "@/components/account/MemberEditor";
 import type { MemberPublication, Member } from "@/lib/members";
@@ -33,6 +35,9 @@ export default async function Page({
   }
   return (
     <>
+      <AdminPageHeading title="Ledenpublicatie bewerken" description={itemResult.data.title}>
+        <Link href="/admin/ledencontent" className="member-secondary">Alle ledenpublicaties</Link>
+      </AdminPageHeading>
       {saved && (
         <p className="member-notice" role="status">
           Opgeslagen.{" "}
