@@ -1,6 +1,8 @@
 # Publicaties opbouwen met componenten
 
-Begin in `src/components/admin/publications/PublicationsModule.tsx`. Dat is het samenstelbestand van het scherm: je kiest daar welke bouwstenen je gebruikt. De route `/admin/content` opent alleen deze module en vertaalt de URL naar filterwaarden.
+Begin in `src/components/admin/publications/PublicationsModule.tsx`. Dat is het samenstelbestand van het scherm: je kiest daar welke bouwstenen je gebruikt. De route `/admin/content` opent deze module. De huidige module gebruikt de [schrijfwerkplek met collecties, tabbladen en tekstsecties](admin-writing-workspace.md). Die handleiding beschrijft de actuele pagina en opslag.
+
+Hieronder staat de eerdere opbouw met een tabel. Deze losse tabel-, filter- en gegevenscomponenten blijven beschikbaar voor hergebruik. Het codevoorbeeld toont hoe je die tabelweergave kunt samenstellen; de huidige Publicaties-pagina gebruikt `WritingWorkspaceData` op die plek.
 
 We noemen het scherm een **module**. Het **datamodel** in `model.ts` beschrijft wat een publicatie is. Zo blijven de bouw van een scherm en de betekenis van de gegevens los van elkaar.
 
