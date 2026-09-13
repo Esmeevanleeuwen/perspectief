@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import MeridianMark from "@/components/brand/MeridianMark";
 import styles from "./SiteHeader.module.css";
 
 const navigation = [
@@ -64,17 +65,7 @@ export default function SiteHeaderNav({
       }}
     >
       <Link href="/" className={styles.brand} aria-label="Meridian home">
-        <svg className={styles.logoMark} viewBox="0 0 48 42" aria-hidden="true">
-          <path
-            d="M6 31V6L24 21L42 6V31"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="5.2"
-            strokeLinecap="square"
-            strokeLinejoin="miter"
-          />
-          <circle cx="24" cy="35.5" r="3.8" fill="currentColor" />
-        </svg>
+        <MeridianMark className={styles.logoMark} />
         <span className={styles.brandName}>MERIDIAN</span>
       </Link>
       <nav className={styles.navigation} aria-label="Hoofdnavigatie">

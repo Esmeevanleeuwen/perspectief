@@ -98,13 +98,10 @@ export default function HeaderAccount({
   return (
     <div className={styles.accountActions}>
       {signedIn ? (
-        <Link href="/account" className={styles.loginButton}>
+        <Link href="/account" className={`${styles.loginButton} ${styles.accountButton}`}>
           <AccountIcon />
           <span className={styles.desktopAccountLabel}>Mijn Meridian</span>
           <span className={styles.mobileAccountLabel}>Mijn account</span>
-          <span className={styles.accountArrow} aria-hidden="true">
-            ↗
-          </span>
         </Link>
       ) : (
         <>

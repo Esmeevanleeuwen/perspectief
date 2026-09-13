@@ -104,26 +104,17 @@ body:has(.member-shell) {
   gap: 10px;
   padding: 0 18px;
   font-size: 13px;
-  font-weight: 650;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.23em;
   text-decoration: none !important;
   overflow: hidden;
   white-space: nowrap;
 }
 .workspace-mark {
-  position: relative;
-  display: inline-flex;
-  font-weight: 650;
-  font-size: 26px;
-  letter-spacing: -0.13em;
-  line-height: 1;
-}
-.workspace-mark span {
-  color: #b87145;
-  font-size: 16px;
-  position: absolute;
-  right: -4px;
-  top: -5px;
+  display: block;
+  width: 30px;
+  height: 28px;
+  flex-shrink: 0;
 }
 .workspace-topbar {
   display: flex;

@@ -139,9 +139,16 @@
 .shell .registerButton:hover {
   background: #f4eee7;
 }
-.accountArrow {
-  margin-left: 2px;
-  opacity: 0.75;
+.shell .accountButton {
+  min-height: 36px;
+  padding: 0 10px;
+  gap: 6px;
+  border-radius: 5px;
+  font-size: 11px;
+}
+.accountButton svg {
+  width: 15px;
+  height: 15px;
 }
 .accountLoading {
   display: inline-flex;
@@ -320,8 +327,7 @@
     gap: 0;
   }
   .shell .registerLink,
-  .desktopAccountLabel,
-  .accountArrow {
+  .desktopAccountLabel {
     display: none;
   }
   .mobileAccountLabel {

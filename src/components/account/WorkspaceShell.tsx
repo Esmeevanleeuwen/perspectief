@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import MeridianMark from "@/components/brand/MeridianMark";
 import WorkspaceIcon, { type WorkspaceIconName } from "./WorkspaceIcon";
 export type WorkspaceLink = {
   href: string;
@@ -50,9 +51,7 @@ export default function WorkspaceShell({
           href="/"
           aria-label="Meridian homepage"
         >
-          <span className="workspace-mark" aria-hidden="true">
-            m<span>•</span>
-          </span>
+          <MeridianMark className="workspace-mark" />
           <span>MERIDIAN</span>
         </Link>
         <div className="workspace-topbar">
