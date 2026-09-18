@@ -1,3 +1,4 @@
+import Link from "next/link";
 import LinkedText from "./LinkedText";
 import ChapterNavigation from "./ChapterNavigation";
 import { articleStructuredData } from "@/lib/publishing/seo";
@@ -11,7 +12,7 @@ export default function SharedArticleView({ article }: { article: SharedArticle 
   const paragraphs = (value: string | null) => (value || "").split(/\n\s*\n/).filter(Boolean).map((p, i) => <p key={i}>{text(p)}</p>);
   return <main className="pub-article">
     {jsonld && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(jsonld) }} />}
-    <nav aria-label="Kruimelpad"><a href="/">{article.platform === "avera" ? "Avera" : "Meridian"}</a> / <a href="/artikelen">Artikelen</a>{article.report && <> / <a href={`/verslagen/${article.report.slug}`}>{article.report.title}</a></>}</nav>
+    <nav aria-label="Kruimelpad"><Link href="/">{article.platform === "avera" ? "Avera" : "Meridian"}</Link> / <Link href="/artikelen">Artikelen</Link>{article.report && <> / <Link href={`/verslagen/${article.report.slug}`}>{article.report.title}</Link></>}</nav>
     <article>
       <header><p>{article.eyebrow || "Artikel"}</p><h1>{article.title}</h1>
         {article.subtitle && <p className="pub-lead">{article.subtitle}</p>}
@@ -32,6 +33,6 @@ export default function SharedArticleView({ article }: { article: SharedArticle 
       </div>
     </article>
     <ChapterNavigation report={article.report} currentId={article.id} />
-    <footer><a href="/artikelen">← Alle artikelen</a></footer>
+    <footer><Link href="/artikelen">← Alle artikelen</Link></footer>
   </main>;
 }
