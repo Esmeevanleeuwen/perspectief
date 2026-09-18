@@ -20,15 +20,16 @@ import { useWritingDocuments } from "./useWritingDocuments";
 import { useWritingSearch } from "./useWritingSearch";
 
 export default function WritingWorkspace({
-  initialState, initialVersion, initialPage, initialDocuments, initialDetail = false,
+  initialState, initialSavedState, initialVersion, initialPage, initialDocuments, initialDetail = false,
 }: {
   initialState: WritingState;
+  initialSavedState?: WritingState;
   initialVersion: number;
   initialPage: WritingPage;
   initialDocuments: WritingDocument[];
   initialDetail?: boolean;
 }) {
-  const space = useWritingSpace(initialState, initialVersion), { state, update } = space;
+  const space = useWritingSpace(initialState, initialVersion, initialSavedState), { state, update } = space;
   const docs = useWritingDocuments(initialDocuments), search = useWritingSearch(state, initialPage);
   const [detail, setDetail] = useState(initialDetail);
   const [capture, setCapture] = useState(false);

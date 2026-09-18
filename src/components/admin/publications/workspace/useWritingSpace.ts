@@ -3,34 +3,30 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { saveWritingSpace } from "@/app/admin/content/workspace-actions";
 import type { WritingState } from "@/lib/admin/writing/model";
 
-/** Serialize writes, including changes made while a previous save is in flight. */
-export function useWritingSpace(initial: WritingState, initialVersion: number) {
+/** Serialize writes, including navigation changes applied by a server-side deep link. */
+export function useWritingSpace(initial: WritingState, initialVersion: number, persistedInitial: WritingState = initial) {
   const [state, setState] = useState(initial),
     [saving, setSaving] = useState(false),
     [error, setError] = useState(""),
-    [pending, setPending] = useState(false);
+    [pending, setPending] = useState(() => JSON.stringify(initial) !== JSON.stringify(persistedInitial));
   const latest = useRef(initial),
     version = useRef(initialVersion),
-    saved = useRef(JSON.stringify(initial)),
+    saved = useRef(JSON.stringify(persistedInitial)),
     inFlight = useRef(false),
     blocked = useRef(false);
-  const update = useCallback(
-    (change: (state: WritingState) => WritingState) => {
-      const next = change(latest.current);
-      latest.current = next;
-      setState(next);
-      setPending(JSON.stringify(next) !== saved.current);
-    },
-    [],
-  );
+  const update = useCallback((change: (state: WritingState) => WritingState) => {
+    const next = change(latest.current);
+    latest.current = next;
+    setState(next);
+    setPending(JSON.stringify(next) !== saved.current);
+  }, []);
   const persist = useCallback(async () => {
     if (inFlight.current || blocked.current) return;
     inFlight.current = true;
     setSaving(true);
     try {
       while (JSON.stringify(latest.current) !== saved.current) {
-        const snapshot = latest.current,
-          encoded = JSON.stringify(snapshot);
+        const snapshot = latest.current, encoded = JSON.stringify(snapshot);
         const result = await saveWritingSpace(snapshot, version.current);
         if (!result.ok) {
           blocked.current = true;

@@ -11,6 +11,7 @@ export default async function WritingWorkspaceData({ filters, openKey }: { filte
   let props: Parameters<typeof WritingWorkspace>[0] | null = null;
   try {
     const { state, version } = await readWritingSpace(supabase, user.id);
+    const initialSavedState = structuredClone(state);
     if (filters.q || filters.type || filters.status || filters.placement)
       state.view = { ...state.view, query: filters.q, type: filters.type, status: filters.status, placement: filters.placement, collection: "all" };
     if (openKey) {
@@ -23,7 +24,8 @@ export default async function WritingWorkspaceData({ filters, openKey }: { filte
     const keys = [...new Set([state.view.active, state.view.reference].filter(key => key !== null))];
     const loaded = await Promise.allSettled(keys.map(key => readWritingDocument(supabase, user.id, key)));
     const documents = loaded.flatMap(result => result.status === "fulfilled" ? [result.value] : []);
-    props = { initialState: state, initialVersion: version, initialPage: page, initialDocuments: documents, initialDetail: Boolean(openKey) };
+    props = { initialState: state, initialSavedState, initialVersion: version, initialPage: page,
+      initialDocuments: documents, initialDetail: Boolean(openKey) };
   } catch {
     // A failed read must never overwrite an existing saved workspace with an empty one.
   }

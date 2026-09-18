@@ -30,12 +30,17 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-      - run: npm ci
+      - id: install
+        run: npm ci
       - name: Navigation and publication tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: node --test tests/admin-navigation.test.mjs tests/publications-module.test.mjs
       - name: Writing regression tests (local database only)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run test:writing
       - name: Shared sidebar tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run test:workspace
       - name: Production build
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run build

@@ -17,7 +17,7 @@ function load(relative, mocks = {}, cache = new Map()) {
   const module = { exports: {} };
   cache.set(file, module.exports);
   const source = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
   }).outputText;
   const localRequire = name => {
     if (Object.hasOwn(mocks, name)) return mocks[name];
@@ -41,6 +41,25 @@ const keyA = 'publication:00000000-0000-4000-8000-000000000001';
 const keyB = 'note:00000000-0000-4000-8000-000000000002';
 const state = () => ({ ...model.emptyWritingState(), view: { ...model.emptyView(), tabs: [keyA, keyB], active: keyA } });
 const filters = { q: '', type: '', status: '', placement: '', page: 1 };
+
+async function inDOM(run) {
+  const dom = new JSDOM('<div id="root"></div>', { url: 'https://example.test/admin/werkplek', pretendToBeVisual: true });
+  const saved = new Map();
+  for (const [key, value] of Object.entries({ window: dom.window, document: dom.window.document,
+    requestAnimationFrame: callback => { callback(); return 0; }, IS_REACT_ACT_ENVIRONMENT: true })) {
+    saved.set(key, Object.getOwnPropertyDescriptor(globalThis, key));
+    Object.defineProperty(globalThis, key, { value, configurable: true, writable: true });
+  }
+  const app = createRoot(dom.window.document.getElementById('root'));
+  try { await run(app, dom); }
+  finally {
+    await act(async () => app.unmount());
+    dom.window.close();
+    for (const [key, descriptor] of saved) {
+      if (descriptor) Object.defineProperty(globalThis, key, descriptor); else delete globalThis[key];
+    }
+  }
+}
 
 test('work areas are separate; member content is not a duplicate primary tab', () => {
   const items = navigation.adminNavigation('owner');
@@ -90,35 +109,28 @@ test('tabs are visible outside a menu and link to the active editor panel', () =
     view: state().view, title: key => key === keyA ? 'Tekst één' : 'Notitie twee', dirty: [keyA],
     onOpen() {}, onClose() {}, onNew() {}, capture: false, captureDirty: false,
   }));
-  const document = new JSDOM(html).window.document;
-  const tabs = document.querySelectorAll('[role="tab"]');
+  const dom = new JSDOM(html);
+  const tabs = dom.window.document.querySelectorAll('[role="tab"]');
   assert.equal(tabs.length, 2);
   assert.equal(tabs[0].getAttribute('aria-selected'), 'true');
   assert.equal(tabs[0].getAttribute('aria-controls'), 'writing-active-document');
   assert.match(tabs[0].getAttribute('aria-label'), /niet opgeslagen/);
   assert.equal(tabs[0].closest('details'), null);
+  dom.window.close();
 });
 
 test('arrow keys activate tabs; Delete closes a tab without losing the remaining view', async () => {
-  const dom = new JSDOM('<div id="root"></div>', { url: 'https://example.test/admin/werkplek', pretendToBeVisual: true });
-  const saved = new Map();
-  for (const [key, value] of Object.entries({ window: dom.window, document: dom.window.document,
-    requestAnimationFrame: callback => { callback(); return 0; }, IS_REACT_ACT_ENVIRONMENT: true })) {
-    saved.set(key, Object.getOwnPropertyDescriptor(globalThis, key));
-    Object.defineProperty(globalThis, key, { value, configurable: true, writable: true });
-  }
-  const Tabs = load('src/components/admin/publications/workspace/OpenDocumentTabs.tsx').default;
-  let current;
-  function Harness() {
-    const [view, setView] = React.useState(state().view);
-    current = view;
-    return React.createElement(Tabs, { view, title: key => key === keyA ? 'Eén' : 'Twee', dirty: [keyA],
-      onOpen: key => setView(old => model.openItem(old, key)),
-      onClose: key => setView(old => model.closeItem(old, key)),
-      onNew() {}, capture: false, captureDirty: false });
-  }
-  const app = createRoot(dom.window.document.getElementById('root'));
-  try {
+  await inDOM(async (app, dom) => {
+    const Tabs = load('src/components/admin/publications/workspace/OpenDocumentTabs.tsx').default;
+    let current;
+    function Harness() {
+      const [view, setView] = React.useState(state().view);
+      current = view;
+      return React.createElement(Tabs, { view, title: key => key === keyA ? 'Eén' : 'Twee', dirty: [keyA],
+        onOpen: key => setView(old => model.openItem(old, key)),
+        onClose: key => setView(old => model.closeItem(old, key)),
+        onNew() {}, capture: false, captureDirty: false });
+    }
     await act(async () => app.render(React.createElement(Harness)));
     const first = dom.window.document.querySelector('[role="tab"]');
     first.focus();
@@ -128,13 +140,7 @@ test('arrow keys activate tabs; Delete closes a tab without losing the remaining
     await act(async () => dom.window.document.activeElement.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'Delete', bubbles: true })));
     assert.deepEqual(current.tabs, [keyA]);
     assert.equal(current.active, keyA);
-  } finally {
-    await act(async () => app.unmount());
-    dom.window.close();
-    for (const [key, descriptor] of saved) {
-      if (descriptor) Object.defineProperty(globalThis, key, descriptor); else delete globalThis[key];
-    }
-  }
+  });
 });
 
 test('workspace entry still checks editorial access before any reads', async () => {
@@ -164,9 +170,36 @@ test('management deep links open the existing document without copying notes, se
   const result = await Component({ filters, openKey: keyB });
   assert.equal(result.props.initialState.view.active, keyB);
   assert.equal(result.props.initialDetail, true);
+  assert.deepEqual(result.props.initialSavedState, existing);
   assert.deepEqual(result.props.initialState.collections, existing.collections);
   assert.deepEqual(result.props.initialState.sessions, existing.sessions);
   assert.deepEqual(calls, [['editor', keyB]]);
+});
+
+test('a deep-linked selection is persisted once, while unchanged saved views do not write', async () => {
+  await inDOM(async app => {
+    const writes = [];
+    const { useWritingSpace } = load('src/components/admin/publications/workspace/useWritingSpace.ts', {
+      '@/app/admin/content/workspace-actions': { saveWritingSpace: async (value, version) => {
+        writes.push({ value: structuredClone(value), version });
+        return { ok: true, value: { version: version + 1 } };
+      } },
+    });
+    const persisted = state();
+    const selected = { ...persisted, view: model.openItem(persisted.view, keyB) };
+    let hook;
+    function Harness({ initial, saved }) { hook = useWritingSpace(initial, 7, saved); return null; }
+    await act(async () => app.render(React.createElement(Harness, { initial: selected, saved: persisted })));
+    assert.equal(hook.pending, true);
+    await act(async () => new Promise(resolve => setTimeout(resolve, 650)));
+    assert.equal(writes.length, 1);
+    assert.equal(writes[0].value.view.active, keyB);
+    assert.equal(writes[0].version, 7);
+    assert.equal(hook.pending, false);
+    await act(async () => app.render(React.createElement(Harness, { key: 'unchanged', initial: persisted, saved: persisted })));
+    await act(async () => new Promise(resolve => setTimeout(resolve, 650)));
+    assert.equal(writes.length, 1);
+  });
 });
 
 test('publication management and writing use different module entry points', () => {
