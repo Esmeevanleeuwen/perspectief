@@ -89,7 +89,7 @@ export default function CurrentDevelopments() {
                 </li>
               ))}
             </ol>
-            <Link prefetch={false} href="/bronnen" className={styles.textLink + " " + styles.feedLink}>Bekijk volledige feed <span aria-hidden="true">→</span></Link>
+            <Link prefetch={false} href="/bronnen" className={`${styles.textLink} ${styles.feedLink}`}>Bekijk volledige feed <span aria-hidden="true">→</span></Link>
           </aside>
         </div>
       </div>
