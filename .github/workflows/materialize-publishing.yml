@@ -25,6 +25,8 @@ jobs:
           assert hashlib.sha256(raw).hexdigest() == '343e4f1dc7fa68b19c9e723ec8e18ef6e27628c41ee20cb13420470afb39f42c'
           with tarfile.open(fileobj=io.BytesIO(raw), mode='r:gz') as archive:
             archive.extractall('.', filter='data')
+          patch = pathlib.Path('.publishing-patch.py')
+          patch.write_text(patch.read_text().replace("'                  document={activeDocument}\\n                  state={state}'", "'document={activeDocument} state={state}'"))
           PY
           python .publishing-patch.py
           rm .publishing-patch.py
