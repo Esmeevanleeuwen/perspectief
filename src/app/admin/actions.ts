@@ -109,7 +109,7 @@ export async function createResearch(formData: FormData) {
 export async function updateContent(formData: FormData) {
   const { supabase } = await requireEditorialUser();
   const id = text(formData, "id");
-  const { data: current } = await supabase.from("content_items").select("content_type,slug,metadata").eq("id", id).single();
+  const { data: current } = await supabase.from("content_items").select("content_type,slug,metadata,status").eq("id", id).single();
   if (!current) redirect("/admin/content");
 
   const title = text(formData, "title");
@@ -131,7 +131,7 @@ export async function updateContent(formData: FormData) {
     summary: text(formData, "summary") || null,
     hero_image: text(formData, "hero_image") || null,
     image_alt: text(formData, "image_alt") || null,
-    status: text(formData, "status") || "draft",
+    status: current.content_type === "research" ? (text(formData, "status") || "draft") : current.status,
     featured,
     featured_position: featured ? (text(formData, "featured_position") || "side") : null,
     metadata,
@@ -163,6 +163,7 @@ export async function publishContent(formData: FormData) {
   const id = text(formData, "id");
   const { data: current } = await supabase.from("content_items").select("content_type,slug,published_at").eq("id", id).single();
   if (!current) redirect("/admin/content");
+  if (current.content_type !== "research") redirect(`/admin/content/${id}`);
 
   await supabase.from("content_items").update({
     status: "published",

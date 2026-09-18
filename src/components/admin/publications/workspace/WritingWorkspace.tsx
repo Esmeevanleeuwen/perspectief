@@ -239,7 +239,13 @@ export default function WritingWorkspace({
             }}
           />
           <div hidden={capture}>
-            {activeDocument ? <DocumentEditor key={activeDocument.key} document={activeDocument} state={state}
+            {activeDocument ? <DocumentEditor key={activeDocument.key}                   document={activeDocument}
+                  onReload={async () => {
+                    const result = await loadWritingDocument(activeDocument.key);
+                    if (result.ok) docs.replace(result.value);
+                    search.refresh();
+                  }}
+                  state={state}
               dirty={docs.dirty.includes(activeDocument.key)} saving={docs.saving.includes(activeDocument.key)}
               error={docs.errors[activeDocument.key]?.message ?? ""} conflict={!!docs.errors[activeDocument.key]?.conflict}
               title={title} onOpen={open}

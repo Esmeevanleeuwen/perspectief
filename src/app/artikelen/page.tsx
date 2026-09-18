@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { articles as staticArticles } from "@/app/data/articles";
 import { getPublishedArticles, mediaPath } from "@/lib/admin/content";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Artikelen | Meridian",
   description: "Onderzoeken waarin gebeurtenissen, ervaringen en onderliggende structuren met elkaar worden verbonden.",
@@ -15,18 +14,6 @@ function numberMeta(metadata: Record<string, unknown> | null, key: string) {
 
 export default async function ArticlesPage() {
   const cmsArticles = await getPublishedArticles();
-  const known = new Set(cmsArticles.map((item) => item.slug));
-  const fallback = staticArticles.filter((item) => !known.has(item.slug)).map((item) => ({
-    slug: item.slug,
-    title: item.title,
-    summary: item.description,
-    eyebrow: item.label,
-    hero_image: item.image,
-    image_alt: item.title,
-    metadata: { experiences: item.experiences },
-    content_type: "article",
-  }));
-
   const items = [
     ...cmsArticles.map((item) => ({
       slug: item.slug,
@@ -38,7 +25,6 @@ export default async function ArticlesPage() {
       metadata: item.metadata,
       content_type: item.content_type,
     })),
-    ...fallback,
   ];
 
   return (

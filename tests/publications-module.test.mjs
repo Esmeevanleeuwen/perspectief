@@ -117,7 +117,7 @@ test('columns can be rearranged without data changes; draft records never get pu
   assert.ok(draft.indexOf('>Status</th>') < draft.indexOf('>Titel</th>'));
   assert.match(draft, /Een &lt;titel&gt;/); assert.match(draft, /\/admin\/content\/pub-1/); assert.doesNotMatch(draft, /href="\/artikelen\//);
   const published = renderToStaticMarkup(React.createElement(Table, { items: [toPublication({ ...row, status: 'published' })], columns: reordered }));
-  assert.match(published, /href="\/artikelen\/titel"/);
+  assert.match(published, /href="\/lees\/pub-1"/);
 });
 
 test('a rejected database range recovers to the first page without dropping filters', async () => {

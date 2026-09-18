@@ -147,6 +147,7 @@ const actions = {
   },
 };
 const mocks = {
+  "@/components/admin/publishing/PublishingPanel": { __esModule: true, default: () => null },
   "@/app/admin/content/workspace-actions": actions,
   "next/link": ({ href, children, ...props }) =>
     React.createElement("a", { href, ...props }, children),

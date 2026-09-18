@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PublishingSettings from "@/components/admin/publishing/PublishingSettings";
 import { notFound } from "next/navigation";
 import { requireEditorialUser } from "@/lib/admin/roles";
 import { publicContentHref } from "@/lib/admin/content";
@@ -53,7 +54,7 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
 
   if (!item) notFound();
   const field = "min-h-11 w-full rounded-md border border-[#102534]/14 bg-[var(--paper)] px-3 py-2 text-sm outline-none transition focus:border-[#102534]/45 focus:ring-2 focus:ring-[var(--accent-soft)]";
-  const publicHref = publicContentHref(item.content_type, item.slug);
+  const publicHref = item.content_type === "research" ? publicContentHref(item.content_type, item.slug) : `/lees/${item.id}`;
   const canPublish = ["owner", "admin", "editor"].includes(role);
 
   return (
@@ -66,12 +67,13 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
         </div>
         <div className="flex flex-wrap gap-2">
           {item.status === "published" && <Link href={publicHref} target="_blank" className="rounded-md border border-[#102534]/15 bg-[var(--paper)] px-4 py-3 text-xs no-underline hover:border-[#102534]/35">Bekijk live ↗</Link>}
-          {canPublish && item.status !== "published" && <form action={publishContent}><input type="hidden" name="id" value={id} /><button className="rounded-md bg-[var(--accent)] px-4 py-3 text-xs font-medium text-white">Publiceren</button></form>}
+          {canPublish && item.content_type === "research" && item.status !== "published" && <form action={publishContent}><input type="hidden" name="id" value={id} /><button className="rounded-md bg-[var(--accent)] px-4 py-3 text-xs font-medium text-white">Publiceren</button></form>}
         </div>
       </div>
 
       {(notice.saved || notice.published) && <p role="status" className="mt-5 rounded-md border border-emerald-800/15 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{notice.published ? "Publicatie staat live." : "Wijzigingen opgeslagen."}</p>}
 
+      {item.content_type !== "research" && <PublishingSettings id={id} />}
       <div className="admin-editor-grid">
         <div className="space-y-7">
           <form action={updateContent} className="rounded-md border border-[#102534]/10 bg-[var(--paper)] p-5 md:p-7">
@@ -95,7 +97,7 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
                 </fieldset>
               )}
 
-              <fieldset className="mt-2 border-t border-[#102534]/10 pt-6"><legend className="pr-3 font-serif text-2xl">Publicatie</legend><div className="mt-4 grid gap-5 md:grid-cols-2"><label className="grid gap-2 text-xs font-medium">Status<select name="status" defaultValue={item.status} className={field}>{statuses.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label className="grid gap-2 text-xs font-medium">Datumlabel<input name="display_date" defaultValue={metaString(item.metadata, "display_date")} placeholder="18 juli 2026" className={field} /></label></div>
+              <fieldset className="mt-2 border-t border-[#102534]/10 pt-6"><legend className="pr-3 font-serif text-2xl">Publicatie</legend><div className="mt-4 grid gap-5 md:grid-cols-2">{item.content_type === "research" ? (<label className="grid gap-2 text-xs font-medium">Status<select name="status" defaultValue={item.status} className={field}>{statuses.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>) : <input type="hidden" name="status" value={item.status} />}<label className="grid gap-2 text-xs font-medium">Datumlabel<input name="display_date" defaultValue={metaString(item.metadata, "display_date")} placeholder="18 juli 2026" className={field} /></label></div>
                 <div className="mt-5 grid gap-5 md:grid-cols-3"><label className="grid gap-2 text-xs font-medium">Ervaringen<input name="experiences" type="number" min="0" defaultValue={metaNumber(item.metadata, "experiences")} className={field} /></label><label className="grid gap-2 text-xs font-medium">Deskundigen<input name="experts" type="number" min="0" defaultValue={metaNumber(item.metadata, "experts")} className={field} /></label><label className="grid gap-2 text-xs font-medium">Provincies<input name="provinces" type="number" min="0" defaultValue={metaNumber(item.metadata, "provinces")} className={field} /></label></div>
                 <div className="mt-5 flex flex-col gap-4 rounded-md bg-[#f7f8f8] p-4 sm:flex-row sm:items-center sm:justify-between"><label className="flex items-center gap-3 text-sm"><input type="checkbox" name="featured" defaultChecked={Boolean(item.featured)} className="h-4 w-4 accent-[var(--accent)]" /> Uitlichten op de homepage</label><label className="flex items-center gap-3 text-xs">Positie<select name="featured_position" defaultValue={item.featured_position ?? "side"} className="rounded-md border border-[#102534]/14 bg-[var(--paper)] px-3 py-2"><option value="main">Hoofditem</option><option value="side">Zij-item</option></select></label></div>
               </fieldset>
@@ -141,9 +143,9 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
         </div>
 
         <aside className="admin-editor-aside space-y-5">
-          <section className="rounded-md border border-[#102534]/10 bg-[var(--paper)] p-5"><p className="text-[0.65rem] uppercase tracking-[0.16em] text-[var(--accent)]">Preview</p><h2 className="mt-2 font-serif text-2xl">Publieke route</h2><code className="mt-4 block break-all rounded-md bg-[#f6f7f7] p-3 text-xs text-[var(--muted)]">{publicHref}</code><Link href={publicHref} target="_blank" className="mt-4 inline-flex text-xs underline-offset-4 hover:underline">Open preview ↗</Link><p className="mt-4 text-xs leading-5 text-[var(--muted)]">Een preview toont alleen content met status ‘Gepubliceerd’. Voor concepten beheer je hier de inhoud totdat je publiceert.</p></section>
+          <section className="rounded-md border border-[#102534]/10 bg-[var(--paper)] p-5"><p className="text-[0.65rem] uppercase tracking-[0.16em] text-[var(--accent)]">Preview</p><h2 className="mt-2 font-serif text-2xl">Publieke route</h2><code className="mt-4 block break-all rounded-md bg-[#f6f7f7] p-3 text-xs text-[var(--muted)]">{publicHref}</code><Link href={publicHref} target="_blank" className="mt-4 inline-flex text-xs underline-offset-4 hover:underline">Open preview ↗</Link><p className="mt-4 text-xs leading-5 text-[var(--muted)]">Dit opent de laatst gepubliceerde versie. Een opgeslagen concept verandert die versie niet. Publiceren van artikelen beheer je via Structuur & publicatie.</p></section>
           <section className="rounded-md border border-[#102534]/10 bg-[var(--paper)] p-5"><p className="text-[0.65rem] uppercase tracking-[0.16em] text-[var(--accent)]">Structuur</p><dl className="mt-4 space-y-3 text-xs"><div className="flex justify-between gap-4"><dt className="text-[var(--muted)]">Type</dt><dd>{item.content_type}</dd></div><div className="flex justify-between gap-4"><dt className="text-[var(--muted)]">Status</dt><dd>{item.status}</dd></div><div className="flex justify-between gap-4"><dt className="text-[var(--muted)]">Blokken</dt><dd>{sections?.length ?? 0}</dd></div><div className="flex justify-between gap-4"><dt className="text-[var(--muted)]">Homepage</dt><dd>{item.featured ? item.featured_position : "nee"}</dd></div></dl></section>
-          {canPublish && <section className="rounded-md border border-red-900/12 bg-[var(--paper)] p-5"><p className="text-[0.65rem] uppercase tracking-[0.16em] text-red-800">Gevarenzone</p><p className="mt-3 text-xs leading-5 text-[var(--muted)]">Verwijderen haalt ook alle gekoppelde leesblokken weg.</p><form action={deleteContent} className="mt-4"><input type="hidden" name="id" value={id} /><button className="rounded-md border border-red-900/20 px-4 py-2.5 text-xs font-medium text-red-800 hover:bg-red-50">Publicatie verwijderen</button></form></section>}
+          {canPublish && <section className="rounded-md border border-red-900/12 bg-[var(--paper)] p-5"><p className="text-[0.65rem] uppercase tracking-[0.16em] text-red-800">Gevarenzone</p><p className="mt-3 text-xs leading-5 text-[var(--muted)]">Verwijderen haalt dit artikel, alle leesblokken en de gepubliceerde versies op beide websites weg.</p><form action={deleteContent} className="mt-4"><input type="hidden" name="id" value={id} /><button className="rounded-md border border-red-900/20 px-4 py-2.5 text-xs font-medium text-red-800 hover:bg-red-50">Publicatie verwijderen</button></form></section>}
         </aside>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { createPublicClient } from "@/lib/supabase/public";
+import { readSharedArticle, readCatalogAll } from "@/lib/publishing/public";
 
 export type ContentSection = {
   id: string;
@@ -40,7 +41,7 @@ export type PublishedContent = {
   research_dossiers?: ResearchDossier | ResearchDossier[] | null;
 };
 
-const articleTypes = ["article", "analysis", "case"];
+
 
 export function publicContentHref(contentType: string, slug: string) {
   return contentType === "research" ? `/onderzoek/${slug}` : `/artikelen/${slug}`;
@@ -59,6 +60,11 @@ export function relationOne<T>(value: T | T[] | null | undefined): T | null {
 }
 
 export async function getPublishedContentBySlug(slug: string, type?: string) {
+  if (type !== "research") {
+    const item = await readSharedArticle("meridian", slug);
+    if (item) return item as PublishedContent;
+    if (type) return null;
+  }
   try {
     const supabase = createPublicClient();
     let query = supabase
@@ -69,6 +75,7 @@ export async function getPublishedContentBySlug(slug: string, type?: string) {
         research_dossiers(*)
       `)
       .eq("slug", slug)
+      .eq("content_type", "research")
       .eq("status", "published");
 
     if (type) query = query.eq("content_type", type);
@@ -81,21 +88,8 @@ export async function getPublishedContentBySlug(slug: string, type?: string) {
   }
 }
 
-export async function getPublishedArticles() {
-  try {
-    const supabase = createPublicClient();
-    const { data, error } = await supabase
-      .from("content_items")
-      .select("id,slug,title,eyebrow,subtitle,summary,hero_image,image_alt,published_at,updated_at,content_type,featured,featured_position,metadata,status")
-      .in("content_type", articleTypes)
-      .eq("status", "published")
-      .order("published_at", { ascending: false, nullsFirst: false });
-
-    if (error) return [];
-    return (data ?? []) as PublishedContent[];
-  } catch {
-    return [];
-  }
+export async function getPublishedArticles(): Promise<PublishedContent[]> {
+  return await readCatalogAll("meridian");
 }
 
 export async function getPublishedResearch() {

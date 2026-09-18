@@ -1,5 +1,8 @@
 "use client";
 import Link from "next/link";
+import { useState } from "react";
+import PublishingPanel from "@/components/admin/publishing/PublishingPanel";
+import { contentLink, type ArticleChoice, type Selection } from "@/lib/publishing/model";
 import WritingMenu from "./WritingMenu";
 import WritingText from "./WritingText";
 import {
@@ -32,6 +35,7 @@ export default function DocumentEditor({
   onLatest,
   onOpen,
   onFocus,
+  onReload,
 }: {
   document: WritingDocument;
   state: WritingState;
@@ -49,7 +53,20 @@ export default function DocumentEditor({
   onLatest: () => void;
   onOpen: (key: ItemKey) => void;
   onFocus: () => void;
+  onReload?: () => void | Promise<void>;
 }) {
+  const [selection, setSelection] = useState<Selection | null>(null);
+  const shared = document.key.startsWith("publication:") && ["article", "analysis", "case"].includes(document.type);
+  function insertReference(target: ArticleChoice, sectionId?: string) {
+    if (!selection) return;
+    const source = document.sections.find(s => s.id === selection.sectionId);
+    if (!source || source.body.slice(selection.start, selection.end) !== selection.text) {
+      window.alert("De geselecteerde tekst is veranderd. Selecteer opnieuw."); return;
+    }
+    const link = contentLink(selection.text || target.title, target.id, sectionId);
+    onChange({...document, sections:document.sections.map(s => s.id === source.id ? {...s, body:s.body.slice(0,selection.start)+link+s.body.slice(selection.end)} : s)});
+    setSelection(null);
+  }
   const connected = linkedKeys(state, document.key),
     otherTabs = state.view.tabs.filter(
       (key) => key !== document.key && !connected.includes(key),
@@ -71,10 +88,13 @@ export default function DocumentEditor({
           {dirty
             ? "Nog niet opgeslagen"
             : document.editable
-              ? "Opgeslagen"
+              ? shared ? "Concept opgeslagen" : "Opgeslagen"
               : "Alleen lezen"}
         </span>
         <div className="writing-editor-actions">
+          {shared && document.editable && <PublishingPanel id={splitKey(document.key).id} revision={document.revision} dirty={dirty}
+            selection={selection} onInsert={insertReference} onReload={onReload}
+            onOpen={id => onOpen(`publication:${id}`)} onReference={id => onReference(`publication:${id}`)} />}
           {document.editable && (
             <button
               type="button"
@@ -84,7 +104,7 @@ export default function DocumentEditor({
             >
               {saving
                 ? "Opslaan…"
-                : document.status === "published"
+                : shared ? "Concept opslaan" : document.status === "published"
                   ? "Wijzigingen live opslaan"
                   : "Tekst opslaan"}
             </button>
@@ -260,6 +280,7 @@ export default function DocumentEditor({
                 </span>
                 <WritingText
                   value={s.body}
+                  onSelect={e => {const field=e.currentTarget; setSelection({sectionId:s.id,start:field.selectionStart,end:field.selectionEnd,text:field.value.slice(field.selectionStart,field.selectionEnd)});}}
                   readOnly={!document.editable}
                   rows={3}
                   placeholder="Begin met schrijven…"

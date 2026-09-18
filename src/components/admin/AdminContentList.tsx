@@ -32,7 +32,7 @@ export default function AdminContentList({ items }: { items: ContentRow[] }) {
           <span className="admin-status" data-status={item.status}>{statusLabels[item.status] ?? item.status.replaceAll("_", " ")}</span>
           <div className="admin-row-actions">
             <Link href={`/admin/content/${item.id}`} aria-label={`Bewerk ${item.title}`}>Bewerken</Link>
-            {item.status === "published" && <Link href={publicContentHref(item.content_type, item.slug)} target="_blank" rel="noopener noreferrer" aria-label={`Bekijk ${item.title} op de site`}>Bekijk ↗</Link>}
+            {item.status === "published" && <Link href={item.content_type === "research" ? publicContentHref(item.content_type, item.slug) : `/lees/${item.id}`} target="_blank" rel="noopener noreferrer" aria-label={`Bekijk ${item.title} op de site`}>Bekijk ↗</Link>}
           </div>
         </li>
       ))}
