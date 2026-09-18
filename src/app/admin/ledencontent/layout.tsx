@@ -1,10 +1,8 @@
+import type { ReactNode } from "react";
 import { requireMemberAdmin } from "@/lib/auth/user";
-import "@/app/member.css";
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import PublicationNavigation from "@/components/admin/publications/PublicationNavigation";
+
+export default async function MemberContentLayout({ children }: { children: ReactNode }) {
   await requireMemberAdmin();
-  return <div className="member-admin">{children}</div>;
+  return <><PublicationNavigation active="members" />{children}</>;
 }

@@ -1,0 +1,41 @@
+name: Admin navigation checks
+
+on:
+  push:
+    branches: ["admin/werkplek-publicaties-tabs"]
+  pull_request:
+    paths:
+      - "src/app/admin/**"
+      - "src/components/admin/**"
+      - "src/lib/admin/**"
+      - "tests/**"
+      - "package*.json"
+      - ".github/workflows/admin-navigation-checks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Navigation and publication tests
+        run: node --test tests/admin-navigation.test.mjs tests/publications-module.test.mjs
+      - name: Writing regression tests (local database only)
+        run: npm run test:writing
+      - name: Shared sidebar tests
+        run: npm run test:workspace
+      - name: Production build
+        run: npm run build

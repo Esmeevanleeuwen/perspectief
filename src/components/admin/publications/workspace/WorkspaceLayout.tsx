@@ -4,16 +4,7 @@ import "./workspace.css";
 
 /** Layout slots only; hiding the list keeps its search, page and scroll position. */
 export default function WorkspaceLayout({
-  mode,
-  detail,
-  documentKey,
-  listKey,
-  navigation,
-  tools,
-  list,
-  document,
-  reference,
-  footer,
+  mode, detail, documentKey, listKey, navigation, tools, list, document, tabs, reference, footer,
 }: {
   mode: string;
   detail: boolean;
@@ -23,6 +14,7 @@ export default function WorkspaceLayout({
   tools: ReactNode;
   list: ReactNode;
   document: ReactNode;
+  tabs?: ReactNode;
   reference?: ReactNode;
   footer: ReactNode;
 }) {
@@ -41,55 +33,33 @@ export default function WorkspaceLayout({
   useLayoutEffect(() => {
     const list = listRef.current;
     if (list) list.scrollTop = listPosition.current;
-    // Move keyboard focus with the small-screen list/detail transition.
-    if (
-      detail &&
-      documentKey !== "capture" &&
-      list &&
-      !list.getClientRects().length
-    )
-      documentRef.current
-        ?.querySelector<HTMLButtonElement>(".writing-back")
-        ?.focus({ preventScroll: true });
+    // Keep arrow-key focus in the tabs; list selections still focus the back button on mobile.
+    const tabFocus = documentRef.current?.querySelector(".writing-open-tabs")?.contains(window.document.activeElement);
+    if (detail && documentKey !== "capture" && list && !list.getClientRects().length && !tabFocus)
+      documentRef.current?.querySelector<HTMLButtonElement>(".writing-back")?.focus({ preventScroll: true });
     if (!detail && documentRef.current?.contains(window.document.activeElement))
-      list
-        ?.querySelector<HTMLButtonElement>('button[aria-current="true"]')
-        ?.focus({ preventScroll: true });
+      list?.querySelector<HTMLButtonElement>('button[aria-current="true"]')?.focus({ preventScroll: true });
   }, [detail, mode, documentKey]);
   return (
     <div className="writing-workspace" data-mode={mode} data-detail={detail}>
       <div className="writing-panes">
-        <section
-          ref={listRef}
-          className="writing-list"
-          aria-label="Verzamelde stukken"
-          onScroll={(event) => {
-            if (event.currentTarget.getClientRects().length)
-              listPosition.current = event.currentTarget.scrollTop;
-          }}
-        >
-          <div className="writing-list-head">
-            {navigation}
-            {tools}
-          </div>
+        <section ref={listRef} className="writing-list" aria-label="Verzamelde stukken" onScroll={event => {
+          if (event.currentTarget.getClientRects().length) listPosition.current = event.currentTarget.scrollTop;
+        }}>
+          <div className="writing-list-head">{navigation}{tools}</div>
           {list}
         </section>
-        <section
-          ref={documentRef}
-          className="writing-document"
-          aria-label="Schrijfvlak"
-          onScroll={(event) => {
-            if (event.currentTarget.getClientRects().length)
-              positions.current.set(documentKey, event.currentTarget.scrollTop);
-          }}
-        >
-          {document}
+        <section ref={documentRef} className="writing-document" aria-label="Schrijfvlak" onScroll={event => {
+          if (event.currentTarget.getClientRects().length) positions.current.set(documentKey, event.currentTarget.scrollTop);
+        }}>
+          {tabs && <div className="writing-open-tabs">{tabs}</div>}
+          <div id="writing-active-document" role={tabs ? "tabpanel" : undefined}
+            aria-labelledby={tabs && documentKey !== "empty" ? `writing-tab-${documentKey}` : undefined}
+            tabIndex={tabs ? 0 : undefined}>
+            {document}
+          </div>
         </section>
-        {reference && (
-          <aside className="writing-reference" aria-label="Stuk ernaast">
-            {reference}
-          </aside>
-        )}
+        {reference && <aside className="writing-reference" aria-label="Stuk ernaast">{reference}</aside>}
       </div>
       <footer className="writing-footer">{footer}</footer>
     </div>
