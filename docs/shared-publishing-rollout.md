@@ -1,31 +1,41 @@
-# Meridian / Amparis — uitrolstatus
+# Meridian / Amparis — geactiveerde publicatiekoppeling
 
-Controle: 19 september 2026.
+Bijgewerkt: 19 september 2026. Dit vervangt de eerdere waarschuwing dat de activatiemigratie nog niet was uitgevoerd.
 
-## Live code en koppeling
+## Database: uitgevoerd en gecontroleerd
 
-De Meridian-bouwfout is gereproduceerd met een lokaal nagebootste databaseconfiguratie, zonder productiegegevens. De fout trad op bij het vooraf renderen van de homepage: de Supabase-aanroep ving het Next.js-signaal voor request-time data op als een gewone fetch-fout. De gedeelde reader wacht nu eerst op `connection()` buiten de SDK. De nieuwe geconfigureerde buildtest en de bestaande publicatie-, schrijf- en sidebar-tests zijn geslaagd. De oplossing staat op main vanaf commit `88784f7ea27cb9f3c2689e63205fa2c3f29cb213`.
+De officiële Supabase-migratietool heeft deze migraties met succes toegepast:
 
-Gecontroleerd via de Vercel-koppeling:
+- `20260919092007` / `activate_shared_publishing`: de eerder openstaande SQL uit `202609180002_activate_shared_publishing.sql`;
+- `20260919092957` / `released_research_links`: openbare onderzoekspagina's krijgen artikellinks uit vrijgegeven edities;
+- `20260919093015` / `released_public_search`: openbare zoekresultaten gebruiken vrijgegeven artikelversies.
 
-- `https://meridiancollective.nl/api/publicaties?platform=avera&limit=1`: HTTP 200, JSON met een lege Amparis-catalogus en origin `https://www.amparis.nl`.
-- `https://meridiancollective.nl/artikelen/prestatiedruk`: HTTP 200, nieuwe gedeelde artikelweergave, eigen canonical, Open Graph en Article JSON-LD.
-- `https://www.amparis.nl/artikelen`: HTTP 200, melding dat nog geen artikel voor Amparis is gepubliceerd.
-- `https://www.amparis.nl/robots.txt`: HTTP 200, verwijst naar de sitemap op hetzelfde www-adres.
-- `https://www.amparis.nl/sitemap.xml`: HTTP 200; nog leeg omdat er geen Amparis-artikelen of verslagen zijn vrijgegeven.
+De eerste migratie sluit de rechtstreekse openbare toegang tot bewerkbare artikelen af, maakt interne tags doorzoekbaar in de Werkplek en past de bestaande dossiersynchronisatie aan. Publiceren en offline halen werken de gekoppelde dossiers bij met vrijgegeven titels en adressen, niet met de werktekst.
 
-Vercel verwijst het adres zonder www door naar www. Die bestaande hostinginstelling is behouden. Het primaire adres in `publishing_sites` en de Amparis-voorbeeldconfiguratie is hierop aangesloten. Er zijn geen DNS-records of mailinstellingen gewijzigd.
+Een read-only controle als `anon` leverde nul ruwe artikelen en nul ruwe artikelsecties op. De openbare catalogus bleef acht Meridian-edities en nul Amparis-edities leveren. Configuraties en de volledige revisietabel zijn niet anoniem leesbaar; anonieme bezoekers kunnen niet publiceren. Ook een authenticated rol zonder redactionele identiteit kreeg geen ruwe artikelen of interne configuraties te zien. Er zijn geen rollen verruimd.
 
-## Nog NIET geactiveerd
+De controlesommen van alle `content_items` en `content_sections` waren voor en na de migraties gelijk. Er zijn geen artikelteksten gewijzigd, geen hoofdstukken aangemaakt en geen artikelen automatisch op Amparis gepubliceerd.
 
-De uitvoertool blokkeerde de aanvraag voor `202609180002_activate_shared_publishing.sql`. De migratie is niet toegepast. Een aansluitende read-only databasecontrole bevestigde dat er geen activatiemigratie geregistreerd is en dat de oude raw-content-leespolicy nog geldt.
+## Extra oude koppelingen hersteld
 
-Daarom is de nieuwe privacyscheiding tussen de bewerkbare tekst van bestaande gepubliceerde artikelen en de openbare versies nog niet volledig actief. Behandel wijzigingen aan bestaande gepubliceerde artikelen voorlopig NIET als een privéconcept, ook als de editor die wijziging als concept opslaat. De uitbreiding van zoeken op interne tags en de aanpassing van bestaande dossierkoppelingen uit deze activatiemigratie staan eveneens nog open.
+De bestaande route `/onderzoek/[slug]` gebruikte nog een sessieclient en een join naar ruwe `content_items`. Na de privacyscheiding vielen artikelkoppelingen voor openbare bezoekers daardoor weg. De route gebruikt nu de gerichte reader `publishing_research_links`, zonder bezoekerssessie. Deze geeft alleen gepubliceerde Meridian-artikeledities bij een gepubliceerd onderzoek terug. Ook gepubliceerde onderliggende onderzoeken blijven ondersteund. De live databasecontrole gaf drie artikellinks voor `mens-als-functie` en één voor `tegenspraak`.
 
-De nieuwe gedeelde artikel-API en beide websites zijn bereikbaar. Dit betekent niet dat de volledige database-uitrol afgerond is.
+De bestaande openbare functie `search_meridian` draaide met `SECURITY DEFINER` en las artikeltekst direct uit `content_items` en `content_sections`. Alleen de RLS-regels aanpassen was daarom onvoldoende: conceptwijzigingen aan een eerder gepubliceerd artikel konden via een zoekresultaat terugkomen. De zoekfunctie leest nu titel, samenvatting, sectietitel en fragment uit dezelfde gepubliceerde snapshot. De bestaande resultaatvelden, Nederlandse zoekweging en filters blijven bestaan. Interne tags worden niet meegenomen. De live zoekopdracht `prestatiedruk` met filter `article` gaf één gepubliceerd resultaat.
 
-## Inhoud en controlemogelijkheden
+## Waarom het eerder niet werkte
 
-De read-only databasecontrole telde acht bestaande Meridian-edities en nul Amparis-edities. In deze uitrol zijn geen artikelen automatisch op Amparis gezet, geen nieuwe hoofdstukken aangemaakt en geen artikelteksten gewijzigd. De ingelogde beheeromgeving is niet interactief met een persoonlijk account getest.
+**Bouwfout.** De oude productiebuild mislukte tijdens het vooraf renderen van `/` met de melding `Gepubliceerde inhoud kon niet worden geladen`. De testbuild zonder Supabase-configuratie sloeg die reader over en kon daardoor toch slagen. De fout is eerder gereproduceerd met de geconfigureerde lokale databasefixture. De reader wacht nu eerst op `connection()` buiten de Supabase/PostgREST-aanroep, zodat Next.js de aanvraag als request-time data behandelt voordat de SDK fetch-fouten opvangt. Die oplossing staat sinds `88784f7ea27cb9f3c2689e63205fa2c3f29cb213` in de code. De testworkflow bouwt nu met die configuratiefixture.
 
-De bestaande gebruikershandleiding staat in `docs/shared-publishing.md`; de bovenstaande activatiebeperking gaat voor op beschrijvingen van de volledig uitgerolde situatie.
+**Eerdere migratieblokkade.** De vorige status meldde een blokkade door de uitvoertool; in de database stond geen geslaagde activatiemigratie en de oude leespolicy was nog aanwezig. Bij deze nieuwe uitvoering is inhoudelijk dezelfde activatie-SQL via `apply_migration` geaccepteerd en geregistreerd. De beschikbare historie bevat geen concrete foutcode die de precieze reden van die eerdere toolblokkade bewijst. Er is dus geen onderbouwde reden om die toe te schrijven aan DNS, het Amparis-domein of een specifieke SQL-fout. Er zijn geen toegangsbeperkingen omzeild.
+
+**Onvolledige omzetting.** Naast de oorspronkelijke bouwfout bleken de oudere onderzoekspagina en de openbare zoekfunctie nog niet naar gepubliceerde edities te zijn omgezet. Beide zijn in deze aanvulling meegenomen.
+
+## Tests en gebruik
+
+De workflow op commit `afbe1a10d80b0256da670ef220d0efc75f124568` is geslaagd: publicatie-, hoofdstuk-, verwijzings-, paneel-, activatie-, schrijf- en sidebar-tests plus de productiebuild met geconfigureerde databasefixture. De nieuwe activatietests gebruiken de echte schrijfmigratie in PGlite. Ze controleren zoeken op interne tags, letterlijke `%`/`_`, gepubliceerde titels na conceptwijzigingen, ontoegankelijke conceptouders, vrijgeven/offline halen, dossiertriggergedrag en het afschermen van concepttekst in publieke zoekresultaten. Voor de oude dossierfunctie wordt een expliciete lokale testdouble van de artikellinkquery gebruikt; daarnaast is de echte productie-dossiersynchronisatie uitgevoerd en read-only gecontroleerd.
+
+De ingelogde Werkplek is niet interactief met een persoonlijk productieaccount getest. De componenttests gebruiken lokale testgegevens. De bestaande npm-waarschuwingen over kwetsbare pakketten zijn niet met deze wijzigingen opgelost.
+
+Gebruik: open een artikel, analyse of casus in Werkplek. Bewaar je werktekst met Concept opslaan. Kies onder Structuur & publicatie → Publiceren & SEO Meridian en/of Amparis, sla de instellingen op en kies Publiceer geselecteerde websites. Hoofdstukken, interne tags en verwijzingen blijven in hetzelfde zijpaneel.
+
+De vroegere waarschuwing om bewerkingen aan bestaande gepubliceerde artikelen niet als privéconcept te behandelen is hiermee opgeheven voor deze gedeelde artikeltypen. Dit verandert NIET het aparte publicatiemodel van `content_type=research`: die oude onderzoekseditor blijft zijn eigen live-opslag gebruiken. Amparis is bereikbaar onder `https://www.amparis.nl`; het adres zonder www verwijst daarheen. Privénotities en ledenpublicaties blijven apart. De editor gebruikt nog leesbare Markdown voor verwijzingen en één verslagpositie per artikel, zoals eerder afgebakend.
