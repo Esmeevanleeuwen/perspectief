@@ -29,6 +29,7 @@ create function public.can_edit_content() returns boolean language sql stable se
 create table public.content_items(id uuid primary key default gen_random_uuid(),slug text unique not null,title text not null,content_type text not null,status text not null default 'draft',author_id uuid,eyebrow text,subtitle text,summary text,hero_image text,image_alt text,featured boolean not null default false,featured_position text,published_at timestamptz,created_at timestamptz not null default now(),updated_at timestamptz not null default now(),metadata jsonb not null default '{}');
 create table public.content_sections(id uuid primary key default gen_random_uuid(),content_id uuid references public.content_items(id) on delete cascade,section_type text default 'paragraph',position integer default 0,title text,body text,data jsonb default '{}',created_at timestamptz default now(),updated_at timestamptz default now());
 create table public.research_children(research_content_id uuid,child_content_id uuid,relation text,position integer);
+create table public.research_dossiers(content_id uuid primary key,central_question text,method text,boundaries text);
 alter table public.content_items enable row level security; alter table public.content_sections enable row level security;
 create policy content_manage on public.content_items for all using(public.is_editorial()) with check(public.is_editorial());
 create policy content_select on public.content_items for select using(status='published' or public.is_editorial());
@@ -40,7 +41,8 @@ insert into public.content_items(id,slug,title,summary,content_type,status) valu
 ('${draft}','prive-artikel','GEHEIM CONCEPT','Niet vrijgegeven','article','draft'),
 ('${research}','openbaar-onderzoek','Openbaar onderzoek','Onderzoek','research','published'),
 ('${privateResearch}','prive-onderzoek','PRIVE ONDERZOEK','Onderzoek','research','draft');
-insert into public.content_sections(content_id,body) values('${article}','Openbare tekst'),('${draft}','GEHEIME TEKST');
+insert into public.content_sections(content_id,title,body) values('${article}','Openbare sectie','Openbare tekst'),('${draft}','Prive sectie','GEHEIME TEKST');
+insert into public.research_dossiers values('${research}','Onderzoeksvraag','Onderzoeksmethode','Afbakening');
 insert into public.research_children values
 ('${research}','${article}','part_of',10),('${research}','${draft}','background',20),
 ('${privateResearch}','${article}','part_of',10);
@@ -61,14 +63,17 @@ end;$$;
 `;
 async function create() {
   const db = new PGlite();
-  await db.exec(setup);
-  for (const file of [
-    '20260913154532_admin_writing_workspace.sql',
-    '202609180001_shared_publishing.sql',
-    '202609180002_activate_shared_publishing.sql',
-    '20260919093000_released_research_links.sql',
-  ]) await db.exec(fs.readFileSync(`supabase/migrations/${file}`, 'utf8'));
-  return db;
+  try {
+    await db.exec(setup);
+    for (const file of [
+      '20260913154532_admin_writing_workspace.sql',
+      '202609180001_shared_publishing.sql',
+      '202609180002_activate_shared_publishing.sql',
+      '20260919093000_released_research_links.sql',
+      '20260919093100_released_public_search.sql',
+    ]) await db.exec(fs.readFileSync(`supabase/migrations/${file}`, 'utf8'));
+    return db;
+  } catch (error) { await db.close(); throw error; }
 }
 async function as(db, user) {
   await db.exec(`reset role; set role ${user ? 'authenticated' : 'anon'};`);
@@ -111,7 +116,7 @@ test('research links retain published titles after draft edits and reflect expli
     await as(db, owner);
     await db.query("update public.content_items set title='NIEUWE CONCEPTTITEL',summary='GEHEIME SAMENVATTING',updated_at=clock_timestamp() where id=$1",[article]);
     await as(db, null);
-    let rows = await links(db);
+    const rows = await links(db);
     assert.equal(rows.length,1);
     assert.equal(rows[0].title,'Openbare titel');
     assert.equal(rows[0].slug,'openbaar-artikel');
@@ -136,7 +141,6 @@ test('draft parent research and missing IDs reveal no linked article titles; act
     assert.deepEqual(await links(db,'99999999-0000-4000-8000-000000000001'),[]);
     await as(db, owner);
     await db.query("update public.content_items set title='UNRELEASED TITLE' where id=$1",[article]);
-    // A routine refresh caused by editing the old research must still use releases.
     await db.exec('reset role');
     await db.query('select public.sync_meridian_research($1)',[research]);
     let cached = await value(db,'select links as value from public.test_research_links where content_id=$1',[research]);
@@ -150,5 +154,34 @@ test('draft parent research and missing IDs reveal no linked article titles; act
     await db.query("select public.publishing_withdraw($1,'meridian')",[article]);
     await db.exec('reset role');
     assert.deepEqual(await value(db,'select links as value from public.test_research_links where content_id=$1',[research]),[]);
+  } finally { await db.close(); }
+});
+
+test('public search never exposes unpublished titles, sections, excerpts or internal tags', async () => {
+  const db = await create();
+  const search = async (q, filter='article') => (await db.query('select * from public.search_meridian($1,$2)',[q,filter])).rows;
+  try {
+    await as(db, owner);
+    const c = await value(db,'select public.publishing_context($1) as value',[article]);
+    c.config.tags=['INTERNALTAGSTRING'];
+    await db.query('select public.publishing_save($1,$2,$3::jsonb)',[article,c.version,JSON.stringify(c.config)]);
+    await db.query("update public.content_items set title='PRIVATETITLESTRING',summary='PRIVATESUMMARYSTRING',updated_at=clock_timestamp() where id=$1",[article]);
+    await db.query("update public.content_sections set title='PRIVATESECTIONSTRING',body='UNIQUEDRAFTSTRING',updated_at=clock_timestamp() where content_id=$1",[article]);
+    await as(db, null);
+    for(const q of ['PRIVATETITLESTRING','PRIVATESUMMARYSTRING','PRIVATESECTIONSTRING','UNIQUEDRAFTSTRING','INTERNALTAGSTRING','GEHEIM']) assert.deepEqual(await search(q),[]);
+    let rows=await search('Openbare');
+    assert.equal(rows.length,1); assert.equal(rows[0].title,'Openbare titel');
+    assert.equal(rows[0].matched_section,'Openbare sectie');
+    assert.doesNotMatch(JSON.stringify(rows),/PRIVATE|DRAFT|INTERNALTAG/);
+    assert.equal((await search('Onderzoeksvraag','research'))[0].id,research);
+    assert.deepEqual(await search('Onderzoeksvraag','article'),[]);
+    assert.deepEqual(await search(''),[]);
+    await as(db, owner); await release(db); await as(db, null);
+    rows=await search('UNIQUEDRAFTSTRING');
+    assert.equal(rows[0].title,'PRIVATETITLESTRING');
+    assert.match(rows[0].excerpt,/UNIQUEDRAFTSTRING/);
+    assert.deepEqual(await search('INTERNALTAGSTRING'),[]);
+    await as(db, owner); await db.query("select public.publishing_withdraw($1,'meridian')",[article]); await as(db, null);
+    assert.deepEqual(await search('UNIQUEDRAFTSTRING'),[]);
   } finally { await db.close(); }
 });
