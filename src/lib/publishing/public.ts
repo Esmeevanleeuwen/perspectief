@@ -1,4 +1,5 @@
 import "server-only";
+import { connection } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import type { Catalog, Platform, PublicReport, SharedArticle } from "./model";
@@ -6,6 +7,9 @@ import type { Catalog, Platform, PublicReport, SharedArticle } from "./model";
 /** No session, service key, fallback to drafts, or cross-deployment cache. */
 async function call<T>(name: string, args: Record<string, unknown>, empty: T): Promise<T> {
   if (!isSupabaseConfigured()) return empty;
+  // Publications are request-time data. Keep Next's prerender bailout outside
+  // the SDK: PostgREST catches fetch errors, including Next's no-store signal.
+  await connection();
   const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)!, {
     auth: { persistSession:false, autoRefreshToken:false, detectSessionInUrl:false },
     global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }) },
