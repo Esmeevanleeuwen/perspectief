@@ -1,25 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ContentSections from "@/components/content/ContentSections";
-import { createClient } from "@/lib/supabase/server";
+import { readResearchLinks } from "@/lib/publishing/public";
 import { getPublishedContentBySlug, mediaPath, publicContentHref, relationOne } from "@/lib/admin/content";
 import { getResearchBySlug } from "@/app/data/research";
 import { getArticlesForResearch } from "@/app/data/articles";
 
 export const revalidate = 300;
 type Props = { params: Promise<{ slug: string }> };
-
-type ChildRow = {
-  relation: string;
-  content_items: {
-    id: string;
-    slug: string;
-    title: string;
-    summary: string | null;
-    content_type: string;
-    status: string;
-  } | null;
-};
 
 export default async function ResearchPage({ params }: Props) {
   const { slug } = await params;
@@ -29,15 +17,9 @@ export default async function ResearchPage({ params }: Props) {
     const dossier = relationOne(dbResearch.research_dossiers);
     const sections = dbResearch.content_sections ?? [];
     const image = mediaPath(dbResearch.hero_image);
-    const supabase = await createClient();
-
-    const { data: children } = await supabase
-      .from("research_children")
-      .select("relation, content_items!child_content_id(id,slug,title,summary,content_type,status)")
-      .eq("research_content_id", dbResearch.id)
-      .order("position", { ascending: true });
-
-    const publishedChildren = ((children ?? []) as unknown as ChildRow[]).filter((row) => row.content_items?.status === "published");
+    // Editable article rows are private after activation. Use the released
+    // title, summary and address instead, also when an editor visits this page.
+    const publishedChildren = await readResearchLinks(dbResearch.id);
 
     return (
       <main className="mx-auto max-w-[1280px] pb-24 pt-10">
@@ -80,17 +62,14 @@ export default async function ResearchPage({ params }: Props) {
               <div><p className="text-xs uppercase tracking-[0.18em] text-[#9a6748]">Verbonden publicaties</p><h2 className="mt-2 font-serif text-4xl">Lees verder binnen dit onderzoek</h2></div>
             </div>
             <div className="grid gap-px bg-[#102534]/10 md:grid-cols-3">
-              {publishedChildren.map((row) => {
-                const item = row.content_items!;
-                return (
-                  <Link key={item.id} href={publicContentHref(item.content_type, item.slug)} className="min-h-56 bg-[#fcfaf7] p-7 text-inherit no-underline transition-colors hover:bg-white">
-                    <span className="text-xs uppercase tracking-[0.12em] text-[#9a6748]">{row.relation.replaceAll("_", " ")}</span>
-                    <h3 className="mt-3 font-serif text-2xl leading-tight">{item.title}</h3>
-                    {item.summary && <p className="mt-3 text-sm leading-6 text-[#102534]/50">{item.summary}</p>}
-                    <span className="mt-6 inline-block text-sm">Lees →</span>
-                  </Link>
-                );
-              })}
+              {publishedChildren.map((item) => (
+                <Link key={item.id} href={publicContentHref(item.content_type, item.slug)} className="min-h-56 bg-[#fcfaf7] p-7 text-inherit no-underline transition-colors hover:bg-white">
+                  <span className="text-xs uppercase tracking-[0.12em] text-[#9a6748]">{item.relation.replaceAll("_", " ")}</span>
+                  <h3 className="mt-3 font-serif text-2xl leading-tight">{item.title}</h3>
+                  {item.summary && <p className="mt-3 text-sm leading-6 text-[#102534]/50">{item.summary}</p>}
+                  <span className="mt-6 inline-block text-sm">Lees →</span>
+                </Link>
+              ))}
             </div>
           </section>
         )}

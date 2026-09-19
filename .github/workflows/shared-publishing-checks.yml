@@ -1,7 +1,7 @@
 name: Shared publishing checks
 on:
   push:
-    branches: [main, feature/shared-publishing-20260918]
+    branches: [main, feature/shared-publishing-20260918, fix/complete-publishing-activation]
   pull_request:
     branches: [main]
 permissions:
@@ -21,9 +21,10 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
-      - name: Publication, chapter, privacy and editor tests
-        run: node --test tests/publishing-links.test.mjs tests/shared-publishing.test.mjs tests/publishing-panel.test.mjs tests/amparis-branding.test.mjs
+      - name: Publication, chapter, privacy, activation and editor tests
+        run: node --test tests/publishing-links.test.mjs tests/shared-publishing.test.mjs tests/publishing-panel.test.mjs tests/publishing-activation.test.mjs
       - name: Existing workspace regression tests
         run: node --test tests/admin-navigation.test.mjs tests/publications-module.test.mjs tests/writing-react.test.mjs tests/writing-database.test.mjs
       - run: npm run test:workspace
-      - run: npm run build
+      - name: Build with configured database fixture
+        run: node scripts/check-configured-build.mjs

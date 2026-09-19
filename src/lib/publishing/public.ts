@@ -28,3 +28,11 @@ export async function readCatalogAll(platform: Platform): Promise<SharedArticle[
   return items;
 }
 export const readArticleAddress = (id:string) => call<{platform:Platform;slug:string;origin:string|null}|null>("publishing_article_address",{p_id:id},null);
+
+export type ReleasedResearchLink = {
+  id: string; slug: string; title: string; summary: string | null;
+  content_type: string; relation: string; position: number;
+};
+/** An identical public projection for signed-out readers and signed-in editors. */
+export const readResearchLinks = (researchId: string) =>
+  call<ReleasedResearchLink[]>("publishing_research_links", {p_research_id: researchId}, []);
