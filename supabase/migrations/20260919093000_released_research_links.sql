@@ -1,7 +1,7 @@
 -- Public research links must use released editions, never editable article rows.
 -- This additive reader does not publish content or change existing access policies.
 create or replace function public.publishing_research_links(p_research_id uuid)
-returns table(id uuid, slug text, title text, summary text, content_type text, relation text, position integer)
+returns table(id uuid, slug text, title text, summary text, content_type text, relation text, "position" integer)
 language sql stable security definer set search_path = '' as $$
   select e.content_id, e.slug, r.document->>'title', r.document->>'summary',
          r.document->>'content_type', c.relation, c.position
@@ -19,7 +19,7 @@ language sql stable security definer set search_path = '' as $$
   join public.content_items child on child.id = c.child_content_id
   where parent.id = p_research_id and parent.content_type = 'research' and parent.status = 'published'
     and child.content_type = 'research' and child.status = 'published'
-  order by position, id;
+  order by 7, 1;
 $$;
 revoke all on function public.publishing_research_links(uuid) from public, anon, authenticated;
 grant execute on function public.publishing_research_links(uuid) to anon, authenticated;
