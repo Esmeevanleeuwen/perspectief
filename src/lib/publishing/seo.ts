@@ -18,6 +18,6 @@ export function articleStructuredData(item: SharedArticle) {
   return { "@context": "https://schema.org", "@type": "Article", "@id": `${origin}/artikelen/${item.slug}#article`,
     mainEntityOfPage: `${origin}/artikelen/${item.slug}`, headline: plainText(item.title), description: plainText(item.summary || ""),
     datePublished: item.published_at, dateModified: item.updated_at, inLanguage: "nl", image: item.hero_image || undefined,
-    publisher: { "@type": "Organization", name: item.platform === "avera" ? "Avera" : "Meridian", url: origin },
+    publisher: { "@type": "Organization", name: item.platform === "avera" ? "Amparis" : "Meridian", url: origin },
     isPartOf: item.report ? { "@type": "CreativeWorkSeries", name: item.report.title, url: `${origin}/verslagen/${item.report.slug}` } : undefined };
 }

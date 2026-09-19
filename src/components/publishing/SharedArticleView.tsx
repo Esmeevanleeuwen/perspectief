@@ -12,7 +12,7 @@ export default function SharedArticleView({ article }: { article: SharedArticle 
   const paragraphs = (value: string | null) => (value || "").split(/\n\s*\n/).filter(Boolean).map((p, i) => <p key={i}>{text(p)}</p>);
   return <main className="pub-article">
     {jsonld && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(jsonld) }} />}
-    <nav aria-label="Kruimelpad"><Link href="/">{article.platform === "avera" ? "Avera" : "Meridian"}</Link> / <Link href="/artikelen">Artikelen</Link>{article.report && <> / <Link href={`/verslagen/${article.report.slug}`}>{article.report.title}</Link></>}</nav>
+    <nav aria-label="Kruimelpad"><Link href="/">{article.platform === "avera" ? "Amparis" : "Meridian"}</Link> / <Link href="/artikelen">Artikelen</Link>{article.report && <> / <Link href={`/verslagen/${article.report.slug}`}>{article.report.title}</Link></>}</nav>
     <article>
       <header><p>{article.eyebrow || "Artikel"}</p><h1>{article.title}</h1>
         {article.subtitle && <p className="pub-lead">{article.subtitle}</p>}

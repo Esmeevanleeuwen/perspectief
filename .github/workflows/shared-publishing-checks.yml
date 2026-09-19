@@ -22,7 +22,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Publication, chapter, privacy and editor tests
-        run: node --test tests/publishing-links.test.mjs tests/shared-publishing.test.mjs tests/publishing-panel.test.mjs
+        run: node --test tests/publishing-links.test.mjs tests/shared-publishing.test.mjs tests/publishing-panel.test.mjs tests/amparis-branding.test.mjs
       - name: Existing workspace regression tests
         run: node --test tests/admin-navigation.test.mjs tests/publications-module.test.mjs tests/writing-react.test.mjs tests/writing-database.test.mjs
       - run: npm run test:workspace
