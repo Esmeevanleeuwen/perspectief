@@ -1,5 +1,6 @@
 import Link from "next/link";
 import PublishingSettings from "@/components/admin/publishing/PublishingSettings";
+import ArticleImageField from "@/components/admin/publishing/ArticleImageField";
 import { notFound } from "next/navigation";
 import { requireEditorialUser } from "@/lib/admin/roles";
 import { publicContentHref } from "@/lib/admin/content";
@@ -56,6 +57,9 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
   const field = "min-h-11 w-full rounded-md border border-[#102534]/14 bg-[var(--paper)] px-3 py-2 text-sm outline-none transition focus:border-[#102534]/45 focus:ring-2 focus:ring-[var(--accent-soft)]";
   const publicHref = item.content_type === "research" ? publicContentHref(item.content_type, item.slug) : `/lees/${item.id}`;
   const canPublish = ["owner", "admin", "editor"].includes(role);
+  // A saved legacy form changes the source revision. Reload the inline publishing panel then,
+  // but never use a render-time random key that could discard an unfinished upload.
+  const sourceVersion = `${item.updated_at}:${(sections ?? []).map(section => `${section.id}:${section.updated_at}:${section.position}`).join("|")}`;
 
   return (
     <div className="admin-page admin-editor-page">
@@ -73,7 +77,7 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
 
       {(notice.saved || notice.published) && <p role="status" className="mt-5 rounded-md border border-emerald-800/15 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">{notice.published ? "Publicatie staat live." : "Wijzigingen opgeslagen."}</p>}
 
-      {item.content_type !== "research" && <PublishingSettings id={id} />}
+      {item.content_type !== "research" && <PublishingSettings key={sourceVersion} id={id} />}
       <div className="admin-editor-grid">
         <div className="space-y-7">
           <form action={updateContent} className="rounded-md border border-[#102534]/10 bg-[var(--paper)] p-5 md:p-7">
@@ -85,7 +89,15 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
               <div className="grid gap-5 md:grid-cols-2"><label className="grid gap-2 text-xs font-medium">Slug<input name="slug" required defaultValue={item.slug} className={field} /></label><label className="grid gap-2 text-xs font-medium">Label / eyebrow<input name="eyebrow" defaultValue={item.eyebrow ?? ""} className={field} /></label></div>
               <label className="grid gap-2 text-xs font-medium">Ondertitel<input name="subtitle" defaultValue={item.subtitle ?? ""} className={field} /></label>
               <label className="grid gap-2 text-xs font-medium">Samenvatting<textarea name="summary" defaultValue={item.summary ?? ""} rows={4} className={`${field} resize-y`} /></label>
-              <div className="grid gap-5 md:grid-cols-2"><label className="grid gap-2 text-xs font-medium">Hero-afbeelding <span className="font-normal text-[var(--muted)]">/bestand.jpg of volledige https-url</span><input name="hero_image" defaultValue={item.hero_image ?? ""} className={field} /></label><label className="grid gap-2 text-xs font-medium">Alt-tekst<input name="image_alt" defaultValue={item.image_alt ?? ""} className={field} /></label></div>
+              {item.content_type === "research" ? <>
+                <ArticleImageField key={`${item.updated_at}:${item.hero_image ?? ""}`} name="hero_image" defaultValue={item.hero_image ?? ""} />
+                <label className="grid gap-2 text-xs font-medium">Alt-tekst<input name="image_alt" defaultValue={item.image_alt ?? ""} className={field} /></label>
+              </> : <>
+                <p className="text-xs text-[var(--muted)]">Je foto en de weergave voor lezers beheer je bij <a href="#article-presentation" className="underline">Afbeelding en artikelweergave</a> bovenaan.</p>
+                {/* Preserve legacy source fields. The released image is managed only by publishing config above. */}
+                <input type="hidden" name="hero_image" value={item.hero_image ?? ""} />
+                <input type="hidden" name="image_alt" value={item.image_alt ?? ""} />
+              </>}
 
               {item.content_type === "research" && (
                 <fieldset className="mt-2 grid gap-5 border-t border-[#102534]/10 pt-6">
@@ -112,7 +124,7 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
                 <form action={updateSection} key={section.id} className="rounded-md border border-[#102534]/10 bg-[#fbfbfa] p-4 md:p-5">
                   <input type="hidden" name="section_id" value={section.id} /><input type="hidden" name="content_id" value={id} />
                   <div className="flex flex-wrap items-center justify-between gap-3"><span className="font-mono text-[0.65rem] text-[var(--muted)]">{String(index + 1).padStart(2, "0")}</span><div className="flex flex-wrap gap-1"><button formAction={moveSection} name="direction" value="up" aria-label="Blok omhoog" className="rounded-md border border-[#102534]/12 bg-[var(--paper)] px-2.5 py-1.5 text-xs hover:bg-[var(--accent)]/4">↑</button><button formAction={moveSection} name="direction" value="down" aria-label="Blok omlaag" className="rounded-md border border-[#102534]/12 bg-[var(--paper)] px-2.5 py-1.5 text-xs hover:bg-[var(--accent)]/4">↓</button><button formAction={deleteSection} className="rounded-md border border-red-900/15 bg-[var(--paper)] px-2.5 py-1.5 text-xs text-red-800 hover:bg-red-50">Verwijder</button></div></div>
-                  <div className="mt-4 grid gap-4 md:grid-cols-2"><label className="grid gap-1.5 text-[0.68rem] font-medium">Bloktype<select name="section_type" defaultValue={section.section_type} className={field}>{sectionTypes.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className="grid gap-1.5 text-[0.68rem] font-medium">Klein label<input name="section_eyebrow" defaultValue={sectionString(section.data, "eyebrow")} className={field} /></label></div>
+                  <div className="mt-4 grid gap-4 md:grid-cols-2"><label className="grid gap-1.5 text-[0.68rem] font-medium">Bloktype<select name="section_type" defaultValue={section.section_type} className={field}>{sectionTypes.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label className="grid gap-1.5 text-[0.68rem] font-medium">Klein label<input name="section_eyebrow" defaultValue={sectionString(section.data, "eyebrow")} className={field} /></label></div>
                   <label className="mt-4 grid gap-1.5 text-[0.68rem] font-medium">Titel<input name="section_title" defaultValue={section.title ?? ""} className={field} /></label>
                   <label className="mt-4 grid gap-1.5 text-[0.68rem] font-medium">Tekst<textarea name="section_body" defaultValue={section.body ?? ""} rows={6} className={`${field} resize-y`} /></label>
                   <label className="mt-4 grid gap-1.5 text-[0.68rem] font-medium">Punten <span className="font-normal text-[var(--muted)]">Eén per regel, voor tijdlijn/kader.</span><textarea name="section_points" defaultValue={sectionLines(section.data, "points")} rows={3} className={`${field} resize-y`} /></label>
@@ -143,7 +155,7 @@ export default async function ContentEditorPage({ params, searchParams }: Props)
         </div>
 
         <aside className="admin-editor-aside space-y-5">
-          <section className="rounded-md border border-[#102534]/10 bg-[var(--paper)] p-5"><p className="text-[0.65rem] uppercase tracking-[0.16em] text-[var(--accent)]">Preview</p><h2 className="mt-2 font-serif text-2xl">Publieke route</h2><code className="mt-4 block break-all rounded-md bg-[#f6f7f7] p-3 text-xs text-[var(--muted)]">{publicHref}</code><Link href={publicHref} target="_blank" className="mt-4 inline-flex text-xs underline-offset-4 hover:underline">Open preview ↗</Link><p className="mt-4 text-xs leading-5 text-[var(--muted)]">Dit opent de laatst gepubliceerde versie. Een opgeslagen concept verandert die versie niet. Publiceren van artikelen beheer je via Structuur & publicatie.</p></section>
+          <section className="rounded-md border border-[#102534]/10 bg-[var(--paper)] p-5"><p className="text-[0.65rem] uppercase tracking-[0.16em] text-[var(--accent)]">Preview</p><h2 className="mt-2 font-serif text-2xl">Publieke route</h2><code className="mt-4 block break-all rounded-md bg-[#f6f7f7] p-3 text-xs text-[var(--muted)]">{publicHref}</code><Link href={publicHref} target="_blank" className="mt-4 inline-flex text-xs underline-offset-4 hover:underline">Open preview ↗</Link><p className="mt-4 text-xs leading-5 text-[var(--muted)]">Dit opent de laatst gepubliceerde versie. Een opgeslagen concept verandert die versie niet. Publiceren van artikelen beheer je bovenaan bij Afbeelding en artikelweergave.</p></section>
           <section className="rounded-md border border-[#102534]/10 bg-[var(--paper)] p-5"><p className="text-[0.65rem] uppercase tracking-[0.16em] text-[var(--accent)]">Structuur</p><dl className="mt-4 space-y-3 text-xs"><div className="flex justify-between gap-4"><dt className="text-[var(--muted)]">Type</dt><dd>{item.content_type}</dd></div><div className="flex justify-between gap-4"><dt className="text-[var(--muted)]">Status</dt><dd>{item.status}</dd></div><div className="flex justify-between gap-4"><dt className="text-[var(--muted)]">Blokken</dt><dd>{sections?.length ?? 0}</dd></div><div className="flex justify-between gap-4"><dt className="text-[var(--muted)]">Homepage</dt><dd>{item.featured ? item.featured_position : "nee"}</dd></div></dl></section>
           {canPublish && <section className="rounded-md border border-red-900/12 bg-[var(--paper)] p-5"><p className="text-[0.65rem] uppercase tracking-[0.16em] text-red-800">Gevarenzone</p><p className="mt-3 text-xs leading-5 text-[var(--muted)]">Verwijderen haalt dit artikel, alle leesblokken en de gepubliceerde versies op beide websites weg.</p><form action={deleteContent} className="mt-4"><input type="hidden" name="id" value={id} /><button className="rounded-md border border-red-900/20 px-4 py-2.5 text-xs font-medium text-red-800 hover:bg-red-50">Publicatie verwijderen</button></form></section>}
         </aside>

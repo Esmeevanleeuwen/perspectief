@@ -8,11 +8,14 @@ import QuickPublish from "./QuickPublish";
 export default function PublishingSettings({ id }: { id: string }) {
   const [revision, setRevision] = useState("");
   const [error, setError] = useState("");
+  const [reloadVersion, setReloadVersion] = useState(0);
   const router = useRouter();
   async function reload() {
-    const result = await loadWritingDocument(`publication:${id}`);
-    if (result.ok) { setRevision(result.value.revision); setError(""); }
-    else setError(result.message);
+    try {
+      const result = await loadWritingDocument(`publication:${id}`);
+      if (result.ok) { setRevision(result.value.revision); setError(""); setReloadVersion(value => value + 1); }
+      else setError(result.message);
+    } catch { setError("Laden lukte niet. Probeer opnieuw."); }
   }
   useEffect(() => {
     let cancelled = false;
@@ -23,9 +26,9 @@ export default function PublishingSettings({ id }: { id: string }) {
     return () => { cancelled = true; };
   }, [id]);
   return <div className="pub-settings-entry">
-    {error ? <p role="alert">{error} <button onClick={() => void reload()}>Opnieuw laden</button></p>
+    {error ? <p role="alert">{error} <button type="button" onClick={() => void reload()}>Opnieuw laden</button></p>
       : revision ? <>
-        <QuickPublish id={id} revision={revision} dirty={false} inline refreshRevisionOnOpen onReload={reload} />
+        <QuickPublish key={reloadVersion} id={id} revision={revision} dirty={false} inline refreshRevisionOnOpen />
         <div className="article-advanced-entry"><AdvancedPublishingPanel id={id} revision={revision} dirty={false} onReload={reload}
           onOpen={key => router.push(`/admin/werkplek?open=publication:${key}`)} />
           <a href={`/admin/werkplek?open=publication:${id}`}>Verder schrijven in de Werkplek →</a></div>
