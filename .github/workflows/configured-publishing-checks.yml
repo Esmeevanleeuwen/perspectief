@@ -22,7 +22,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Existing publication and workspace regressions
-        run: node --test tests/publishing-links.test.mjs tests/shared-publishing.test.mjs tests/publishing-panel.test.mjs tests/admin-navigation.test.mjs tests/publications-module.test.mjs tests/writing-react.test.mjs tests/writing-database.test.mjs
+        run: node --test tests/article-image.test.mjs tests/quick-publish.test.mjs tests/publishing-links.test.mjs tests/shared-publishing.test.mjs tests/publishing-panel.test.mjs tests/admin-navigation.test.mjs tests/publications-module.test.mjs tests/writing-react.test.mjs tests/writing-database.test.mjs
       - run: npm run test:workspace
       - name: Build with configured read-only database fixture
         run: node scripts/check-configured-build.mjs
