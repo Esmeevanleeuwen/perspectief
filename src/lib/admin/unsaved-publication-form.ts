@@ -7,9 +7,11 @@ export function hasUnsavedPublicationForm(root: Document | Element): boolean {
     if (field.disabled) return false;
     if (field.tagName === "SELECT") {
       const select = field as HTMLSelectElement;
-      const defaults = Array.from(select.options).filter(option => option.defaultSelected).map(option => option.value);
-      if (!select.multiple && defaults.length === 0 && select.options.length) defaults.push(select.options[0].value);
-      return JSON.stringify(Array.from(select.selectedOptions).map(option => option.value)) !== JSON.stringify(defaults);
+      const options = Array.from(select.options);
+      const defaults = options.filter(option => option.defaultSelected).map(option => option.value);
+      if (!select.multiple && defaults.length === 0 && options.length) defaults.push(options[0].value);
+      // Read current option flags directly, including immediately after a native form reset.
+      return JSON.stringify(options.filter(option => option.selected).map(option => option.value)) !== JSON.stringify(defaults);
     }
     if (field.tagName === "INPUT") {
       const input = field as HTMLInputElement;
