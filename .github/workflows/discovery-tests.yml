@@ -1,0 +1,25 @@
+name: Discovery regression checks
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node --test tests/discovery.test.mjs
+      - run: python3 -m unittest discover -s tests -p 'test_discovery_audit.py'
+      - name: Existing tests and configured build remain separate required checks
+        run: node scripts/check-configured-build.mjs

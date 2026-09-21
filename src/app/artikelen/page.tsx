@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { absoluteUrl } from "@/lib/dossier-platforms";
 import { getPublishedArticles, mediaPath } from "@/lib/admin/content";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
+  alternates: { canonical: absoluteUrl("/artikelen"), types: { "application/rss+xml": absoluteUrl("/feed.xml") } },
   title: "Artikelen | Meridian",
   description: "Onderzoeken waarin gebeurtenissen, ervaringen en onderliggende structuren met elkaar worden verbonden.",
 };
@@ -40,7 +42,7 @@ export default async function ArticlesPage() {
       </section>
 
       <section className="grid gap-px border-x border-b border-[#102534]/10 bg-[#102534]/10 md:grid-cols-2">
-        {items.map((article) => {
+        {items.map((article, index) => {
           const image = mediaPath(article.hero_image);
           return (
             <Link
@@ -50,7 +52,7 @@ export default async function ArticlesPage() {
             >
               {image ? (
                 <div className="aspect-[16/9] overflow-hidden bg-[#102534]/5">
-                  <img src={image} alt={article.image_alt} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
+                  <img src={image} loading={index === 0 ? "eager" : "lazy"} decoding="async" alt={article.image_alt} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
                 </div>
               ) : (
                 <div className="flex aspect-[16/9] items-end bg-[#102534] p-6 text-xs uppercase tracking-[0.2em] text-white/55">Meridian</div>

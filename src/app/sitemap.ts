@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const topics = getTopics(indexableDossiers);
   const paths = [
     "/",
+    "/artikelen",
     ...(indexableDossiers.length ? ["/dossiers"] : []),
     ...(topics.length ? ["/themas"] : []),
     ...indexableDossiers.map((dossier) => dossierPath(dossier.slug)),

@@ -1,5 +1,6 @@
 "use server";
 import { revalidatePath, updateTag } from "next/cache";
+import { queueDiscoveryNotice } from "@/lib/publishing/discovery-notify";
 import { requireEditorialUser } from "@/lib/admin/roles";
 import { PUBLIC_CONTENT_CACHE_TAG, DOSSIER_CACHE_TAG } from "@/lib/public-cache";
 import { uuidPattern, type ArticleChoice, type Platform, type PublishingConfig, type PublishingContext } from "@/lib/publishing/model";
@@ -35,11 +36,11 @@ export async function changePublishingReport(input:{id:string;action:string;repo
   return invoke("publishing_report_change",{p_id:input.id,p_action:input.action,p_report:input.report??null,p_version:input.version??null,p_title:input.title??null,p_order:input.order??null});
 }
 export async function setPublishingOrigin(site:Platform,origin:string):Promise<Result<null>> { return invoke("publishing_set_origin",{p_site:site,p_origin:origin.replace(/\/$/,"")}); }
-function invalidate() { updateTag(PUBLIC_CONTENT_CACHE_TAG); updateTag(DOSSIER_CACHE_TAG); revalidatePath("/admin/content"); revalidatePath("/sitemap.xml"); }
+function invalidate() { updateTag(PUBLIC_CONTENT_CACHE_TAG); updateTag(DOSSIER_CACHE_TAG); for (const path of ["/", "/artikelen", "/admin/content", "/sitemap.xml", "/artikelen/sitemap.xml", "/feed.xml"]) revalidatePath(path); }
 export async function publishSharedArticle(input:{id:string;sites:Platform[];version:number;revision:string;reportVersion:number|null}):Promise<Result<{revision_id:string}>> {
   if(!uuidPattern.test(input.id)) return invalid();
   const result=await invoke<{revision_id:string}>("publishing_publish",{p_id:input.id,p_sites:input.sites,p_version:input.version,p_revision:input.revision,p_report_version:input.reportVersion});
-  if(result.ok) invalidate(); return result;
+  if(result.ok) { invalidate(); if (input.sites.includes("meridian")) queueDiscoveryNotice(input.id); } return result;
 }
 export async function withdrawSharedArticle(id:string,site:Platform):Promise<Result<null>> {
   if(!uuidPattern.test(id)) return invalid();
