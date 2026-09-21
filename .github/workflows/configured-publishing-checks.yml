@@ -21,6 +21,8 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci
+      - name: Publication status controls and database transitions
+        run: node --test tests/publication-status-react.test.mjs tests/publication-status-database.test.mjs
       - name: Existing publication and workspace regressions
         run: node --test tests/article-image.test.mjs tests/quick-publish.test.mjs tests/publishing-links.test.mjs tests/shared-publishing.test.mjs tests/publishing-panel.test.mjs tests/admin-navigation.test.mjs tests/publications-module.test.mjs tests/writing-react.test.mjs tests/writing-database.test.mjs
       - run: npm run test:workspace

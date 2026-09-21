@@ -1,0 +1,10 @@
+.meridian-admin .publication-status-editor { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem; min-width: 11rem; max-width: 19rem; white-space: normal; }
+.meridian-admin .publication-status-editor > select { min-height: 2.5rem; width: 100%; border: 1px solid var(--line, #dedde1); border-radius: .35rem; padding: .5rem 1.6rem .5rem .65rem; background: var(--paper, #fffefc); color: var(--ink, #102534); font: inherit; font-size: .75rem; }
+.meridian-admin .publication-status-editor > button, .meridian-admin .publication-status-feedback button { min-height: 2rem; border: 1px solid var(--line, #dedde1); border-radius: .35rem; padding: .35rem .7rem; background: var(--paper, #fffefc); color: var(--ink, #102534); font: inherit; font-size: .72rem; cursor: pointer; }
+.meridian-admin .publication-status-editor > .pub-primary { background: var(--accent, #63469c); color: white; }
+.meridian-admin .publication-status-editor > select:focus-visible, .meridian-admin .publication-status-editor button:focus-visible { outline: 2px solid var(--accent, #63469c); outline-offset: 2px; }
+.meridian-admin .publication-status-editor :disabled { cursor: wait; opacity: .6; }
+.meridian-admin .publication-status-feedback { flex-basis: 100%; font-size: .7rem; line-height: 1.5; color: var(--muted, #666); }
+.meridian-admin .publication-status-feedback:empty { display: none; }
+.meridian-admin .publication-status-feedback p { margin: 0; }
+.meridian-admin .publication-status-feedback [role="alert"] { color: #8b2727; }

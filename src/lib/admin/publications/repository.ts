@@ -5,7 +5,9 @@ import { publicationsQuery, toPublication } from "./query";
 
 /** Every read checks the current user's editorial access, including reuse in another module. */
 export async function getPublications(filters: PublicationFilters): Promise<PublicationsResult> {
-  const { supabase } = await requireEditorialUser();
+  const { supabase, role } = await requireEditorialUser();
+  // Match is_editorial() without widening the existing database permissions.
+  const canChangeStatus = role === "owner" || role === "editor";
   try {
     let page = filters.page;
     let result = await publicationsQuery(supabase, filters, page);
@@ -22,7 +24,7 @@ export async function getPublications(filters: PublicationFilters): Promise<Publ
       result = await publicationsQuery(supabase, filters, page);
       if (result.error) return { ok: false, message: "Publicaties laden lukte niet. Probeer het opnieuw." };
     }
-    return { ok: true, items: (result.data ?? []).map(toPublication), total: result.count ?? 0, page, pageSize: PUBLICATIONS_PAGE_SIZE };
+    return { ok: true, items: (result.data ?? []).map(row => ({ ...toPublication(row), canChangeStatus })), total: result.count ?? 0, page, pageSize: PUBLICATIONS_PAGE_SIZE };
   } catch {
     return { ok: false, message: "Publicaties laden lukte niet. Probeer het opnieuw." };
   }
