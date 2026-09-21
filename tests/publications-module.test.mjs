@@ -21,6 +21,8 @@ function load(relative, mocks = {}, cache = new Map()) {
   const localRequire = name => {
     if (Object.hasOwn(mocks, name)) return mocks[name];
     if (name === 'server-only') return {};
+    // Isolate the server table boundary; the real control has its own React/action tests.
+    if (name === '@/components/admin/publications/PublicationStatus') return { default: ({ item }) => React.createElement('select', { 'aria-label': 'Status van ' + item.title, defaultValue: item.status }, React.createElement('option', { value: item.status }, item.status)) };
     if (name.startsWith('.') || name.startsWith('@/')) {
       const base = name.startsWith('@/') ? path.join(root, 'src', name.slice(2)) : path.resolve(path.dirname(file), name);
       const target = [base, base + '.ts', base + '.tsx'].find(candidate => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
@@ -118,6 +120,8 @@ test('columns can be rearranged without data changes; draft records never get pu
   assert.match(draft, /Een &lt;titel&gt;/); assert.match(draft, /\/admin\/content\/pub-1/); assert.doesNotMatch(draft, /href="\/artikelen\//);
   const published = renderToStaticMarkup(React.createElement(Table, { items: [toPublication({ ...row, status: 'published' })], columns: reordered }));
   assert.match(published, /href="\/lees\/pub-1"/);
+  const editable = renderToStaticMarkup(React.createElement(Table, { items: [{ ...toPublication(row), canChangeStatus: true }], columns: reordered }));
+  assert.match(editable, /<select/); assert.doesNotMatch(draft, /<select/);
 });
 
 test('a rejected database range recovers to the first page without dropping filters', async () => {
@@ -126,4 +130,13 @@ test('a rejected database range recovers to the first page without dropping filt
   const result = await getPublications({ ...defaults, page: 10, type: 'analysis' });
   assert.equal(result.ok, true); assert.equal(result.page, 1);
   assert.equal(urls[1].searchParams.get('content_type'), 'eq.analysis');
+});
+
+test('list editing controls follow the existing owner/editor database boundary', async () => {
+  for (const role of ['owner', 'editor', 'admin', 'researcher', 'fact_checker']) {
+    const { client } = clientWithResponses([{ body: [row] }]);
+    const { getPublications } = load('src/lib/admin/publications/repository.ts', { '@/lib/admin/roles': { requireEditorialUser: async () => ({ supabase: client, role }) } });
+    const result = await getPublications(defaults);
+    assert.equal(result.ok, true); assert.equal(result.items[0].canChangeStatus, ['owner', 'editor'].includes(role));
+  }
 });

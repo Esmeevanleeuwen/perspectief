@@ -7,6 +7,7 @@ export type Publication = {
   status: string;
   placement: { featured: boolean; position: string | null };
   updatedAt: string;
+  canChangeStatus?: boolean;
 };
 
 export const publicationTypes = [
