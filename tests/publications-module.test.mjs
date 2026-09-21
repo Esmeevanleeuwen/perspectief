@@ -22,7 +22,7 @@ function load(relative, mocks = {}, cache = new Map()) {
     if (Object.hasOwn(mocks, name)) return mocks[name];
     if (name === 'server-only') return {};
     // Isolate the server table boundary; the real control has its own React/action tests.
-    if (name === '@/components/admin/publications/PublicationStatus') return { default: ({ item }) => React.createElement('select', { 'aria-label': 'Status van ' + item.title, defaultValue: item.status }, React.createElement('option', { value: item.status }, item.status)) };
+    if (name === '@/components/admin/publications/PublicationStatus') return { __esModule: true, default: ({ item }) => React.createElement('select', { 'aria-label': 'Status van ' + item.title, defaultValue: item.status }, React.createElement('option', { value: item.status }, item.status)) };
     if (name.startsWith('.') || name.startsWith('@/')) {
       const base = name.startsWith('@/') ? path.join(root, 'src', name.slice(2)) : path.resolve(path.dirname(file), name);
       const target = [base, base + '.ts', base + '.tsx'].find(candidate => fs.existsSync(candidate) && fs.statSync(candidate).isFile());

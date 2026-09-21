@@ -20,7 +20,7 @@ window.confirm=message=>{confirmations.push(message);return confirm;};
 function load(relative,mocks={},cache=new Map()) {
  const file=path.resolve(relative);if(cache.has(file))return cache.get(file);const mod={exports:{}};
  const source=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.ReactJSX,esModuleInterop:true}}).outputText;
- function local(name){if(Object.hasOwn(mocks,name))return mocks[name];if(name.endsWith('.css'))return {};if(name==='@/app/admin/content/status-actions')return actions;if(name==='next/navigation')return {useRouter:()=>router};if(name==='@/components/admin/publishing/QuickPublish')return {default:props=>{publishProps.push(props);return React.createElement('button',{onClick:()=>props.onReload?.()},'Publiceren');}};
+ function local(name){if(Object.hasOwn(mocks,name))return mocks[name];if(name.endsWith('.css'))return {};if(name==='@/app/admin/content/status-actions')return actions;if(name==='next/navigation')return {useRouter:()=>router};if(name==='@/components/admin/publishing/QuickPublish')return {__esModule:true,default:props=>{publishProps.push(props);return React.createElement('button',{onClick:()=>props.onReload?.()},'Publiceren');}};
  if(name.startsWith('.')||name.startsWith('@/')){const base=name.startsWith('@/')?path.resolve('src',name.slice(2)):path.resolve(path.dirname(file),name);const actual=[base,base+'.ts',base+'.tsx'].find(p=>fs.existsSync(p)&&fs.statSync(p).isFile());return load(actual,mocks,cache);}return require(name);}
  new Function('require','module','exports',source)(local,mod,mod.exports);cache.set(file,mod.exports);return mod.exports;
 }
