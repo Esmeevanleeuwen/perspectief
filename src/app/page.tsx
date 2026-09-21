@@ -1,3 +1,4 @@
+import RecentArticles from "@/components/publishing/RecentArticles";
 import ParticleHero from "@/app/components/homepage/ParticleHero";
 import OtherResearch, { type OtherResearchItem } from "@/app/components/homepage/OtherResearch";
 import FeaturedResearch from "@/app/components/homepage/FeaturedResearch";
@@ -88,6 +89,7 @@ export default async function Home() {
       <OtherResearch items={otherResearch} />
       <FeaturedResearch relatedDossiers={relatedDossiers} />
       <FeaturedArticles />
+      <RecentArticles />
       <CurrentDevelopments />
     </main>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { absoluteUrl, isPreview } from "@/lib/dossier-platforms";
 import { Inter, Newsreader } from "next/font/google";
 
 import SiteFooter from "@/app/components/Layout/SiteFooter";
@@ -20,6 +21,13 @@ const newsreader = Newsreader({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(absoluteUrl("/")),
+  alternates: { types: { "application/rss+xml": absoluteUrl("/feed.xml") } },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION } : undefined,
+  },
+  ...(isPreview ? { robots: { index: false, follow: false } } : {}),
   title: "Meridian",
   description:
     "Gebeurtenissen, perspectieven, bronnen en structuren verbonden tot een groter beeld.",

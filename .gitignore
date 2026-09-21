@@ -43,3 +43,9 @@ next-env.d.ts
 
 # Supabase local CLI cache
 /supabase/.temp/
+
+# Local discovery audit state and installer backups
+/.seo-discovery/
+/.meridian-discovery-backup/
+/.meridian-discovery-installed.json
+**/__pycache__/
